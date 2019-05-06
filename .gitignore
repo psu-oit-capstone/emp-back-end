@@ -1,0 +1,12 @@
+.env/
+venv/
+.idea/
+logs/
+
+*.pyc
+*.egg-info
+*.sqlite3
+*.log
+
+/local_settings.dat
+
