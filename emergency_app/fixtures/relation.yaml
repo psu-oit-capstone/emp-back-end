@@ -1,0 +1,35 @@
+- model: emergency_app.Relation
+  pk: G
+  fields:
+    code: G
+    description: Guardian/Parent
+- model: emergency_app.Relation
+  pk: F
+  fields:
+    code: F
+    description: Friend
+- model: emergency_app.Relation
+  pk: O
+  fields:
+    code: O
+    description: Other Relative
+- model: emergency_app.Relation
+  pk: U
+  fields:
+    code: U
+    description: Unknown
+- model: emergency_app.Relation
+  pk: S
+  fields:
+    code: S
+    description: Spouse/Significant Other
+- model: emergency_app.Relation
+  pk: A
+  fields:
+    code: A
+    description: Agent
+- model: emergency_app.Relation
+  pk: R
+  fields:
+    code: R
+    description: Other Representative

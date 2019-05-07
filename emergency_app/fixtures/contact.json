@@ -1,0 +1,415 @@
+[
+  {
+    "model": "emergency_app.Contact",
+    "pk": 104557,
+    "fields": {
+      "pidm": 529,
+      "priority": "1",
+      "last_name": "Aasquez",
+      "first_name": "Kazem",
+      "street_line1": "2255 SW 87th",
+      "city": "Portland",
+      "stat_code": "OR",
+      "zip": "97232-2091",
+      "phone_area":  "629",
+      "phone_number":  "6066000",
+      "activity_date": "2016-01-14T15:50:23",
+      "surrogate_id": 104557
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 98453,
+    "fields": {
+      "pidm": 1149,
+      "priority": "1",
+      "last_name": "Abblitt",
+      "first_name": "Courtney",
+      "phone_area":  "364",
+      "phone_number":  "2645721",
+      "activity_date": "2015-04-07T14:46:18",
+      "surrogate_id": 98453
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 104756,
+    "fields": {
+      "pidm": 1699,
+      "priority": "1",
+      "last_name": "Ababneh",
+      "first_name": "Leonel",
+      "street_line1": "PO BOX 24",
+      "street_line3": "TUALATIN",
+      "city": "TUALATIN",
+      "stat_code": "OR",
+      "natn_code": "LUS",
+      "zip": "97062",
+      "phone_area":  "161",
+      "phone_number":  "3814409",
+      "phone_ext": "7018356",
+      "activity_date": "2016-08-04T16:19:31",
+      "surrogate_id": 104756
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 98446,
+    "fields": {
+      "pidm": 1072,
+      "priority": "1",
+      "last_name": "Abbington",
+      "first_name": "Nona",
+      "phone_area":  "217",
+      "phone_number":  "1725947",
+      "relt_code": "S",
+      "activity_date": "2015-04-07T11:34:34",
+      "surrogate_id": 98446
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 98443,
+    "fields": {
+      "pidm": 1072,
+      "priority": "2",
+      "last_name": "Aachi",
+      "first_name": "Babak",
+      "phone_area":  "734",
+      "phone_number":  "1430330",
+      "relt_code": "O",
+      "activity_date": "2015-04-07T11:35:36",
+      "surrogate_id": 98443
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 98447,
+    "fields": {
+      "pidm": 1072,
+      "priority": "3",
+      "last_name": "Aaseby",
+      "first_name": "Molly",
+      "street_line1": "231 Church St",
+      "city": "Portland",
+      "stat_code": "OR",
+      "zip": "97212-4564",
+      "phone_area":  "583",
+      "phone_number":  "2511411",
+      "relt_code": "O",
+      "activity_date": "2015-04-07T11:37:49",
+      "surrogate_id": 98447
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 401,
+    "fields": {
+      "pidm": 1514,
+      "priority": "1",
+      "last_name": "Abadilla",
+      "first_name": "Sophia",
+      "mi": "L",
+      "street_line1": "4334 NE 77th",
+      "street_line3": "Portland",
+      "city": "Portland",
+      "stat_code": "OR",
+      "natn_code": "LUS",
+      "zip": "97220",
+      "phone_area":  "675",
+      "phone_number":  "6467651",
+      "activity_date": "2016-10-10T14:13:42",
+      "surrogate_id": 401
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 10102,
+    "fields": {
+      "pidm": 1190,
+      "priority": "1",
+      "last_name": "Ababio",
+      "first_name": "Khalid",
+      "street_line1": " 224 Shin Tien Rd",
+      "city": "Sherwood",
+      "stat_code": "OR",
+      "zip": "97140",
+      "phone_area":  "538",
+      "phone_number":  "2473879",
+      "activity_date": "2003-05-28T00:00:00",
+      "surrogate_id": 10102
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 50690,
+    "fields": {
+      "pidm": 1781,
+      "priority": "1",
+      "last_name": "Aazami",
+      "first_name": "Joeoan",
+      "street_line1": "875 SW 185th Ave  31",
+      "city": "Portland",
+      "stat_code": "OR",
+      "natn_code": "LUS",
+      "zip": "97212",
+      "phone_area":  "506",
+      "phone_number":  "6380725",
+      "relt_code": "S",
+      "activity_date": "2010-11-22T11:41:01",
+      "surrogate_id": 50690
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 54689,
+    "fields": {
+      "pidm": 495,
+      "priority": "1",
+      "last_name": "Aatowaileb",
+      "first_name": "Morganne",
+      "mi": "B",
+      "street_line1": "543 Manzanita St",
+      "city": "Beaverton",
+      "stat_code": "OR",
+      "natn_code": "LUS",
+      "zip": "97006",
+      "phone_area":  "471",
+      "phone_number":  "6744043",
+      "relt_code": "S",
+      "activity_date": "2011-09-07T17:45:56",
+      "surrogate_id": 54689
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 54691,
+    "fields": {
+      "pidm": 495,
+      "priority": "2",
+      "last_name": "Aadahl",
+      "first_name": "Charles",
+      "phone_area":  "574",
+      "phone_number":  "1335775",
+      "activity_date": "2011-09-07T17:45:56",
+      "surrogate_id": 54691
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 54830,
+    "fields": {
+      "pidm": 891,
+      "priority": "1",
+      "last_name": "Abbas",
+      "first_name": "Gretchen",
+      "phone_area":  "317",
+      "phone_number":  "1329012",
+      "activity_date": "2014-12-12T15:45:07",
+      "surrogate_id": 54830
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 96078,
+    "fields": {
+      "pidm": 891,
+      "priority": "2",
+      "last_name": "Aagaard",
+      "first_name": "Kathleen",
+      "phone_area":  "574",
+      "phone_number":  "2123355",
+      "phone_ext": "5557",
+      "relt_code": "O",
+      "activity_date": "2014-12-12T15:46:17",
+      "surrogate_id": 96078
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 91879,
+    "fields": {
+      "pidm": 1673,
+      "priority": "1",
+      "last_name": "Abbenhaus",
+      "first_name": "Laurel",
+      "street_line1": "422 SE 79th",
+      "city": "Portland",
+      "stat_code": "OR",
+      "zip": "97225-7056",
+      "phone_area":  "464",
+      "phone_number":  "8601203",
+      "relt_code": "S",
+      "activity_date": "2014-06-17T19:24:28",
+      "surrogate_id": 91879
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 105887,
+    "fields": {
+      "pidm": 516,
+      "priority": "1",
+      "last_name": "Abbett",
+      "first_name": "Brian",
+      "mi": "H",
+      "street_line1": "Mahmodieh-Alef St 4th Al",
+      "city": "Portland",
+      "stat_code": "OR",
+      "natn_code": "LUS",
+      "zip": "97212-3942",
+      "phone_area":  "179",
+      "phone_number":  "1140752",
+      "relt_code": "O",
+      "activity_date": "2016-09-25T21:32:23",
+      "surrogate_id": 105887
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 107077,
+    "fields": {
+      "pidm": 516,
+      "priority": "2",
+      "last_name": "Ababneh",
+      "first_name": "Glenn",
+      "mi": "J",
+      "street_line1": "6965 SW 68th Ave",
+      "city": "Portland",
+      "stat_code": "OR",
+      "natn_code": "LUS",
+      "zip": "97212-3942",
+      "phone_area":  "599",
+      "phone_number":  "6793397",
+      "relt_code": "O",
+      "activity_date": "2016-09-25T21:29:17",
+      "surrogate_id": 107077
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 64185,
+    "fields": {
+      "pidm": 1523,
+      "priority": "1",
+      "last_name": "Abbonizio",
+      "first_name": "Shielan",
+      "mi": "d",
+      "street_line1": "18735 SW Longacre St",
+      "city": "Portland",
+      "stat_code": "OR",
+      "zip": "97211-7109",
+      "phone_area":  "304",
+      "phone_number":  "7242142",
+      "relt_code": "S",
+      "activity_date": "2012-12-30T12:04:54",
+      "surrogate_id": 64185
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 4092,
+    "fields": {
+      "pidm": 165,
+      "priority": "1",
+      "last_name": "Aase",
+      "first_name": "Taylor",
+      "phone_area":  "844",
+      "phone_number":  "3133328",
+      "activity_date": "2009-02-11T11:52:45",
+      "surrogate_id": 4092
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 42473,
+    "fields": {
+      "pidm": 942,
+      "priority": "1",
+      "last_name": "Aase",
+      "first_name": "Roberta",
+      "street_line1": "12424 SE Riveroad  2",
+      "city": "Beaverton",
+      "stat_code": "OR",
+      "natn_code": "LUS",
+      "zip": "97007",
+      "phone_area":  "849",
+      "phone_number":  "5723893",
+      "relt_code": "S",
+      "activity_date": "2009-08-10T18:33:51",
+      "surrogate_id": 42473
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 107125,
+    "fields": {
+      "pidm": 1165,
+      "priority": "1",
+      "last_name": "Ababetain",
+      "first_name": "Maria",
+      "phone_area":  "735",
+      "phone_number":  "9815646",
+      "activity_date": "2016-01-23T09:48:26",
+      "surrogate_id": 107125
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 36298,
+    "fields": {
+      "pidm": 1142,
+      "priority": "1",
+      "last_name": "Abbaszadeh",
+      "first_name": "Joeoan",
+      "mi": "Y",
+      "street_line1": "143 Sepang Jaya",
+      "city": "Hillsboro",
+      "stat_code": "OR",
+      "zip": "97006-9251",
+      "phone_area":  "696",
+      "phone_number":  "9798912",
+      "relt_code": "S",
+      "activity_date": "2008-08-18T11:31:17",
+      "surrogate_id": 36298
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 79794,
+    "fields": {
+      "pidm": 1705,
+      "priority": "1",
+      "last_name": "Aavik",
+      "first_name": "Vaidyanath",
+      "street_line1": "17359 SW Noble Fir Ct",
+      "city": "Portland",
+      "stat_code": "OR",
+      "natn_code": "LUS",
+      "zip": "97230",
+      "phone_area":  "208",
+      "phone_number":  "4990620",
+      "relt_code": "S",
+      "activity_date": "2013-06-30T23:18:01",
+      "surrogate_id": 79794
+    }
+  },
+  {
+    "model": "emergency_app.Contact",
+    "pk": 12821,
+    "fields": {
+      "pidm": 1720, 
+      "priority": "1", 
+      "last_name": "Aaker", 
+      "first_name": "Christopher", 
+      "street_line1": "315 SW 195th", 
+      "city": "Atlanta", 
+      "stat_code": "GA", 
+      "zip": "30306", 
+      "phone_area":  "227", 
+      "phone_number":  "7488926", 
+      "activity_date": "2003-10-09T00:00:00", 
+      "surrogate_id": 12821
+    } 
+  }
+]

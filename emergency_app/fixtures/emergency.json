@@ -1,0 +1,518 @@
+[
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 787,
+    "fields": {
+      "pidm": 787, 
+      "campus_email":  "conjoint.indefensible@pdx.edu", 
+      "activity_date": "2016-06-29T08:52:41", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 967,
+    "fields": {
+      "pidm": 967, 
+      "campus_email":  "acquiesce.destruct@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:10", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1487,
+    "fields": {
+      "pidm": 1487, 
+      "campus_email":  "macintosh.global@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 13,
+    "fields": {
+      "pidm": 13, 
+      "campus_email":  "thro.khaki@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:10", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 529,
+    "fields": {
+      "pidm": 529, 
+      "campus_email":  "scruffy.Hamilton@pdx.edu", 
+      "activity_date": "2016-08-16T16:14:51", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1262,
+    "fields": {
+      "pidm": 1262, 
+      "campus_email":  "flashy.vat@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1554,
+    "fields": {
+      "pidm": 1554, 
+      "campus_email":  "nepotism.wombat@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1577,
+    "fields": {
+      "pidm": 1577, 
+      "campus_email":  "mana.chaise@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1699,
+    "fields": {
+      "pidm": 1699, 
+      "campus_email":  "Bergen.subur@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 941,
+    "fields": {
+      "pidm": 941, 
+      "campus_email":  "concise.connubial@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:10", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1190,
+    "fields": {
+      "pidm": 1190, 
+      "campus_email":  "pigroot.Maurine@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 495,
+    "fields": {
+      "pidm": 495, 
+      "campus_email":  "irrelevant.exception@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:10", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1721,
+    "fields": {
+      "pidm": 1721, 
+      "campus_email":  "Longfellow.bulletin@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 75,
+    "fields": {
+      "pidm": 75, 
+      "campus_email":  "alder.leisure@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:10", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 239,
+    "fields": {
+      "pidm": 239, 
+      "campus_email":  "caste.Amerada@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:10", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 165,
+    "fields": {
+      "pidm": 165, 
+      "campus_email":  "mum.Lubell@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:10", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 214,
+    "fields": {
+      "pidm": 214, 
+      "campus_email":  "turbofan.lute@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:10", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 368,
+    "fields": {
+      "pidm": 368, 
+      "campus_email":  "saddlebag.Edgerton@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:10", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 942,
+    "fields": {
+      "pidm": 942, 
+      "campus_email":  "grosbeak.hereto@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:10", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 946,
+    "fields": {
+      "pidm": 946, 
+      "campus_email":  "projectile.degas@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:10", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1072,
+    "fields": {
+      "pidm": 1072, 
+      "campus_email":  "opposition.ambrosia@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1449,
+    "fields": {
+      "pidm": 1449, 
+      "campus_email":  "Bradshaw.privacy@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 171,
+    "fields": {
+      "pidm": 171, 
+      "campus_email":  "hillside.tree@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:10", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 890,
+    "fields": {
+      "pidm": 890, 
+      "campus_email":  "exhume.deerstalker@pdx.edu", 
+      "activity_date": "2016-08-16T16:14:51", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1142,
+    "fields": {
+      "pidm": 1142, 
+      "campus_email":  "malformation.persimmon@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1254,
+    "fields": {
+      "pidm": 1254, 
+      "campus_email":  "fjord.pH@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1293,
+    "fields": {
+      "pidm": 1293, 
+      "campus_email":  "preposterous.satiric@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1705,
+    "fields": {
+      "pidm": 1705, 
+      "campus_email":  "squint.ninetieth@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1720,
+    "fields": {
+      "pidm": 1720, 
+      "campus_email":  "marginalia.fjord@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 122,
+    "fields": {
+      "pidm": 122, 
+      "campus_email":  "bring.asteroidal@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:10", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 838,
+    "fields": {
+      "pidm": 838, 
+      "campus_email":  "dearie.elongate@pdx.edu", 
+      "activity_date": "2016-08-16T16:14:51", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1376,
+    "fields": {
+      "pidm": 1376, 
+      "campus_email":  "equilateral.holeable@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1490,
+    "fields": {
+      "pidm": 1490, 
+      "campus_email":  "styrene.radical@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1561,
+    "fields": {
+      "pidm": 1561, 
+      "campus_email":  "extraneous.rick@pdx.edu", 
+      "activity_date": "2017-09-07T03:30:11", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1514,
+    "fields": {
+      "pidm": 1514, 
+      "primary_phone":  "8572371328", 
+      "campus_email":  "plasmid.scaffold@pdx.edu", 
+      "activity_date": "2016-10-10T14:16:41", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 999,
+    "fields": {
+      "pidm": 999, 
+      "primary_phone":  "4240680683", 
+      "sms_device":  "6482571764", 
+      "external_email":  "officio.glaze@email.com", 
+      "campus_email":  "magnificent.semi@pdx.edu", 
+      "activity_date": "2016-07-27T03:40:05", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1149,
+    "fields": {
+      "pidm": 1149, 
+      "campus_email":  "puff.colonist@pdx.edu", 
+      "activity_date": "2015-04-07T15:21:38", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 26,
+    "fields": {
+      "pidm": 26, 
+      "campus_email":  "Merrill.Nicholas@pdx.edu", 
+      "activity_date": "2017-02-10T03:45:29", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1781,
+    "fields": {
+      "pidm": 1781, 
+      "external_email":  "dense.fat@email.com", 
+      "campus_email":  "extreme.flatworm@pdx.edu", 
+      "activity_date": "2015-03-14T14:44:59", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 509,
+    "fields": {
+      "pidm": 509, 
+      "campus_email":  "randy.neither@pdx.edu", 
+      "activity_date": "2017-03-17T03:47:37", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 521,
+    "fields": {
+      "pidm": 521, 
+      "campus_email":  "chalcedony.hooligan@pdx.edu", 
+      "activity_date": "2018-04-03T03:30:06", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 687,
+    "fields": {
+      "pidm": 687, 
+      "campus_email":  "Leningrad.loudspeaker@pdx.edu", 
+      "activity_date": "2018-02-02T08:22:12", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 891,
+    "fields": {
+      "pidm": 891, 
+      "alternate_phone":  "7955097951", 
+      "primary_phone":  "7730000609", 
+      "sms_device":  "1728992046", 
+      "external_email":  "digging.spiritual@email.com", 
+      "campus_email":  "Costa.Greer@pdx.edu", 
+      "activity_date": "2016-09-28T08:04:49", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1673,
+    "fields": {
+      "pidm": 1673, 
+      "primary_phone":  "8095246052", 
+      "sms_device":  "7624994538", 
+      "external_email":  "bud.swollen@email.com", 
+      "campus_email":  "entity.orthodoxy@pdx.edu", 
+      "activity_date": "2014-06-30T10:28:05", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 516,
+    "fields": {
+      "pidm": 516, 
+      "alternate_phone":  "1556180333", 
+      "primary_phone":  "7960662988", 
+      "sms_device":  "3830484254", 
+      "external_email":  "axe.minstrel@email.com", 
+      "campus_email":  "meditate.windup@pdx.edu", 
+      "activity_date": "2016-09-25T21:35:06", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1523,
+    "fields": {
+      "pidm": 1523, 
+      "campus_email":  "Locke.beribbon@pdx.edu", 
+      "activity_date": "2012-12-18T07:51:39", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1165,
+    "fields": {
+      "pidm": 1165, 
+      "campus_email":  "Ligget.fell@pdx.edu", 
+      "activity_date": "2015-10-01T11:56:46", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1045,
+    "fields": {
+      "pidm": 1045, 
+      "campus_email":  "you.boy@pdx.edu", 
+      "activity_date": "2012-12-18T07:51:33", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1257,
+    "fields": {
+      "pidm": 1257, 
+      "campus_email":  "eyeglass.eigenfunction@pdx.edu", 
+      "activity_date": "2017-08-08T22:04:54", 
+      "sms_status_ind": "Y"
+    } 
+  },
+  {
+    "model": "emergency_app.Emergency",
+    "pk": 1457,
+    "fields": {
+      "pidm": 1457, 
+      "campus_email":  "fog.swank@pdx.edu", 
+      "activity_date": "2014-04-09T13:25:53", 
+      "sms_status_ind": "Y"
+    } 
+  }
+]
