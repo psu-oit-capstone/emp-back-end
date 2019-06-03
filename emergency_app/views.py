@@ -14,14 +14,15 @@ from common.util import jwt_test as j
 Identity = identity.Identity
 
 def test(request, name=None):
-
-	ret = []
+	"""
+	Test function for returning all usernames
+	Useful for testing login that requires a username
+	"""
+	ret = ["ALL DATABASE USERNAMES: "]
 	#Gather the db entries
-	entries = Identity.objects.all()
-	for object in entries:
-		field_object = Identity._meta.get_field('username')
-		field_value = field_object.value_from_object(object)
-		ret.append(str(field_value) + ' # ')
+	usernames = Identity.objects.all().values('username')
+	for username in usernames:
+		ret.append(username['username'] + ' # ')
 	return HttpResponse(ret)
 
 #TODO csrf_exempt is temporary, need this exemption over http
@@ -32,43 +33,36 @@ def login(request):
 	Only available as a POST request
 	Body:
 		{
-			username: (str)
+			usr (str): username as it shows in the database
 		}
 	Return:
-		Return a JWT (plain-string) on success
+		Return a JWT (plain-string) on success with the following header and payload
+			Header:
+				{
+					typ (str): "JWT"
+					alg (str): "HS256"
+				}
+			Payload:
+				{
+					first_name (str)
+					last_name (str)
+					username (str)
+					email (str)
+				}
 			Return Unauthorized Error(401) otherwise
 	Raises:
 		TODO - is it good practice to raise in Django views?
 	"""
-	
-	# if request.method == 'POST':
+	# Grab the username within the POST body
 	username = request.POST.get('username')
 	
-	username_field = Identity._meta.get_field('username')
+	# Attempt to grab first/last name, username, and email from the database
+	user_data = Identity.objects.filter(username=username).values('first_name', 'last_name', 'username', 'email')
 	
-	objects = Identity.objects.all()	
+	# If the query returned nothing, then the username isn't in the database
+	if len(user_data) < 1:
+		return HttpResponse('Unauthorized', status=401)
 	
-	for object in objects:
-		value = username_field.value_from_object(object)
-		if username == value:
-			json = {'usr': value, 'other_info': 'blah'}
-			token = j.generate_token(json)
-			return HttpResponse(token)
-			# return HttpResponse("Found your username!")
-	#Getting here implies we didn't find the username
-	return HttpResponse('Unauthorized', status=401)
-
-# Only needed for testing - no reason the front-end should ever validate their token
-# def validate_token(request, token=None):
-	# """
-	# Validates the token passed in
-	# Args:
-		# token (str): The JWT that was (if valid) signed by this server
-	# Return:
-		# ???
-		# Currently returns a webpage telling the user it's valid
-			# TODO - return JUST a value
-	# """
-	# if(j.validate_token(token)):
-		# return HttpResponse("You've a valid token!")
-	# return HttpResponse("You've an invalid token (possibly tampered with)")
+	# Otherwise, return a JWT containing the first/last name, username, and email
+	token = j.generate_token(user_data[0])
+	return HttpResponse(token)
