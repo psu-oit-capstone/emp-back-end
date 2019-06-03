@@ -1,5 +1,6 @@
 """
-	Simple script to test out jwt capabilities
+	Placeholder for the SSO.
+	Generates and validates JWTs
 """
 import sys
 import jwt
@@ -22,9 +23,10 @@ def generate_token(json):
 	try:
 		token = jwt.encode(json, base_secret, algorithm=hash_algorithm)
 	except(TypeError):
-		print("Invalid json object passed in...")
-		return 'ERROR'
-
+		# print("Invalid json object passed in to jwt_placeholder.generate_token()!")
+		# Re-throw the exception
+		raise
+		
 	return token
 
 def validate_token(token):
@@ -38,20 +40,12 @@ def validate_token(token):
 	try:
 		jwt.decode(token, base_secret, algorithms=hash_algorithm)
 	except(jwt.exceptions.InvalidSignatureError):
-		return False
+		# print("Invalid signature in jwt_placeholder.validate_token()!")
+		raise
 	except(jwt.exceptions.DecodeError):
-		print("Malformed JWT")
-		return 'ERROR'
-		
+		# print("Malformed JWT passed to jwt_placeholder.validate_token()!")
+		raise
+	except(e):
+		print(e)
+		return False
 	return True
-
-def main(argv):
-	if len(argv) < 1:
-		print("Missing json")
-		return
-	payload = ast.literal_eval(argv[0])
-	
-	token = generate_token(payload)	
-
-if __name__ == "__main__":
-	main(sys.argv[1:])
