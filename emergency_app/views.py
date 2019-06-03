@@ -6,10 +6,10 @@ from django.views.decorators.csrf import csrf_exempt
 #require_http_methods allows us to force POST rather then GET
 from django.views.decorators.http import require_http_methods
 
-# jwt_test is a temporary JWT generator and validator
+# jwt_placeholder is a temporary JWT generator and validator
 # Will be replaced by Single-Sign-On calls
 # Need better name convention
-from common.util import jwt_test as j
+from common.util import jwt_placeholder as j
 
 Identity = identity.Identity
 
