@@ -54,10 +54,11 @@ def login(request):
 		TODO - is it good practice to raise in Django views?
 	"""
 	# Grab the username within the POST body
-	username = request.POST.get('username')
+	requested_username = request.POST.get('username')
 	
 	# Attempt to grab first/last name, username, and email from the database
-	user_data = Identity.objects.filter(username=username).values('first_name', 'last_name', 'username', 'email')
+	# SQL equivilent: SELECT first_name, last_name, username, email FROM Identity WHERE Identity.username = requested_username
+	user_data = Identity.objects.filter(username=requested_username).values('first_name', 'last_name', 'username', 'email')
 	
 	# If the query returned nothing, then the username isn't in the database
 	if len(user_data) < 1:
