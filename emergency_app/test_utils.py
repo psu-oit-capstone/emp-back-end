@@ -83,7 +83,7 @@ class JWTTests(TestCase):
 def base64_to_json_compare(payload, expected):
 	"""
 	Compares a payload received from the JWT generation process
-		and the original data which is expected
+		and the original data which is expected.
 		original expected data is formatted to drop spacing between entries
 		and change single quotes (') to double quotes (")
 	Args:
@@ -93,11 +93,14 @@ def base64_to_json_compare(payload, expected):
 		True if the formatted 'expected' data matches our 'payload' data
 	"""
 	# base64 decoding requires the payload to be a multiple of 4
-	# '=' is the padding char, which is only consumed until we hit a multiple of 4
+	# '=' is the padding char. a maximum padding of 3 '=' is needed.
 	base64_padding = '==='
 	
-	# The JWT generation formats the string with double-quotes and no spaces after ',' and ':'
-	#	Our expected data should be formatted similarly
+	# The JWT generation formats the string:
+	# 	Single quotes (') are replaced with double quotes (")
+	#	No Spaces between Keys and Values, and no spaces between pairs
+	#	e.g. {'key': 'value', 'keyTwo': 'valueTwo'} -> {"key":"value","keyTwo":"valueTwo"}
+	# Our expected data should be formatted similarly
 	expected = str(expected).replace("'", '"').replace(', ', ',').replace(': ', ':')
 
 	# Our payload is encoded in url-safe base64, we'll decode it for easier comparison
