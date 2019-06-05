@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from emergency_app import views
-from emergency_app.models import identity
+from emergency_app.models import identity, contact
 
 import base64 # For checking JWT data
 import json # For checking JWT return data
@@ -89,9 +89,84 @@ class AuthorizationTests(TestCase):
 		
 		Given any GET request for authenticating, the backend should respond with an error status 405 (disallowed method)
 		"""
+		self.assertTrue(response.status_code == self.disallowed_method_code)
+		
 		c = Client()
 
 		# We won't even load this with data, as any GET request for authentication should receive error 405
 		response = c.get(self.auth_url)
 
 		self.assertTrue(response.status_code == self.disallowed_method_code)
+
+class DataRequestTests(TestCase):
+	"""
+	Testing out the data request views
+	
+	Testing uses an empty temp data base - so it must be filled prior to any queries
+	"""
+	
+	def setUp(self):
+		self.get_contacts_url = '/getEmergencyContacts/'
+		self.auth_url = '/login/'
+		# Data requests for users that lack any entries in the database result in No Content (204) return
+		self.success_code = 200
+		self.no_content_code = 204
+		self.unauthorized_code = 401
+		
+		# Create a user who will have data in the (test) contact database
+		identity.Identity.objects.create(pidm=123, username='fooBar', first_name='Foo', last_name='Bar', email='fooBar@pdx.edu')
+		self.username_with_data = 'fooBar'
+		self.pidm_with_data = 123
+		# Add two contacts for 'user_with_data' - no need to populate every field
+		contact.Contact.objects.create(surrogate_id=1, pidm=123, first_name="Debby", last_name='Bar')
+		contact.Contact.objects.create(surrogate_id=2, pidm=123, first_name="Jim", last_name='Bar')
+		
+		# Create a user who won't have data in the (test) contact database
+		identity.Identity.objects.create(pidm=456, username='TommyZ', first_name='Tom', last_name='Zero-friends', email='TomZ@pdx.edu')
+		self.username_without_data = 'TommyZ'
+		
+		# Create a Contact entry that isn't linked to either user
+		contact.Contact.objects.create(surrogate_id=3, pidm=789, first_name="Billy", last_name='Kid')
+
+		
+	def test_get_emergency_contacts(self):
+		"""
+		Testing that get_emergency_contacts returns expected values and status codes
+		
+		One user will have contact data and test his request (200 response code)
+		One user will have no contact data and test his request (204 response code)
+		One user will have an invalid JWT and test his request (401 response code)
+		"""
+		# Using Django's Client means our views will access the test database
+		c = Client()
+				
+		# First, generate a token for our users
+		# User with data's JWT
+		response = c.post(self.auth_url, {'username': self.username_with_data})
+		user_with_data_jwt = response.content.decode('utf-8')
+		# User without data's JWT
+		response = c.post(self.auth_url, {'username': self.username_without_data})
+		user_without_data_jwt = response.content.decode('utf-8')
+		
+		# Request the contact info for the user with data
+		response = c.post(self.get_contacts_url, {'jwt': user_with_data_jwt})
+		"""Testing that we received a 200 success response"""
+		self.assertTrue(response.status_code == self.success_code)
+		# Load the contacts in dictionary/JSON format
+		contacts = json.loads(response.content)
+		"""Testing that the contacts returned are linked to our user with data"""
+		for contact in contacts:
+			self.assertTrue(contact['pidm'] == self.pidm_with_data)
+		
+		# Now to test that users without data receive a No Content (204) response
+		response = c.post(self.get_contacts_url, {'jwt': user_without_data_jwt})
+		"""Testing that we received a 204 No Content response"""
+		self.assertTrue(response.status_code == self.no_content_code)
+		"""Testing that there's no contacts returned"""
+		self.assertTrue(len(response.content) == 0)
+
+		# Now test a user who doesn't supply a valid JWT
+		response = c.post(self.get_contacts_url, {'jwt': 'No token here!'})
+		"""Testing that back-end reports a 401 Unauthorized"""
+		self.assertTrue(response.status_code == self.unauthorized_code)
+		
