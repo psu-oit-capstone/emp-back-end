@@ -4,7 +4,6 @@
 """
 import sys
 import jwt
-import ast # For CLI args string->dict eval
 
 # The base for our secret - TODO: temporary, replace with better base later (perhaps store it in the database, and allow it to be updated)
 # Once set up, this should be used to salt the user password to generate our 
@@ -49,3 +48,14 @@ def validate_token(token):
 		print(e)
 		return False
 	return True
+
+def grab_token_payload(token):
+	"""
+	Decodes the payload of the JWT - Only call after a token has been validated
+	Args:
+		token (str): The JWT containing the desired payload to decode
+	Returns:
+		Dictionary/json : returns the json representation of the JWT payload
+	"""
+	payload = jwt.decode(token, verify=False)
+	return payload
