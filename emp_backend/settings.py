@@ -37,7 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	
     'emergency_app',
+	# corsheaders for cross origin access
+	'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -48,9 +51,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	
+	# corsheaders for cross origin access
+	'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'emp_backend.urls'
+
+# TODO - this whitelists everything, great for testing, probably not for production.
+CORS_ORIGIN_ALLOW_ALL = True
 
 TEMPLATES = [
     {

@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from emergency_app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+	path('grab_usernames/', views.test),
+	path('login/', views.login),
+	# path('validate_token/<str:token>/', views.validate_token),
 ]
