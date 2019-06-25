@@ -51,7 +51,9 @@ def login(request):
 				}
 			Return Unauthorized Error(401) otherwise
 	Raises:
-		TODO - is it good practice to raise in Django views?
+		jwt_lib.exceptions.DecodeError on attempting to validate a malformed token
+		jwt_lib.exceptions.InvalidSignatureError on attempting to validate a token with an
+			invalid signature (Tampered data/invalid secret key)
 	"""
 	# Grab the username within the POST body
 	requested_username = request.POST.get('username')
