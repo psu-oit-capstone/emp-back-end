@@ -130,7 +130,7 @@ def set_request_assistance(request):
 	"""
 	Updates the user's status on the Emergency assistance table
 	If the user has the checkbox 'ticked' then attempt to add their info in
-	otherwise, delete the user's input
+	otherwise, delete the user's input.
 	"""
 
 	# Pull the jwt from the POST request
