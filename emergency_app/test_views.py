@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
+from django.utils import timezone	# For timestamp verification
 from emergency_app import views
-from emergency_app.models import identity, contact
+from emergency_app.models import identity, contact, emergency
 
 import base64 # For checking JWT data
 import json # For checking JWT return data
@@ -106,27 +107,44 @@ class DataRequestTests(TestCase):
 	
 	def setUp(self):
 		self.get_contacts_url = '/getEmergencyContacts/'
+		self.get_alert_info_url = '/getAlertInfo/'
 		self.auth_url = '/login/'
-		# Data requests for users that lack any entries in the database result in No Content (204) return
-		self.success_code = 200
-		self.no_content_code = 204
-		self.unauthorized_code = 401
 		
+		# Expected response codes from the back-end
+		self.success_code = 200 # Successful request, with return data
+		self.no_content_code = 204 # Successful request, but no data found
+		self.unauthorized_code = 401 # Unauthorized user, either no JWT, malformed JWT, or a non server-signed JWT
+		
+		""" Our user entry with contacts and alert info set up """ 
 		# Create a user who will have data in the (test) contact database
 		identity.Identity.objects.create(pidm=123, username='fooBar', first_name='Foo', last_name='Bar', email='fooBar@pdx.edu')
 		self.username_with_data = 'fooBar'
 		self.pidm_with_data = 123
-		# Add two contacts for 'user_with_data' - no need to populate every field
-		contact.Contact.objects.create(surrogate_id=1, pidm=123, first_name="Debby", last_name='Bar')
-		contact.Contact.objects.create(surrogate_id=2, pidm=123, first_name="Jim", last_name='Bar')
-		
 		# Create a user who won't have data in the (test) contact database
+		""" Our user entry without contacts or alert info set up """
 		identity.Identity.objects.create(pidm=456, username='TommyZ', first_name='Tom', last_name='Zero-friends', email='TomZ@pdx.edu')
 		self.username_without_data = 'TommyZ'
 		
+		""" Contact information entries """
+		# Add two contacts for 'user_with_data' - no need to populate every field
+		contact.Contact.objects.create(surrogate_id=1, pidm=123, first_name="Debby", last_name='Bar')
+		contact.Contact.objects.create(surrogate_id=2, pidm=123, first_name="Jim", last_name='Bar')	
 		# Create a Contact entry that isn't linked to either user
 		contact.Contact.objects.create(surrogate_id=3, pidm=789, first_name="Billy", last_name='Kid')
 
+		""" Emergency information entry """
+		self.external_email = "fooMaster77@hotmail.com"
+		self.campus_email="fooBar@pdx.edu"
+		self.primary_phone='5031234567'
+		self.alternate_phone='9979876543'
+		self.sms_status_ind='Y'
+		self.sms_device='5030102929'
+		self.timestamp= timezone.now()
+		# Add data for 'fooBar'/pidm 123 user into the alert info (emergency) database
+		emergency.Emergency.objects.create(pidm=123, external_email=self.external_email,
+											campus_email=self.campus_email, primary_phone=self.primary_phone,
+											alternate_phone=self.alternate_phone, sms_status_ind = self.sms_status_ind,
+											sms_device=self.sms_device)#, activity_date=self.activity_date)
 		
 	def test_get_emergency_contacts(self):
 		"""
@@ -142,6 +160,7 @@ class DataRequestTests(TestCase):
 		# First, generate a token for our users
 		# User with data's JWT
 		response = c.post(self.auth_url, {'username': self.username_with_data})
+		# Decode the JWT from json to string format (which is what the API expects)
 		user_with_data_jwt = response.content.decode('utf-8')
 		# User without data's JWT
 		response = c.post(self.auth_url, {'username': self.username_without_data})
@@ -164,7 +183,61 @@ class DataRequestTests(TestCase):
 		"""Testing that there's no contacts returned"""
 		self.assertTrue(len(response.content) == 0)
 
-		# Now test a user who doesn't supply a valid JWT
+		# # Now test a user who doesn't supply a valid JWT
+		response = c.post(self.get_contacts_url, {'jwt': 'No token here!'})
+		"""Testing that back-end reports a 401 Unauthorized"""
+		self.assertTrue(response.status_code == self.unauthorized_code)
+		
+	def test_get_alert_info(self):
+		"""
+		Testing that get_alert_info returns expected values and status codes
+		
+		One user will have alert info and test his request (200 response code and meaningful data returned)
+		One user will have no alert info and test his request (204 response code)
+		One user will have an invalid JWT and test his request (401 response code)
+		"""
+		# Using Django's client to access the temporary test database
+		c = Client()
+		
+		# Generate our JWTs
+		response = c.post(self.auth_url, {'username': self.username_with_data})
+		# Decode the JWT from json to string format (which is what the API expects)
+		user_with_data_jwt = response.content.decode('utf-8')
+		# Grab our user without any alert info's JWT
+		response = c.post(self.auth_url, {'username': self.username_without_data})
+		user_without_data_jwt = response.content.decode('utf-8')
+		
+		# Request the alert info for our user with data
+		response = c.post(self.get_alert_info_url, {'jwt': user_with_data_jwt})
+		"""Testing that we received a 200 success response"""
+		self.assertTrue(response.status_code == self.success_code)
+		# Load the alert info list into a dictionary/JSON format
+		alert_info = json.loads(response.content)[0]
+		
+		"""Testing that the alert info returned is as expected"""
+		self.assertTrue(alert_info['external_email'] == self.external_email)
+		self.assertTrue(alert_info['primary_phone'] == self.primary_phone)
+		self.assertTrue(alert_info['alternate_phone'] == self.alternate_phone)
+		self.assertTrue(alert_info['sms_status_ind'] == self.sms_status_ind)
+		self.assertTrue(alert_info['sms_device'] == self.sms_device)
+		# Rather than try and validate down to the millisecond, we'll just validate that the year-month-day match expected values
+		# database timestamp format: YYYY-MM-DDTHH:MM:SS.(Milliseconds)Z
+		truncated_database_timestamp = alert_info['activity_date'].split('T')[0]
+		#local timestamp format: YYYY-MM-DD HH:MM:SS.(Milliseconds)+00:00
+		truncated_local_timestamp = str(self.timestamp).split(' ')[0]
+		self.assertTrue(truncated_database_timestamp == truncated_local_timestamp)
+		
+		"""We didn't provide evacuation_assistance info, so we'll confirm that it is null"""
+		self.assertTrue(alert_info['evacuation_assistance'] == None)
+		
+		# Request the alert info for our user without data
+		response = c.post(self.get_alert_info_url, {'jwt': user_without_data_jwt})
+		"""Testing that we received a 204 No Content response"""
+		self.assertTrue(response.status_code == self.no_content_code)
+		"""Testing taht there's no data returned"""
+		self.assertTrue(len(response.content) == 0)
+		
+		# Test a user who doesn't supply a valid JWT
 		response = c.post(self.get_contacts_url, {'jwt': 'No token here!'})
 		"""Testing that back-end reports a 401 Unauthorized"""
 		self.assertTrue(response.status_code == self.unauthorized_code)
