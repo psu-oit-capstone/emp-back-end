@@ -79,6 +79,23 @@ class JWTTests(TestCase):
 		with self.assertRaises(jwt_lib.exceptions.DecodeError):
 			ret_val = jwt_placeholder.validate_token("Just a regular, unencoded string!")
 		
+	def test_grab_token_payload(self):
+		"""
+		Testing the payload-grabbing of JWTs
+		
+		The payload/claims used to generate a JWT should matche the output
+		from the grab_token_payload function
+		"""
+		
+		"""Testing valid and invalid comparisons"""
+		for data in self.good_data_list:
+			jwt = jwt_placeholder.generate_token(data)
+			data_from_JWT = jwt_placeholder.grab_token_payload(jwt)
+			"""Valid comparison - should be True"""
+			self.assertTrue(data == data_from_JWT)
+			"""Invalid comparison - should be False"""
+			for bad_data in self.bad_data_list:
+				self.assertFalse(bad_data == data_from_JWT)
 
 def base64_to_json_compare(payload, expected):
 	"""
