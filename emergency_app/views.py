@@ -194,7 +194,6 @@ def set_request_assistance(request):
 	# Pull the jwt from the POST request
 	jwt = request.POST.get('jwt')
 	# Check if the request is to add, otherwise it is to delete
-	add_to_registry = request.POST.get('addToRegistry') == 'True'
 
 	try:
 		j.validate_token(jwt)
@@ -204,6 +203,21 @@ def set_request_assistance(request):
 	# Extract the JWT payload
 	payload = j.grab_token_payload(jwt)
 
+	# Grab all additional data - POST.get(...) returns None if front-end didn't load the POST request with it
+	evacuation_assistance = request.POST.get('evacuation_assistance')
+	external_email = request.POST.get('external_email')
+	campus_email = request.POST.get('campus_email')
+	primary_phone = request.POST.get('primary_phone')
+	alternate_phone = request.POST.get('alternate_phone')
+	sms_status_ind = request.POST.get('sms_status_ind')
+	sms_device = request.POST.get('sms_device')
+	# Campus email is included in jwt
+	campus_email = payload['email']
+	
+	# Validate data here
+	#...
+	#...
+	#...
 	# Grab the user's pidm from Identity table
 	user_pidm = Identity.objects.get(username=payload['username']).pidm
 	
@@ -216,34 +230,26 @@ def set_request_assistance(request):
 		user_entry = query[0]
 		user_exists = True
 
-	# If the user wants to add themselves to the emergency registry
-	if add_to_registry:
-		# Confirm that the user isn't already in the registry
-		if not user_exists:
-			# Grab the user's email from their JWT payload
-			email = payload['email']
-			# The database needs to add an entirely new entry and set sms_status_ind to 'Y'
-			# 
-			new_entry = Emergency(pidm=user_pidm, campus_email=email, activity_date=timezone.now(), sms_status_ind='Y')
-			new_entry.save()
-			return HttpResponse("User successfully added to registry", status=200)
-		# The user already exists in the emergency contact database, but they want to update their status to 'yes'/'Y'
-		else:
-			# Update the existing user entry sms_status_ind to 'Y'
-			user_entry.sms_status_ind = 'Y'
-			user_entry.save()
-			return HttpResponse("User registry status has been set to 'Y'")
-
-	# Otherwise, user wants to 'delete' their entry into the registry
-	# Rather than delete, we'll just set the user's sms_status_ind to 'N'
+	# If the user exists, update all information (any blank fields from front-end result in no data for that field here)
+	if user_exists:
+		user_entry.evacuation_assistance = evacuation_assistance
+		user_entry.external_email = external_email
+		user_entry.campus_email = campus_email
+		user_entry.primary_phone = primary_phone
+		user_entry.alternate_phone = alternate_phone
+		user_entry.sms_status_ind = sms_status_ind
+		user_entry.sms_device = sms_device
+		user_entry.campus_email = campus_email
+		user_entry.save()
+		
+		return HttpResponse("User info updated")
 	else:
-		# If the user doesn't exist, we don't have to do anything, just report back
-		if not user_exists:
-			return HttpResponse("User registry status has been set to 'No'")
-		# Otherwise, if the user exists in the database, we'll just change the sms_status_ind to 'N'
-		else:
-			user_entry.sms_status_ind = 'N'
-			return HttpResponse("User registry status has been set to 'No'")
-
-
-
+		print("Adding in user")
+		new_entry = Emergency(pidm=user_pidm,
+								evacuation_assistance=evacuation_assistance, external_email=external_email,
+								campus_email=campus_email, primary_phone=primary_phone,
+								alternate_phone=alternate_phone, sms_status_ind=sms_status_ind,
+								sms_device=sms_device)
+		new_entry.save()
+		
+		return HttpResponse("User info added")
