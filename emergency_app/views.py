@@ -124,6 +124,64 @@ def get_emergency_contacts(request):
 	contact_list = list(contacts.values())
 	return JsonResponse(contact_list, safe=False)
 
+@csrf_exempt
+@require_http_methods(["POST"])
+def get_alert_info(request):
+	"""
+	Only available as a POST request
+	expects 'jwt': JWT
+	JWT Body:
+		{
+			first_name (str)
+			last_name (str)
+			username (str)
+			email (str)
+		}
+	returns a json on success with the following data
+	{
+	  "alternate_phone":  "XXXXXXXXXX", <- no dashes
+      "primary_phone":  "XXXXXXXXXX",  <- no dashes
+      "sms_device":  "XXXXXXXXXX",  <- no dashes
+      "external_email":  "aaa.bbb@email.com", 
+      "campus_email":  "ccc.ddd@pdx.edu", 
+      "activity_date": "YYYY-MM-DDTHH:MM:SS", <- YearMonthDayTHour:MinuteSecond
+      "sms_status_ind": "Y" <- Or null
+	}
+	NOTE: Any of these values can be null, make sure to check in front-end
+	"""
+	# Pull the jwt from the POST request
+	jwt = request.POST.get('jwt')
+	try:
+		j.validate_token(jwt)
+	except Exception as e:
+		return HttpResponse(str(e), status=401)
+	
+	# Grab username from the token
+	payload = j.grab_token_payload(jwt)
+	
+	# With a valid jwt, we can query the Identity table for the user's primary key (pidm)
+	# SELECT pidm FROM Identity WHERE Identity.usrname = payload['username']
+	user_pidm = Identity.objects.get(username=payload['username']).pidm
+	
+	# Now we query the emergency table for any info the user has listed
+	# SELECT * FROM Emergency WHERE Emergency.pidm = user_pidm
+	user_entry = Emergency.objects.filter(pidm=user_pidm)
+	
+	# No info found for this user's valid request results in a 204, No Content
+	if len(user_entry) < 1:
+		return HttpResponse("No emergency info found", status=204)
+	
+	# Otherwise return all emergency info in their json format
+	# We want every field except for the pidm, as there is no need to expose front-end to database specifics
+	emergency_info = list(user_entry.values('evacuation_assistance', 'external_email',
+											'campus_email', 'primary_phone',
+											'alternate_phone', 'sms_status_ind',
+											'sms_device', 'activity_date'))
+											
+	# Return the list of user's emergency info, safe=false means we can return non-dictionary items
+	return JsonResponse(emergency_info, safe=False)
+
+
 # For Sam
 @csrf_exempt
 def set_request_assistance(request):
