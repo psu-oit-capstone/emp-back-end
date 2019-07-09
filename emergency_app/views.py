@@ -13,6 +13,12 @@ from django.utils import timezone
 from common.util import jwt_placeholder as j
 from common.util import sanitization
 
+# Common http return codes
+http_no_content_response = 204 # Request was valid and authorized, but no content found
+http_unauthorized_response = 401 # Request is either missing JWT or provided invalid JWT
+http_unprocessable_entity_response = 422 # Request was formatted properly, but had invalid data (e.g. invalid email)
+
+# Database models
 Identity = identity.Identity
 Contact = contact.Contact
 Emergency = emergency.Emergency
@@ -69,7 +75,7 @@ def login(request):
 	
 	# If the query returned nothing, then the username isn't in the database
 	if len(user_data) < 1:
-		return HttpResponse('Unauthorized', status=401)
+		return HttpResponse('Unauthorized', status=http_unauthorized_response)
 	
 	# Otherwise, return a JWT containing the first/last name, username, and email
 	token = j.generate_token(user_data[0])
@@ -109,7 +115,7 @@ def get_emergency_contacts(request):
 	try:
 		j.validate_token(jwt)
 	except Exception as e:
-		return HttpResponse(str(e), status=401)
+		return HttpResponse(str(e), status=http_unauthorized_response)
 		
 	payload = j.grab_token_payload(jwt)
 	
@@ -122,7 +128,7 @@ def get_emergency_contacts(request):
 	
 	# No contacts for this user's valid request results in a 204, No Content
 	if len(contacts) < 1:
-		return HttpResponse("No contacts found", status=204)	
+		return HttpResponse("No contacts found", status=http_no_content_response)	
 	
 	# Otherwise return all contacts in their json form
 	contact_list = list(contacts.values())
@@ -154,11 +160,11 @@ def get_alert_info(request):
 	NOTE: Any of these values can be null, make sure to check in front-end
 	"""
 	# Pull the jwt from the POST request
-	jwt = request.POST.get('jwt')
+	jwt = request.META.get(JWT_Headers_Key)
 	try:
 		j.validate_token(jwt)
 	except Exception as e:
-		return HttpResponse(str(e), status=401)
+		return HttpResponse(str(e), status=http_unauthorized_response)
 	
 	# Grab username from the token
 	payload = j.grab_token_payload(jwt)
@@ -173,7 +179,7 @@ def get_alert_info(request):
 	
 	# No info found for this user's valid request results in a 204, No Content
 	if len(user_entry) < 1:
-		return HttpResponse("No emergency info found", status=204)
+		return HttpResponse("No emergency info found", status=http_no_content_response)
 	
 	# Otherwise return all emergency info in their json format
 	# We want every field except for the pidm, as there is no need to expose front-end to database specifics
@@ -201,7 +207,7 @@ def set_request_assistance(request):
 	try:
 		j.validate_token(jwt)
 	except Exception as e:
-		return HttpResponse(str(e), status=401)
+		return HttpResponse(str(e), status=http_unauthorized_response)
 	
 	payload = j.grab_token_payload(jwt)
 	
@@ -229,10 +235,13 @@ def set_request_assistance(request):
 	# Campus email is included in jwt
 	campus_email = payload['email']
 	
-	if not sanitization.validate_email(external_email):
-		external_email = None
-	else:
+	# Example of blanking the email - should we return instead?
+	if external_email and sanitization.validate_email(external_email):
 		print("Great email!")
+	else:
+		# TODO - rather than return right away, validate all fields, and return a string detailing every failed check
+		return HttpResponse("Invalid Email!", status=http_unprocessable_entity_response)
+		external_email = None
 	# Validate data here
 	#...
 	#...

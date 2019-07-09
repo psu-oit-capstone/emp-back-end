@@ -18,8 +18,8 @@ from django.urls import path
 from emergency_app import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-	path('grab_usernames/', views.test),
+    # path('admin/', admin.site.urls),
+	# path('grab_usernames/', views.test),
 	path('login/', views.login),
 	path('getEmergencyContacts/', views.get_emergency_contacts),
 	path('getAlertInfo/', views.get_alert_info),
