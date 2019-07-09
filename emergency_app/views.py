@@ -11,10 +11,14 @@ from django.utils import timezone
 # jwt_placeholder is a temporary JWT generator and validator
 # Will be replaced by Single-Sign-On calls
 from common.util import jwt_placeholder as j
+from common.util import sanitization
 
 Identity = identity.Identity
 Contact = contact.Contact
 Emergency = emergency.Emergency
+
+# The key name for our JWT in HTTP request headers
+JWT_Headers_Key = "HTTP_AUTHORIZATION"
 
 def test(request, name=None):
 	"""
@@ -101,7 +105,7 @@ def get_emergency_contacts(request):
 	if JWT fails to validate return Unauthorized Error(401)
 	"""
 	# Pull the jwt from the POST request
-	jwt = request.POST.get('jwt')
+	jwt = request.META.get(JWT_Headers_Key)
 	try:
 		j.validate_token(jwt)
 	except Exception as e:
@@ -126,6 +130,7 @@ def get_emergency_contacts(request):
 
 # For Sam
 @csrf_exempt
+@require_http_methods(["POST", "DELETE"])
 def set_request_assistance(request):
 	"""
 	Updates the user's status on the Emergency assistance table
@@ -133,17 +138,27 @@ def set_request_assistance(request):
 	otherwise, delete the user's input.
 	"""
 
-	# Pull the jwt from the POST request
-	jwt = request.POST.get('jwt')
-	# Check if the request is to add, otherwise it is to delete
+	jwt = request.META.get(JWT_Headers_Key)
 
 	try:
 		j.validate_token(jwt)
 	except Exception as e:
 		return HttpResponse(str(e), status=401)
 	
-	# Extract the JWT payload
 	payload = j.grab_token_payload(jwt)
+	
+	# Grab the user's pidm from Identity table
+	user_pidm = Identity.objects.get(username=payload['username']).pidm
+	
+	# Delete doesn't make sense in this request
+	# DELETE request - delete this user from the database
+	# if request.method == "DELETE":
+		# print("DELETE Request!")
+		# # TODO set their op-out to Y
+		# Emergency.objects.filter(pidm=user_pidm).delete()
+		# return HttpResponse("User info deleted")
+	
+	# POST requests - adding data into the registry database
 
 	# Grab all additional data - POST.get(...) returns None if front-end didn't load the POST request with it
 	evacuation_assistance = request.POST.get('evacuation_assistance')
@@ -156,12 +171,14 @@ def set_request_assistance(request):
 	# Campus email is included in jwt
 	campus_email = payload['email']
 	
+	if not sanitization.validate_email(external_email):
+		external_email = None
+	else:
+		print("Great email!")
 	# Validate data here
 	#...
 	#...
 	#...
-	# Grab the user's pidm from Identity table
-	user_pidm = Identity.objects.get(username=payload['username']).pidm
 	
 	# Determine if the user is already in the emergency registry
 	query = Emergency.objects.filter(pidm=user_pidm)
