@@ -22,7 +22,9 @@ urlpatterns = [
 	# path('grab_usernames/', views.test),
 	path('login/', views.login),
 	path('getEmergencyContacts/', views.get_emergency_contacts),
-	path('getAlertInfo/', views.get_alert_info),
-	path('setRequestAssistance/', views.set_request_assistance),
+	path('getEmergencyNotifications/', views.get_emergency_notifications),
+	path('setEmergencyNotifications/', views.set_emergency_notifications),
+    path('getEvacuationAssistance/', views.get_evacuation_assistance),
+    path('setEvacuationAssistance/', views.set_evacuation_assistance),
 	# path('validate_token/<str:token>/', views.validate_token),
 ]

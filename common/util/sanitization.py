@@ -49,6 +49,7 @@ def validate_phone_num(phone_num):
     if phone_num[-1] == '1':
         if phone_num[-2] == '1':
             return False
+
     return True
 
 
@@ -69,3 +70,18 @@ def validate_username(username):
             return False
 
     return True
+
+
+def validate_checkbox(checkbox):
+    """
+    Validates a checkbox input by ensuring whether it's 'Y' or None values
+    Args:
+            checkbox(String): checkbox to validate in String format.
+    Returns:
+            boolean: True if valid, False otherwise.
+    """
+    # alternatively, if checkbox isintance(checkbox, bool):
+    if checkbox == 'Y' or checkbox == None:
+        return True
+    else:
+        return False
