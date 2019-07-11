@@ -104,8 +104,8 @@ class DataRequestTests(TestCase):
 
 	def setUp(self):
 		self.get_contacts_url = '/getEmergencyContacts/'
-		self.get_emergency_notifications_url = '/getEmeregencyNotifications/'
-		self.get_evacuation_assistance_url = '/getEvacuationAssistance'
+		self.get_emergency_notifications_url = '/getEmergencyNotifications/'
+		self.get_evacuation_assistance_url = '/getEvacuationAssistance/'
 		self.auth_url = '/login/'
 
 		# Expected response codes from the back-end
@@ -225,9 +225,6 @@ class DataRequestTests(TestCase):
 		truncated_local_timestamp = str(self.timestamp).split(' ')[0]
 		self.assertEqual(truncated_database_timestamp, truncated_local_timestamp)
 
-		"""We didn't provide evacuation_assistance info, so we'll confirm that it is null"""
-		self.assertEqual(emergency_notifications['evacuation_assistance'], None)
-
 		# Request the emergency notifications info for our user without data
 		response = c.post(self.get_emergency_notifications_url, HTTP_AUTHORIZATION=user_without_data_jwt)
 		"""Testing that we received a 204 No Content response"""
@@ -261,24 +258,11 @@ class DataRequestTests(TestCase):
 		user_without_data_jwt = response.content.decode('utf-8')
 
 		# Request the emergency notifications info for our user with data
-		response = c.post(self.get_evacuation_assitance_url, HTTP_AUTHORIZATION=user_with_data_jwt)
+		response = c.post(self.get_evacuation_assistance_url, HTTP_AUTHORIZATION=user_with_data_jwt)
 		"""Testing that we received a 200 success response"""
 		self.assertEqual(response.status_code, self.success_code)
 		# Load the emergency notifications info list into a dictionary/JSON format
 		emergency_notifications = json.loads(response.content)[0]
-
-		"""Testing that the emergency notifications info returned is as expected"""
-		self.assertEqual(emergency_notifications['external_email'], self.external_email)
-		self.assertEqual(emergency_notifications['primary_phone'], self.primary_phone)
-		self.assertEqual(emergency_notifications['alternate_phone'], self.alternate_phone)
-		self.assertEqual(emergency_notifications['sms_status_ind'], self.sms_status_ind)
-		self.assertEqual(emergency_notifications['sms_device'], self.sms_device)
-		# Rather than try and validate down to the millisecond, we'll just validate that the year-month-day match expected values
-		# database timestamp format: YYYY-MM-DDTHH:MM:SS.(Milliseconds)Z
-		truncated_database_timestamp = emergency_notifications['activity_date'].split('T')[0]
-		#local timestamp format: YYYY-MM-DD HH:MM:SS.(Milliseconds)+00:00
-		truncated_local_timestamp = str(self.timestamp).split(' ')[0]
-		self.assertEqual(truncated_database_timestamp, truncated_local_timestamp)
 
 		"""We didn't provide evacuation_assistance info, so we'll confirm that it is null"""
 		self.assertEqual(emergency_notifications['evacuation_assistance'], None)
@@ -367,12 +351,12 @@ class DataWriteTests(TestCase):
 		response = c.post(self.set_emergency_notifications_url,
 		# POST body
 		{
-			'evacuation_assistance':self.good_evacuation_assistance,
+			# 'evacuation_assistance':self.good_evacuation_assistance,
 			'external_email':self.good_external_email,
 			'primary_phone':self.good_primary_phone,
 			'alternate_phone':self.good_alternate_phone,
 			'sms_status_ind':self.good_sms_status_ind,
-			'sms_device':self.good_sms_device
+			# 'sms_device':self.good_sms_device
 		},
 		# POST headers
 		HTTP_AUTHORIZATION=user_with_valid_data_jwt
@@ -386,22 +370,21 @@ class DataWriteTests(TestCase):
 
 		"""Testing that the data is uploaded to the registry correctly"""
 		# Now compare each value, asserting their equivalence
-		self.assertEqual(user_entry.evacuation_assistance, self.good_evacuation_assistance)
+		# self.assertEqual(user_entry.evacuation_assistance, self.good_evacuation_assistance)
 		self.assertEqual(user_entry.external_email, self.good_external_email)
 		self.assertEqual(user_entry.primary_phone, self.good_primary_phone)
 		self.assertEqual(user_entry.alternate_phone, self.good_alternate_phone)
 		self.assertEqual(user_entry.sms_status_ind, self.good_sms_status_ind)
-		self.assertEqual(user_entry.sms_device, self.good_sms_device)
+		# self.assertEqual(user_entry.sms_device, self.good_sms_device)
 
-		# Attempt to update our valid database entry with more valid data
+		# Attempt to update our valid database entry with more valid data - this time opting in for sms service
 		response = c.post(self.set_emergency_notifications_url,
 		# POST body
 		{
-			'evacuation_assistance':self.good_evacuation_assistance,
+			# 'evacuation_assistance':self.good_evacuation_assistance,
 			'external_email':self.additional_good_external_email,
 			'primary_phone':self.good_primary_phone,
 			'alternate_phone':self.additional_good_alternate_phone,
-			'sms_status_ind':self.good_sms_status_ind,
 			'sms_device':self.good_sms_device
 		},
 		# POST headers
@@ -415,11 +398,11 @@ class DataWriteTests(TestCase):
 		user_entry = emergency.Emergency.objects.get(pidm=self.user_pidm_with_valid_data)
 
 		"""Testing that the data is updated correctly"""
-		self.assertEqual(user_entry.evacuation_assistance, self.good_evacuation_assistance)
+		# self.assertEqual(user_entry.evacuation_assistance, self.good_evacuation_assistance)
 		self.assertEqual(user_entry.external_email, self.additional_good_external_email)
 		self.assertEqual(user_entry.primary_phone, self.good_primary_phone)
 		self.assertEqual(user_entry.alternate_phone, self.additional_good_alternate_phone)
-		self.assertEqual(user_entry.sms_status_ind, self.good_sms_status_ind)
+		self.assertEqual(user_entry.sms_status_ind, None)
 		self.assertEqual(user_entry.sms_device, self.good_sms_device)
 
 		# Bad data testing #
@@ -427,7 +410,7 @@ class DataWriteTests(TestCase):
 		response = c.post(self.set_emergency_notifications_url,
 		# POST body
 		{
-			'evacuation_assistance':self.bad_evacuation_assistance,
+			# 'evacuation_assistance':self.bad_evacuation_assistance,
 			'external_email':self.bad_external_email,
 			'primary_phone':self.bad_primary_phone,
 			'alternate_phone':self.bad_alternate_phone,
@@ -451,7 +434,7 @@ class DataWriteTests(TestCase):
 		response = c.post(self.set_emergency_notifications_url,
 		# POST body
 		{
-			'evacuation_assistance':self.bad_evacuation_assistance,
+			# 'evacuation_assistance':self.bad_evacuation_assistance,
 			'external_email':self.bad_external_email,
 			'primary_phone':self.bad_primary_phone,
 			'alternate_phone':self.bad_alternate_phone,
@@ -469,9 +452,32 @@ class DataWriteTests(TestCase):
 		user_entry = emergency.Emergency.objects.get(pidm=self.user_pidm_with_valid_data)
 
 		"""Testing that the database did NOT update our old entry with the new invalid data."""
-		self.assertEqual(user_entry.evacuation_assistance, self.good_evacuation_assistance)
+		# self.assertEqual(user_entry.evacuation_assistance, self.good_evacuation_assistance)
 		self.assertEqual(user_entry.external_email, self.additional_good_external_email)
 		self.assertEqual(user_entry.primary_phone, self.good_primary_phone)
 		self.assertEqual(user_entry.alternate_phone, self.additional_good_alternate_phone)
-		self.assertEqual(user_entry.sms_status_ind, self.good_sms_status_ind)
+		# self.assertEqual(user_entry.sms_status_ind, self.good_sms_status_ind)
 		self.assertEqual(user_entry.sms_device, self.good_sms_device)
+
+	def test_set_evacuation_assistance(self):
+		"""
+		Testing that set_emergency_notifications returns expected status codes and changes are made to the database
+
+		One user will attempt to create an entry into the database with valid evac-assistance
+		One user will attempt to create an entry into the database with invalid data
+		One user will attempt to update their database entry with valid data
+		One user will attempt to update their database entry with invalid data
+
+		One user will have an invalid JWT and test his request (401 response code)
+		"""
+		
+		# Using Django's client to access the temporary test database
+		c = Client()
+
+		# Generate our JWTs
+		response = c.post(self.auth_url, {'username': self.username_with_valid_data})
+		# Decode the JWT from json to string format (which is what the API expects)
+		user_with_valid_data_jwt = response.content.decode('utf-8')
+		# Grab our user without any emergency notifications info's JWT
+		response = c.post(self.auth_url, {'username': self.username_with_invalid_data})
+		user_without_invalid_data_jwt = response.content.decode('utf-8')

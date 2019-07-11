@@ -11,6 +11,9 @@ def validate_email(email):
     Returns:
             boolean: True if valid, False otherwise.
     """
+    if not email:
+        return False
+
     at_count = email.count('@')
     if at_count != 1:
         return False
@@ -34,6 +37,9 @@ def validate_phone_num(phone_num):
     Returns:
             boolean: True if valid, False otherwise.
     """
+    if not phone_num:
+        return False
+    
     # number has a length of 10
     if len(phone_num) != 10:
         return False
@@ -63,6 +69,8 @@ def validate_username(username):
     Returns:
             boolean: True if valid, False otherwise.
     """
+    if not username:
+        return False
     if len(username) < 6:
         return False
     for c in username:
@@ -80,7 +88,6 @@ def validate_checkbox(checkbox):
     Returns:
             boolean: True if valid, False otherwise.
     """
-    # alternatively, if checkbox isintance(checkbox, bool):
     if checkbox == 'Y' or checkbox == None:
         return True
     else:

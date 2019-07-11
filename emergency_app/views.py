@@ -82,7 +82,7 @@ def login(request):
 	return HttpResponse(token)
 
 @csrf_exempt
-@require_http_methods(["POST"])
+@require_http_methods(["POST", "GET"])
 def get_emergency_contacts(request):
 	"""
 	Validates the jwt issued, then returns relevent emergency contact info
@@ -135,7 +135,7 @@ def get_emergency_contacts(request):
 	return JsonResponse(contact_list, safe=False)
 
 @csrf_exempt
-@require_http_methods(["POST"])
+@require_http_methods(["POST", "GET"])
 def get_emergency_notifications(request):
 	"""
 	Only available as a POST request
@@ -260,7 +260,6 @@ def set_emergency_notifications(request):
 
 	# If the user exists, update all information (any blank fields from front-end result in no data for that field here)
 	if user_exists:
-		user_entry.evacuation_assistance = evacuation_assistance
 		user_entry.external_email = external_email
 		user_entry.campus_email = campus_email
 		user_entry.primary_phone = primary_phone
