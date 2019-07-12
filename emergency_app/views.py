@@ -156,8 +156,8 @@ def update_emergency_contact(request):
 
 	# First, we extract the checkbox data and determine if we need to branch
 	removal = request.POST.get('remove_contact') # mAKE SURE TO LET FRONT END KNOW TO CALL CHECKBOX DATA THIS
-	if removal == True:
-		print("removal branch")
+	if removal == 'True':
+		# print("removal branch")
 		surrogate_id = request.POST.get('surrogate_id')
 		user_entry = Contact.objects.filter(surrogate_id=surrogate_id)
 		if len(user_entry) < 	1:
@@ -234,7 +234,7 @@ def update_emergency_contact(request):
 
 		# Use the user_exists flag to add to the database
 		if user_exists:
-			print("user exists")
+			# print("user exists")
 			entry.pidm = user_pidm
 			entry.priority = priority
 			entry.relt_code = relt_code
@@ -257,7 +257,7 @@ def update_emergency_contact(request):
 			return HttpResponse("Emergency Contact Updated")
 		else:
 			# Add the user (questions regarding usage of PIDM vs Surrogate)
-			print("Adding new user")
+			# print("Adding new user")
 			n_entry = Contact(
 						surrogate_id=surrogate_id,
 						pidm=user_pidm,
