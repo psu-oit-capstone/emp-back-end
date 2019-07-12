@@ -19,7 +19,7 @@ get_evacuation_assistance_url = '/getEvacuationAssistance/'
 set_evacuation_assistance_url = '/setEvacuationAssistance/'
 # Emergency Contacts Urls
 get_contacts_url = '/getEmergencyContacts/'
-set_contacts_url = '/setEmergencyContacts/'
+set_contacts_url = '/updateEmergencyContact/'
 # Common HTTP Return statuses
 success_code = 200 # Successful request, with return data
 no_content_code = 204 # Successful request, but no data to return
@@ -523,15 +523,45 @@ class EmergencyContactsTests(TestCase):
 		identity.Identity.objects.create(pidm=456, username='TommyZ', first_name='Tom', last_name='Zero-friends', email='TomZ@pdx.edu')
 		self.username_without_data = 'TommyZ'
 		self.pidm_without_data = 456
+		
+		""" Our fresh user, for testing the setting of contact info """
+		identity.Identity.objects.create(pidm=789, username='JJohn', first_name='Jimmy', last_name='Johnson', email='JimmyJ@pdx.edu')
+		self.fresh_username = 'JJohn'
+		self.pidm_for_fresh_user = 789
 
-		""" Contact information entries """
+		""" Contact information entries for data retrieval """
 		# Add two contacts for 'user_with_data' - no need to populate every field
 		contact.Contact.objects.create(surrogate_id=1, pidm=123, first_name="Debby", last_name='Bar')
 		contact.Contact.objects.create(surrogate_id=2, pidm=123, first_name="Jim", last_name='Bar')
 		# We'll check against how many values are returned on a get-contacts request
 		self.user_with_data_contact_count = 2
 		# Create a Contact entry that isn't linked to either user
-		contact.Contact.objects.create(surrogate_id=3, pidm=789, first_name="Billy", last_name='Kid')
+		contact.Contact.objects.create(surrogate_id=3, pidm=987654321, first_name="Billy", last_name='Kid')
+
+		""" Valid emergency contact information to enter into database """
+		self.good_emergency_priority = "1"
+		self.good_emergency_relt_code = 'S'
+		self.good_emergency_last_name = "Bauuer"
+		self.good_emergency_first_name = "George"
+		self.good_emergency_middle_init = "S"
+		self.good_emergency_street_line1 = "345 SW Georgia Ln"
+		self.good_emergency_street_line2 = ""
+		self.good_emergency_street_line3 = ""
+		self.good_emergency_city = "Portland"
+		self.good_emergency_stat_code = "OR"
+		self.good_emergency_natn_code = "LUS" # Not sure what this denotes but it is present in the existing dataset
+		self.good_emergency_zip = "97230"
+		self.good_emergency_ctry_code_phone = "01"
+		self.good_emergency_phone_area = "503"
+		self.good_emergency_phone_number = "2572522"
+		self.good_emergency_phone_ext = "34"
+		self.surrogate_id_of_contact = 34
+
+		""" Bad data to feed into the emergency contact database """
+		self.bad_emergency_relt_code = 'Z'
+		self.bad_emergency_phone_area = "5033"
+		self.bad_emergency_phone_number = "25725223"
+		self.surrogate_id_of_bad_contact = 27
 
 	def test_get_emergency_contacts(self):
 		"""
@@ -579,3 +609,209 @@ class EmergencyContactsTests(TestCase):
 		response = c.post(get_contacts_url, HTTP_AUTHORIZATION="No Token Here!")
 		"""Testing that back-end reports a 401 Unauthorized"""
 		self.assertEqual(response.status_code, unauthorized_code)
+		
+	def test_update_emergency_contacts(self):
+		""" Testing will test for the following cases of usage of update_emergency_contact:
+
+			User with invalid JWT (Expected 401)
+			User attempts to create entry into database with good_emergency data
+			User attempts to create entry in database with bad_emergency data
+			User updates database with good_emergency data
+			User updates database with bad_emergency data
+
+		"""
+		# Much of the code for testing JWTs is exactly the same process as in Daniel's tests.
+		# Using Django's client to access the temporary test database
+		c = Client()
+		# Generate our JWTs
+		response = c.post(auth_url, {'username': self.fresh_username})
+		# Decode the JWT from json to string format (which is what the API expects)
+		user_with_valid_data_jwt = response.content.decode('utf-8')
+		# Grab our user without any alert info's JWT
+		response = c.post(auth_url, {'username': self.username_without_data})
+		user_with_invalid_data_jwt = response.content.decode('utf-8')
+
+		# Test entering new entry with valid data
+		response = c.post(set_contacts_url,
+		# create the POST Body
+		{
+			'remove_contact':False,
+			'surrogate_id':self.surrogate_id_of_contact,
+			'priority':self.good_emergency_priority,
+			'relt_code':self.good_emergency_relt_code,
+			'last_name':self.good_emergency_last_name,
+			'first_name':self.good_emergency_first_name,
+			'mi':self.good_emergency_middle_init,
+			'street_line1':self.good_emergency_street_line1,
+			'street_line2':self.good_emergency_street_line2,
+			'street_line3':self.good_emergency_street_line3,
+			'city':self.good_emergency_city,
+			'stat_code':self.good_emergency_stat_code,
+			'natn_code':self.good_emergency_natn_code,
+			'zip':self.good_emergency_zip,
+			'ctry_code_phone':self.good_emergency_ctry_code_phone,
+			'phone_area':self.good_emergency_phone_area,
+			'phone_number':self.good_emergency_phone_number,
+			'phone_ext':self.good_emergency_phone_ext
+		},
+		# POST headers
+		HTTP_AUTHORIZATION=user_with_valid_data_jwt
+		)
+
+		""" Testing to make sure that this returned a 200 status code """
+		self.assertEqual(response.status_code, success_code)
+
+		# Grab the valid user's Contact info
+		user_entry = contact.Contact.objects.get(pidm=self.pidm_for_fresh_user)
+
+		""" Testing that the data that was uploaded matches the local data """
+		# Compare each value using asserts
+		self.assertEqual(user_entry.priority, self.good_emergency_priority)
+		self.assertEqual(user_entry.relt_code, self.good_emergency_relt_code)
+		self.assertEqual(user_entry.last_name, self.good_emergency_last_name)
+		self.assertEqual(user_entry.first_name, self.good_emergency_first_name)
+		self.assertEqual(user_entry.mi, self.good_emergency_middle_init)
+		self.assertEqual(user_entry.street_line1, self.good_emergency_street_line1)
+		self.assertEqual(user_entry.street_line2, self.good_emergency_street_line2)
+		self.assertEqual(user_entry.street_line3, self.good_emergency_street_line3)
+		self.assertEqual(user_entry.city, self.good_emergency_city)
+		self.assertEqual(user_entry.stat_code, self.good_emergency_stat_code)
+		self.assertEqual(user_entry.natn_code, self.good_emergency_natn_code)
+		self.assertEqual(user_entry.zip, self.good_emergency_zip)
+		self.assertEqual(user_entry.ctry_code_phone, self.good_emergency_ctry_code_phone)
+		self.assertEqual(user_entry.phone_area, self.good_emergency_phone_area)
+		self.assertEqual(user_entry.phone_number, self.good_emergency_phone_number)
+		self.assertEqual(user_entry.phone_ext, self.good_emergency_phone_ext)
+
+		# Now, update our valid db entries with more valid data
+		response = c.post(set_contacts_url,
+		# create the POST Body
+		{
+			'remove_contact':False,
+			'surrogate_id':self.surrogate_id_of_contact,
+			'priority':self.good_emergency_priority,
+			'relt_code':self.good_emergency_relt_code,
+			'last_name':self.good_emergency_last_name,
+			'first_name':self.good_emergency_first_name,
+			'mi':self.good_emergency_middle_init,
+			'street_line1':self.good_emergency_street_line1,
+			'street_line2':self.good_emergency_street_line2,
+			'street_line3':self.good_emergency_street_line3,
+			'city':self.good_emergency_city,
+			'stat_code':self.good_emergency_stat_code,
+			'natn_code':self.good_emergency_natn_code,
+			'zip':self.good_emergency_zip,
+			'ctry_code_phone':self.good_emergency_ctry_code_phone,
+			'phone_area':self.good_emergency_phone_area,
+			'phone_number':self.good_emergency_phone_number,
+			'phone_ext':self.good_emergency_phone_ext
+		},
+		# POST headers
+		HTTP_AUTHORIZATION=user_with_valid_data_jwt
+		)
+
+		""" Testing to make sure that this returned a 200 status code """
+		self.assertEqual(response.status_code, success_code)
+
+		# Grab the valid user's Contact info
+		user_entry = contact.Contact.objects.get(pidm=self.pidm_for_fresh_user)
+
+		""" Testing that the data that was uploaded matches the local data """
+		# Compare each value using asserts
+		self.assertEqual(user_entry.priority, self.good_emergency_priority)
+		self.assertEqual(user_entry.relt_code, self.good_emergency_relt_code)
+		self.assertEqual(user_entry.last_name, self.good_emergency_last_name)
+		self.assertEqual(user_entry.first_name, self.good_emergency_first_name)
+		self.assertEqual(user_entry.mi, self.good_emergency_middle_init)
+		self.assertEqual(user_entry.street_line1, self.good_emergency_street_line1)
+		self.assertEqual(user_entry.street_line2, self.good_emergency_street_line2)
+		self.assertEqual(user_entry.street_line3, self.good_emergency_street_line3)
+		self.assertEqual(user_entry.city, self.good_emergency_city)
+		self.assertEqual(user_entry.stat_code, self.good_emergency_stat_code)
+		self.assertEqual(user_entry.natn_code, self.good_emergency_natn_code)
+		self.assertEqual(user_entry.zip, self.good_emergency_zip)
+		self.assertEqual(user_entry.ctry_code_phone, self.good_emergency_ctry_code_phone)
+		self.assertEqual(user_entry.phone_area, self.good_emergency_phone_area)
+		self.assertEqual(user_entry.phone_number, self.good_emergency_phone_number)
+		self.assertEqual(user_entry.phone_ext, self.good_emergency_phone_ext)
+
+		# Now, test entering bad new data into a database
+		response = c.post(set_contacts_url,
+		# create the POST Body
+		{
+			'remove_contact':False,
+			'surrogate_id':self.surrogate_id_of_bad_contact,
+			'relt_code':self.bad_emergency_relt_code,
+			'phone_area':self.bad_emergency_phone_area,
+			'phone_number':self.bad_emergency_phone_number,
+			# The rest should be None to be invalid.
+		},
+		# POST headers
+		HTTP_AUTHORIZATION=user_with_invalid_data_jwt
+		)
+
+		""" Testing to make sure that this returned a 422 status code """
+		self.assertEqual(response.status_code, unprocessable_entity)
+
+		# Try to grab db data for this entry, should be empty
+		user_entry = contact.Contact.objects.filter(surrogate_id=self.surrogate_id_of_bad_contact)
+
+		"""Testing that the database did NOT update with this invalid data, returning nothing"""
+		self.assertEqual(len(user_entry), 0)
+
+		# Now attempt to update an already-valid database with invalid data
+		response = c.post(set_contacts_url,
+		# create the POST Body
+		{
+			'remove_contact':False,
+			'surrogate_id':self.surrogate_id_of_contact,
+			'relt_code':self.bad_emergency_relt_code,
+			'phone_area':self.bad_emergency_phone_area,
+			'phone_number':self.bad_emergency_phone_number,
+			# The rest should be None to be invalid.
+		},
+		# POST headers
+		HTTP_AUTHORIZATION=user_with_valid_data_jwt
+		)
+
+		""" Testing to make sure that this returned a 422 status code """
+		self.assertEqual(response.status_code, unprocessable_entity)
+
+		# Try to grab db data for this entry, should have stayed the same and not been updated
+		user_entry = contact.Contact.objects.get(pidm=self.pidm_for_fresh_user)
+		self.assertEqual(user_entry.priority, self.good_emergency_priority)
+		self.assertEqual(user_entry.relt_code, self.good_emergency_relt_code)
+		self.assertEqual(user_entry.last_name, self.good_emergency_last_name)
+		self.assertEqual(user_entry.first_name, self.good_emergency_first_name)
+		self.assertEqual(user_entry.mi, self.good_emergency_middle_init)
+		self.assertEqual(user_entry.street_line1, self.good_emergency_street_line1)
+		self.assertEqual(user_entry.street_line2, self.good_emergency_street_line2)
+		self.assertEqual(user_entry.street_line3, self.good_emergency_street_line3)
+		self.assertEqual(user_entry.city, self.good_emergency_city)
+		self.assertEqual(user_entry.stat_code, self.good_emergency_stat_code)
+		self.assertEqual(user_entry.natn_code, self.good_emergency_natn_code)
+		self.assertEqual(user_entry.zip, self.good_emergency_zip)
+		self.assertEqual(user_entry.ctry_code_phone, self.good_emergency_ctry_code_phone)
+		self.assertEqual(user_entry.phone_area, self.good_emergency_phone_area)
+		self.assertEqual(user_entry.phone_number, self.good_emergency_phone_number)
+		self.assertEqual(user_entry.phone_ext, self.good_emergency_phone_ext)
+
+		""" Testing the delete functionality in the emergency contact interface """
+		# Make sure that the valid entry exists.
+		user_entry = contact.Contact.objects.filter(surrogate_id=self.surrogate_id_of_contact)
+		self.assertEqual(len(user_entry), 1)
+
+		# now, delete it
+		response = c.post(set_contacts_url,
+		# create the POST Body
+		{
+			'remove_contact':True,
+			'surrogate_id':self.surrogate_id_of_contact,
+			# The rest should be None to be invalid.
+		},
+		# POST headers
+		HTTP_AUTHORIZATION=user_with_valid_data_jwt
+		)
+
+		user_entry = contact.Contact.objects.filter(surrogate_id=self.surrogate_id_of_contact)
+		self.assertEqual(len(user_entry), 0)
