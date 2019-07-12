@@ -8,7 +8,24 @@ import json # For checking JWT return data
 
 # During testing, localhost:8000 is the base to any URL
 base_url = 'http://localhost:8000/'
-
+# Backend API URLs
+# Authentication Url
+auth_url = '/login/'
+# Emergency Notification Urls
+get_emergency_notifications_url = '/getEmergencyNotifications/'
+set_emergency_notifications_url = '/setEmergencyNotifications/'
+# Evacuation Assistance Urls
+get_evacuation_assistance_url = '/getEvacuationAssistance/'
+set_evacuation_assistance_url = '/setEvacuationAssistance/'
+# Emergency Contacts Urls
+get_contacts_url = '/getEmergencyContacts/'
+set_contacts_url = '/setEmergencyContacts/'
+# Common HTTP Return statuses
+success_code = 200 # Successful request, with return data
+no_content_code = 204 # Successful request, but no data to return
+unauthorized_code = 401 # Authorization failed
+disallowed_method_code = 405 # Attempting to access this API call with the incorrect request type
+unprocessable_entity = 422 # Required fields were provided, but are semantically incorrect (e.g. garbage email)
 
 class AuthorizationTests(TestCase):
 	"""
@@ -16,11 +33,6 @@ class AuthorizationTests(TestCase):
 	"""
 	def setUp(self):
 		""" Sets up some useful data for Authorization testing """
-		self.auth_url = '/login/'
-		# Login attempts with invalid usernames results in a 401
-		self.unauthorized_code = 401
-		# Attempting a GET request on a POST-only method results in a 405
-		self.disallowed_method_code = 405
 		# Generate some lists of known good and bad usernames
 		identity.Identity.objects.create(pidm=1, username='fooBar', first_name='Foo', last_name='Bar', email='fooBar@pdx.edu')
 		identity.Identity.objects.create(pidm=2, username='BobbyB', first_name='Bobby', last_name='Baratheon', email='BobbyB@pdx.edu')
@@ -42,12 +54,12 @@ class AuthorizationTests(TestCase):
 
 		"""Testing valid names via POST"""
 		for username in self.valid_usernames:
-			response = c.post(self.auth_url, {'username': username})
-			self.assertNotEqual(response.status_code, self.unauthorized_code)
+			response = c.post(auth_url, {'username': username})
+			self.assertNotEqual(response.status_code, unauthorized_code)
 		"""Testing invalid names via POST"""
 		for username in self.invalid_usernames:
-			response = c.post(self.auth_url, {'username': username})
-			self.assertEqual(response.status_code, self.unauthorized_code)
+			response = c.post(auth_url, {'username': username})
+			self.assertEqual(response.status_code, unauthorized_code)
 
 	def test_JWT_payload(self):
 		"""
@@ -66,7 +78,7 @@ class AuthorizationTests(TestCase):
 
 		# Gathering the jwts
 		for username in self.valid_usernames:
-			response = c.post(self.auth_url, {'username': username})
+			response = c.post(auth_url, {'username': username})
 			# Response.content is the byte-version of our JWT. We want it as a string, so decode it first
 			jwts.append(response.content.decode('utf-8'))
 
@@ -91,227 +103,48 @@ class AuthorizationTests(TestCase):
 		c = Client()
 
 		# We won't even load this with data, as any GET request for authentication should receive error 405
-		response = c.get(self.auth_url)
+		response = c.get(auth_url)
 
-		self.assertEqual(response.status_code, self.disallowed_method_code)
+		self.assertEqual(response.status_code, disallowed_method_code)
 
-class DataRequestTests(TestCase):
+class EmergencyNotificationTests(TestCase):
 	"""
-	Testing out the data request views
-
-	Testing uses an empty temp data base - so it must be filled prior to any queries
+	Testing out the setting and getting of Alert Info
 	"""
-
+	
 	def setUp(self):
-		self.get_contacts_url = '/getEmergencyContacts/'
-		self.get_emergency_notifications_url = '/getEmergencyNotifications/'
-		self.get_evacuation_assistance_url = '/getEvacuationAssistance/'
-		self.auth_url = '/login/'
-
-		# Expected response codes from the back-end
-		self.success_code = 200 # Successful request, with return data
-		self.no_content_code = 204 # Successful request, but no data found
-		self.unauthorized_code = 401 # Unauthorized user, either no JWT, malformed JWT, or a non server-signed JWT
-
-		""" Our user entry with contacts and emergency notifications info set up """
+		""" Our user entry with emergency notifications info set up """
 		# Create a user who will have data in the (test) contact database
 		identity.Identity.objects.create(pidm=123, username='fooBar', first_name='Foo', last_name='Bar', email='fooBar@pdx.edu')
 		self.username_with_data = 'fooBar'
 		self.pidm_with_data = 123
+		
 		# Create a user who won't have data in the (test) contact database
-		""" Our user entry without contacts or emergency notifications info set up """
+		""" Our user entry without emergency notifications info set up """
 		identity.Identity.objects.create(pidm=456, username='TommyZ', first_name='Tom', last_name='Zero-friends', email='TomZ@pdx.edu')
 		self.username_without_data = 'TommyZ'
-
-		""" Contact information entries """
-		# Add two contacts for 'user_with_data' - no need to populate every field
-		contact.Contact.objects.create(surrogate_id=1, pidm=123, first_name="Debby", last_name='Bar')
-		contact.Contact.objects.create(surrogate_id=2, pidm=123, first_name="Jim", last_name='Bar')
-		# Create a Contact entry that isn't linked to either user
-		contact.Contact.objects.create(surrogate_id=3, pidm=789, first_name="Billy", last_name='Kid')
-
-		""" Emergency information entry """
-		self.external_email = "fooMaster77@hotmail.com"
-		self.campus_email="fooBar@pdx.edu"
-		self.primary_phone='5031234567'
-		self.alternate_phone='9979876543'
-		self.sms_status_ind='Y'
-		self.sms_device='5030102929'
-		self.timestamp= timezone.now()
-		# Add data for 'fooBar'/pidm 123 user into the emergency notifications info (emergency) database
-		emergency.Emergency.objects.create(pidm=123, external_email=self.external_email,
-											campus_email=self.campus_email, primary_phone=self.primary_phone,
-											alternate_phone=self.alternate_phone, sms_status_ind = self.sms_status_ind,
-											sms_device=self.sms_device)#, activity_date=self.activity_date)
-
-	def test_get_emergency_contacts(self):
-		"""
-		Testing that get_emergency_contacts returns expected values and status codes
-
-		One user will have contact data and test his request (200 response code)
-		One user will have no contact data and test his request (204 response code)
-		One user will have an invalid JWT and test his request (401 response code)
-		"""
-		# Using Django's Client means our views will access the test database
-		c = Client()
-
-		# First, generate a token for our users
-		# User with data's JWT
-		response = c.post(self.auth_url, {'username': self.username_with_data})
-		# Decode the JWT from json to string format (which is what the API expects)
-		user_with_data_jwt = response.content.decode('utf-8')
-		# User without data's JWT
-		response = c.post(self.auth_url, {'username': self.username_without_data})
-		user_without_data_jwt = response.content.decode('utf-8')
-
-		# Request the contact info for the user with data
-		response = c.post(self.get_contacts_url, HTTP_AUTHORIZATION=user_with_data_jwt)
-		"""Testing that we received a 200 success response"""
-		self.assertEqual(response.status_code, self.success_code)
-		# Load the contacts in dictionary/JSON format
-		contacts = json.loads(response.content)
-		"""Testing that the contacts returned are linked to our user with data"""
-		for contact in contacts:
-			self.assertEqual(contact['pidm'], self.pidm_with_data)
-
-		# Now to test that users without data receive a No Content (204) response
-		response = c.post(self.get_contacts_url, HTTP_AUTHORIZATION=user_without_data_jwt)
-		"""Testing that we received a 204 No Content response"""
-		self.assertEqual(response.status_code, self.no_content_code)
-		"""Testing that there's no contacts returned"""
-		self.assertEqual(len(response.content), 0)
-
-		# # Now test a user who doesn't supply a valid JWT
-		response = c.post(self.get_contacts_url, HTTP_AUTHORIZATION="No Token Here!")
-		"""Testing that back-end reports a 401 Unauthorized"""
-		self.assertEqual(response.status_code, self.unauthorized_code)
-
-	def test_get_emergency_notifications(self):
-		"""
-		Testing that get_emergency_notifications returns expected values and status codes
-
-		One user will have emergency notifications info info and test his request (200 response code and meaningful data returned)
-		One user will have no emergency notifications info and test his request (204 response code)
-		One user will have an invalid JWT and test his request (401 response code)
-		"""
-		# Using Django's client to access the temporary test database
-		c = Client()
-
-		# Generate our JWTs
-		response = c.post(self.auth_url, {'username': self.username_with_data})
-		# Decode the JWT from json to string format (which is what the API expects)
-		user_with_data_jwt = response.content.decode('utf-8')
-		# Grab our user without any emergency notifications info's JWT
-		response = c.post(self.auth_url, {'username': self.username_without_data})
-		user_without_data_jwt = response.content.decode('utf-8')
-
-		# Request the emergency notifications info for our user with data
-		response = c.post(self.get_emergency_notifications_url, HTTP_AUTHORIZATION=user_with_data_jwt)
-		"""Testing that we received a 200 success response"""
-		self.assertEqual(response.status_code, self.success_code)
-		# Load the emergency notifications info list into a dictionary/JSON format
-		emergency_notifications = json.loads(response.content)[0]
-
-		"""Testing that the emergency notifications info returned is as expected"""
-		self.assertEqual(emergency_notifications['external_email'], self.external_email)
-		self.assertEqual(emergency_notifications['primary_phone'], self.primary_phone)
-		self.assertEqual(emergency_notifications['alternate_phone'], self.alternate_phone)
-		self.assertEqual(emergency_notifications['sms_status_ind'], self.sms_status_ind)
-		self.assertEqual(emergency_notifications['sms_device'], self.sms_device)
-		# Rather than try and validate down to the millisecond, we'll just validate that the year-month-day match expected values
-		# database timestamp format: YYYY-MM-DDTHH:MM:SS.(Milliseconds)Z
-		truncated_database_timestamp = emergency_notifications['activity_date'].split('T')[0]
-		#local timestamp format: YYYY-MM-DD HH:MM:SS.(Milliseconds)+00:00
-		truncated_local_timestamp = str(self.timestamp).split(' ')[0]
-		self.assertEqual(truncated_database_timestamp, truncated_local_timestamp)
-
-		# Request the emergency notifications info for our user without data
-		response = c.post(self.get_emergency_notifications_url, HTTP_AUTHORIZATION=user_without_data_jwt)
-		"""Testing that we received a 204 No Content response"""
-		self.assertEqual(response.status_code, self.no_content_code)
-		"""Testing taht there's no data returned"""
-		self.assertEqual(len(response.content), 0)
-
-		# Test a user who doesn't supply a valid JWT
-		response = c.post(self.get_contacts_url, HTTP_AUTHORIZATION="No Token Here!")
-		"""Testing that back-end reports a 401 Unauthorized"""
-		self.assertEqual(response.status_code, self.unauthorized_code)
-
-	# in progress
-	def test_get_evacuation_assitance(self):
-		"""
-		Testing that get_evacuation_assitance returns expected values and status codes
-
-		One user will have evacuation assistance info and test his request (200 response code and meaningful data returned)
-		One user will have no emergency notifications info and test his request (204 response code)
-		One user will have an invalid JWT and test his request (401 response code)
-		"""
-		# Using Django's client to access the temporary test database
-		c = Client()
-
-		# Generate our JWTs
-		response = c.post(self.auth_url, {'username': self.username_with_data})
-		# Decode the JWT from json to string format (which is what the API expects)
-		user_with_data_jwt = response.content.decode('utf-8')
-		# Grab our user without any emergency notifications info's JWT
-		response = c.post(self.auth_url, {'username': self.username_without_data})
-		user_without_data_jwt = response.content.decode('utf-8')
-
-		# Request the emergency notifications info for our user with data
-		response = c.post(self.get_evacuation_assistance_url, HTTP_AUTHORIZATION=user_with_data_jwt)
-		"""Testing that we received a 200 success response"""
-		self.assertEqual(response.status_code, self.success_code)
-		# Load the emergency notifications info list into a dictionary/JSON format
-		emergency_notifications = json.loads(response.content)[0]
-
-		"""We didn't provide evacuation_assistance info, so we'll confirm that it is null"""
-		self.assertEqual(emergency_notifications['evacuation_assistance'], None)
-
-		# Request the emergency notifications info for our user without data
-		response = c.post(self.get_emergency_notifications_url, HTTP_AUTHORIZATION=user_without_data_jwt)
-		"""Testing that we received a 204 No Content response"""
-		self.assertEqual(response.status_code, self.no_content_code)
-		"""Testing taht there's no data returned"""
-		self.assertEqual(len(response.content), 0)
-
-		# Test a user who doesn't supply a valid JWT
-		response = c.post(self.get_contacts_url, HTTP_AUTHORIZATION="No Token Here!")
-		"""Testing that back-end reports a 401 Unauthorized"""
-		self.assertEqual(response.status_code, self.unauthorized_code)
-
-class DataWriteTests(TestCase):
-	"""
-	Testing out views that change the database
-
-	Tests adding data and removing data from the database via Django views
-	"""
-
-	def setUp(self):
-		self.set_emergency_notifications_url = '/setEmergencyNotifications/'
-		self.auth_url = '/login/'
-
-		# Expected response codes from the back-end
-		self.success_code = 200 # Successful request, with return data
-		self.unauthorized_code = 401 # Unauthorized user, either no JWT, malformed JWT, or a non server-signed JWT
-		self.unprocessable_entity = 422 # Arguments were provided correctly, but were semantically incorrect (such as invalid email/phone number)
-
-		""" Our dummy-data user """
-		# Create a user who will update their data in the (test) emergency notifications-info database
-		identity.Identity.objects.create(pidm=123, username='fooBar', first_name='Foo', last_name='Bar', email='fooBar@pdx.edu')
-		self.username_with_valid_data = 'fooBar'
-		self.user_pidm_with_valid_data = 123
-
-		identity.Identity.objects.create(pidm=456, username='badData', first_name='Bad', last_name='Data', email='badData@pdx.edu')
+		self.pidm_without_data = 456
+		
+		# Create a user who will have bad values to upload to the database
+		""" Our user entry with invalid data for the emergency notifications """
+		identity.Identity.objects.create(pidm=789, username='badData', first_name='Bad', last_name='Data', email='badData@pdx.edu')
 		self.username_with_invalid_data = 'badData'
-		self.user_pidm_with_invalid_data = 456
-
+		self.user_pidm_with_invalid_data = 789
+		
+		""" Emergency information entry """
 		""" Valid Emergency information we'll use as the user data """
-		self.good_evacuation_assistance = 'Y'
+		self.campus_email = 'fooBar@pdx.edu'
 		self.good_external_email = "fooMaster77@hotmail.com"
 		self.good_primary_phone = '5031234567'
 		self.good_alternate_phone = '9979876543'
 		self.good_sms_status_ind = 'Y'
 		self.good_sms_device = '5030102929'
+		self.timestamp= timezone.now()
+		# Add data for 'fooBar'/pidm 123 user into the emergency notifications info (emergency) database
+		emergency.Emergency.objects.create(pidm=self.pidm_with_data, external_email=self.good_external_email,
+											campus_email=self.campus_email, primary_phone=self.good_primary_phone,
+											alternate_phone=self.good_alternate_phone, sms_status_ind = self.good_sms_status_ind,
+											sms_device=self.good_sms_device)
 
 		""" Additional valid email and phone number to update database with """
 		self.additional_good_external_email = "barKing200@yahoo.com"
@@ -325,6 +158,57 @@ class DataWriteTests(TestCase):
 		self.bad_sms_status_ind='Nope!'
 		self.bad_sms_device='No-Phone!'
 
+	def test_get_emergency_notifications(self):
+		"""
+		Testing that get_emergency_notifications returns expected values and status codes
+
+		One user will have emergency notifications info info and test his request (200 response code and meaningful data returned)
+		One user will have no emergency notifications info and test his request (204 response code)
+		One user will have an invalid JWT and test his request (401 response code)
+		"""
+		# Using Django's client to access the temporary test database
+		c = Client()
+
+		# Generate our JWTs
+		response = c.post(auth_url, {'username': self.username_with_data})
+		# Decode the JWT from json to string format (which is what the API expects)
+		user_with_data_jwt = response.content.decode('utf-8')
+		# Grab our user without any emergency notifications info's JWT
+		response = c.post(auth_url, {'username': self.username_without_data})
+		user_without_data_jwt = response.content.decode('utf-8')
+
+		# Request the emergency notifications info for our user with data
+		response = c.post(get_emergency_notifications_url, HTTP_AUTHORIZATION=user_with_data_jwt)
+		"""Testing that we received a 200 success response"""
+		self.assertEqual(response.status_code, success_code)
+		# Load the emergency notifications info list into a dictionary/JSON format
+		emergency_notifications = json.loads(response.content)[0]
+
+		"""Testing that the emergency notifications info returned is as expected"""
+		self.assertEqual(emergency_notifications['external_email'], self.good_external_email)
+		self.assertEqual(emergency_notifications['primary_phone'], self.good_primary_phone)
+		self.assertEqual(emergency_notifications['alternate_phone'], self.good_alternate_phone)
+		self.assertEqual(emergency_notifications['sms_status_ind'], self.good_sms_status_ind)
+		self.assertEqual(emergency_notifications['sms_device'], self.good_sms_device)
+		# Rather than try and validate down to the millisecond, we'll just validate that the year-month-day match expected values
+		# database timestamp format: YYYY-MM-DDTHH:MM:SS.(Milliseconds)Z
+		truncated_database_timestamp = emergency_notifications['activity_date'].split('T')[0]
+		#local timestamp format: YYYY-MM-DD HH:MM:SS.(Milliseconds)+00:00
+		truncated_local_timestamp = str(self.timestamp).split(' ')[0]
+		self.assertEqual(truncated_database_timestamp, truncated_local_timestamp)
+
+		# Request the emergency notifications info for our user without data
+		response = c.post(get_emergency_notifications_url, HTTP_AUTHORIZATION=user_without_data_jwt)
+		"""Testing that we received a 204 No Content response"""
+		self.assertEqual(response.status_code, no_content_code)
+		"""Testing taht there's no data returned"""
+		self.assertEqual(len(response.content), 0)
+
+		# Test a user who doesn't supply a valid JWT
+		response = c.post(get_emergency_notifications_url, HTTP_AUTHORIZATION="No Token Here!")
+		"""Testing that back-end reports a 401 Unauthorized"""
+		self.assertEqual(response.status_code, unauthorized_code)
+	
 	def test_set_emergency_notifications(self):
 		"""
 		Testing that set_emergency_notifications returns expected status codes and changes are made to the database
@@ -340,15 +224,15 @@ class DataWriteTests(TestCase):
 		c = Client()
 
 		# Generate our JWTs
-		response = c.post(self.auth_url, {'username': self.username_with_valid_data})
+		response = c.post(auth_url, {'username': self.username_with_data})
 		# Decode the JWT from json to string format (which is what the API expects)
 		user_with_valid_data_jwt = response.content.decode('utf-8')
 		# Grab our user without any emergency notifications info's JWT
-		response = c.post(self.auth_url, {'username': self.username_with_invalid_data})
+		response = c.post(auth_url, {'username': self.username_with_invalid_data})
 		user_without_invalid_data_jwt = response.content.decode('utf-8')
 
 		# Attempt to enter in a new entry with valid data
-		response = c.post(self.set_emergency_notifications_url,
+		response = c.post(set_emergency_notifications_url,
 		# POST body
 		{
 			# 'evacuation_assistance':self.good_evacuation_assistance,
@@ -363,10 +247,10 @@ class DataWriteTests(TestCase):
 		)
 
 		"""Testing that we received a 200 success response"""
-		self.assertEqual(response.status_code, self.success_code)
+		self.assertEqual(response.status_code, success_code)
 
 		# Grab the valid user's Emergency emergency notifications info
-		user_entry = emergency.Emergency.objects.get(pidm=self.user_pidm_with_valid_data)
+		user_entry = emergency.Emergency.objects.get(pidm=self.pidm_with_data)
 
 		"""Testing that the data is uploaded to the registry correctly"""
 		# Now compare each value, asserting their equivalence
@@ -378,7 +262,7 @@ class DataWriteTests(TestCase):
 		# self.assertEqual(user_entry.sms_device, self.good_sms_device)
 
 		# Attempt to update our valid database entry with more valid data - this time opting in for sms service
-		response = c.post(self.set_emergency_notifications_url,
+		response = c.post(set_emergency_notifications_url,
 		# POST body
 		{
 			# 'evacuation_assistance':self.good_evacuation_assistance,
@@ -392,10 +276,10 @@ class DataWriteTests(TestCase):
 		)
 
 		"""Testing that we received a 200 success response"""
-		self.assertEqual(response.status_code, self.success_code)
+		self.assertEqual(response.status_code, success_code)
 
 		# Grab the valid user's Emergency emergency notifications info
-		user_entry = emergency.Emergency.objects.get(pidm=self.user_pidm_with_valid_data)
+		user_entry = emergency.Emergency.objects.get(pidm=self.pidm_with_data)
 
 		"""Testing that the data is updated correctly"""
 		# self.assertEqual(user_entry.evacuation_assistance, self.good_evacuation_assistance)
@@ -407,7 +291,7 @@ class DataWriteTests(TestCase):
 
 		# Bad data testing #
 		# Attempt to enter in a new entry with invalid data
-		response = c.post(self.set_emergency_notifications_url,
+		response = c.post(set_emergency_notifications_url,
 		# POST body
 		{
 			# 'evacuation_assistance':self.bad_evacuation_assistance,
@@ -422,7 +306,7 @@ class DataWriteTests(TestCase):
 		)
 
 		"""Testing that we received a 422 unprocessable entity failure response"""
-		self.assertEqual(response.status_code, self.unprocessable_entity)
+		self.assertEqual(response.status_code, unprocessable_entity)
 
 		# Attempt to grab data for the invalid entry - should return an empty list
 		user_entry = emergency.Emergency.objects.filter(pidm=self.user_pidm_with_invalid_data)
@@ -431,7 +315,7 @@ class DataWriteTests(TestCase):
 		self.assertEqual(len(user_entry), 0)
 
 		# Attempt to update our already-validated database entry with new, invalid data
-		response = c.post(self.set_emergency_notifications_url,
+		response = c.post(set_emergency_notifications_url,
 		# POST body
 		{
 			# 'evacuation_assistance':self.bad_evacuation_assistance,
@@ -446,10 +330,10 @@ class DataWriteTests(TestCase):
 		)
 
 		"""Testing that we received a 422 unprocessable entity failure response"""
-		self.assertEqual(response.status_code, self.unprocessable_entity)
+		self.assertEqual(response.status_code, unprocessable_entity)
 
 		# Grab the valid user's Emergency emergency notifications info
-		user_entry = emergency.Emergency.objects.get(pidm=self.user_pidm_with_valid_data)
+		user_entry = emergency.Emergency.objects.get(pidm=self.pidm_with_data)
 
 		"""Testing that the database did NOT update our old entry with the new invalid data."""
 		# self.assertEqual(user_entry.evacuation_assistance, self.good_evacuation_assistance)
@@ -459,7 +343,82 @@ class DataWriteTests(TestCase):
 		# self.assertEqual(user_entry.sms_status_ind, self.good_sms_status_ind)
 		self.assertEqual(user_entry.sms_device, self.good_sms_device)
 
-	def test_set_evacuation_assistance(self):
+class EvacuationAssistanceTests(TestCase):
+	"""
+	Testing out the setting and getting of Evacuation Assistance Info
+	"""
+	
+	def setUp(self):
+		""" Our user entry with valid info set up """
+		identity.Identity.objects.create(pidm=123, username='fooBar', first_name='Foo', last_name='Bar', email='fooBar@pdx.edu')
+		self.username_with_data = 'fooBar'
+		self.pidm_with_data = 123
+		
+		""" Our user without evac assistance info set up """
+		identity.Identity.objects.create(pidm=456, username='TommyZ', first_name='Tom', last_name='Zero-friends', email='TomZ@pdx.edu')
+		self.username_without_data = 'TommyZ'
+		self.pidm_without_data = 456
+		
+		""" Our user entry who doesn't exist in the Emergency database yet """
+		identity.Identity.objects.create(pidm=789, username='JBob', first_name='Jim', last_name='Bob', email='JBob@pdx.edu')
+		self.username_without_emergency_entry = 'JBob'
+		self.pidm_without_emergency_entry = 789
+		
+		# The only valid status is 'Y' or None
+		self.valid_status = 'Y'
+		# We'll attempt to update with an invalid status, which shouldn't be accepted by the backend
+		self.invalid_status = 'invalid!'
+		
+		# The user entry with evacuation_assistance set to 'Y'
+		emergency.Emergency.objects.create(pidm=self.pidm_with_data, evacuation_assistance=self.valid_status)
+		# The user entry with no evacuation_assistance data set
+		emergency.Emergency.objects.create(pidm=self.pidm_without_data)
+		
+	def test_get_evacuation_assitance(self):
+		"""
+		Testing that get_evacuation_assitance returns expected values and status codes
+
+		One user will have evacuation assistance info and test his request (200 response code and meaningful data returned)
+		One user will have no emergency assistance info and test his request (204 response code)
+		One user will have an invalid JWT and test his request (401 response code)
+		"""
+		# Using Django's client to access the temporary test database
+		c = Client()
+
+		# Generate our JWTs
+		response = c.post(auth_url, {'username': self.username_with_data})
+		# Decode the JWT from json to string format (which is what the API expects)
+		user_with_data_jwt = response.content.decode('utf-8')
+		# Grab our user without any emergency notifications info's JWT
+		response = c.post(auth_url, {'username': self.username_without_data})
+		user_without_data_jwt = response.content.decode('utf-8')
+
+		# Request the emergency notifications info for our user with data
+		response = c.post(get_evacuation_assistance_url, HTTP_AUTHORIZATION=user_with_data_jwt)
+		"""Testing that we received a 200 success response"""
+		self.assertEqual(response.status_code, success_code)
+		# Load the emergency notifications info list into a dictionary/JSON format
+		evac_assistance_return = json.loads(response.content)[0]
+
+		"""We provided 'Y' as the evacuation_assistance, confirm that's what was returned"""
+		self.assertEqual(evac_assistance_return['evacuation_assistance'], self.valid_status)
+
+		# Request the emergency notifications info for our user without data
+		response = c.post(get_evacuation_assistance_url, HTTP_AUTHORIZATION=user_without_data_jwt)
+		"""Testing that we received a 200 success response"""
+		self.assertEqual(response.status_code, success_code)
+		# Load the emergency notifications info list into a dictionary/JSON format
+		evac_assistance_return = json.loads(response.content)[0]
+		
+		"""This user didn't supply a value for evacuation_assistance, so it should be None/Null"""
+		self.assertEqual(evac_assistance_return['evacuation_assistance'], None)
+
+		# Test a user who doesn't supply a valid JWT
+		response = c.post(get_evacuation_assistance_url, HTTP_AUTHORIZATION="No Token Here!")
+		"""Testing that back-end reports a 401 Unauthorized"""
+		self.assertEqual(response.status_code, unauthorized_code)
+
+	def test_set_evacuation_assitance(self):
 		"""
 		Testing that set_emergency_notifications returns expected status codes and changes are made to the database
 
@@ -474,10 +433,149 @@ class DataWriteTests(TestCase):
 		# Using Django's client to access the temporary test database
 		c = Client()
 
-		# Generate our JWTs
-		response = c.post(self.auth_url, {'username': self.username_with_valid_data})
-		# Decode the JWT from json to string format (which is what the API expects)
-		user_with_valid_data_jwt = response.content.decode('utf-8')
+		# Generate our JWT
 		# Grab our user without any emergency notifications info's JWT
-		response = c.post(self.auth_url, {'username': self.username_with_invalid_data})
-		user_without_invalid_data_jwt = response.content.decode('utf-8')
+		response = c.post(auth_url, {'username': self.username_without_emergency_entry})
+		user_without_emergency_entry_jwt = response.content.decode('utf-8')
+		
+		# First, we'll attempt to create a new entry into the Emergency database with invalid data
+		response = c.post(set_evacuation_assistance_url,
+		# POST body
+		{
+			'evacuation_assistance':self.invalid_status
+		},
+		# POST headers
+		HTTP_AUTHORIZATION=user_without_emergency_entry_jwt
+		)
+		
+		"""Testing that we received a 422 unprocessable entity response"""
+		self.assertEqual(response.status_code, unprocessable_entity)
+
+		"""Testing that the Emergency database did not add the user in with incorrect data"""
+		user_entry = emergency.Emergency.objects.filter(pidm=self.pidm_without_emergency_entry)
+		# Should be 0 returned values
+		self.assertEqual(len(user_entry), 0)
+		
+		# Now, we'll attempt to create an entry with valid data
+		response = c.post(set_evacuation_assistance_url,
+		# POST body
+		{
+			'evacuation_assistance':self.valid_status
+		},
+		# POST headers
+		HTTP_AUTHORIZATION=user_without_emergency_entry_jwt
+		)
+		
+		"""Testing that we received a 200 success response"""
+		self.assertEqual(response.status_code, success_code)
+		
+		"""Testing that the user was added to the Emergency registry with the correct value"""
+		user_entry = emergency.Emergency.objects.get(pidm=self.pidm_without_emergency_entry)
+		self.assertEqual(user_entry.evacuation_assistance, self.valid_status)
+		
+		# We'll now update the database status with None
+		response = c.post(set_evacuation_assistance_url,
+		# POST body
+		{
+			# Without 'evacuation_assistance' set, it will be deleted in the database
+		},
+		# POST headers
+		HTTP_AUTHORIZATION=user_without_emergency_entry_jwt
+		)
+		
+		"""Testing that we received a 200 success response"""
+		self.assertEqual(response.status_code, success_code)
+		
+		"""Testing that the user's data has updated to None"""
+		user_entry = emergency.Emergency.objects.get(pidm=self.pidm_without_emergency_entry)
+		self.assertEqual(user_entry.evacuation_assistance, None)
+		
+		# Now we'll attempt to update the database with an invalid status
+		response = c.post(set_evacuation_assistance_url,
+		# POST body
+		{
+			'evacuation_assistance':self.invalid_status
+		},
+		# POST headers
+		HTTP_AUTHORIZATION=user_without_emergency_entry_jwt
+		)
+		
+		"""Testing that we received a 422 unprocessable entity response"""
+		self.assertEqual(response.status_code, unprocessable_entity)
+		
+		"""Testing that the user's data remains unchanged and is still None"""
+		user_entry = emergency.Emergency.objects.get(pidm=self.pidm_without_emergency_entry)
+		self.assertEqual(user_entry.evacuation_assistance, None)
+		
+
+class EmergencyContactsTests(TestCase):
+	"""
+	Testing out the setting and getting of Emergency Contacts Info
+	"""
+	
+	def setUp(self):
+		""" Our user entry with contact info set up """
+		identity.Identity.objects.create(pidm=123, username='fooBar', first_name='Foo', last_name='Bar', email='fooBar@pdx.edu')
+		self.username_with_data = 'fooBar'
+		self.pidm_with_data = 123
+
+		""" Our user entry without contact info set up """
+		identity.Identity.objects.create(pidm=456, username='TommyZ', first_name='Tom', last_name='Zero-friends', email='TomZ@pdx.edu')
+		self.username_without_data = 'TommyZ'
+		self.pidm_without_data = 456
+
+		""" Contact information entries """
+		# Add two contacts for 'user_with_data' - no need to populate every field
+		contact.Contact.objects.create(surrogate_id=1, pidm=123, first_name="Debby", last_name='Bar')
+		contact.Contact.objects.create(surrogate_id=2, pidm=123, first_name="Jim", last_name='Bar')
+		# We'll check against how many values are returned on a get-contacts request
+		self.user_with_data_contact_count = 2
+		# Create a Contact entry that isn't linked to either user
+		contact.Contact.objects.create(surrogate_id=3, pidm=789, first_name="Billy", last_name='Kid')
+
+	def test_get_emergency_contacts(self):
+		"""
+		Testing that get_emergency_contacts returns expected values and status codes
+
+		One user will have contact data and test his request (200 response code)
+		One user will have no contact data and test his request (204 response code)
+		One user will have an invalid JWT and test his request (401 response code)
+		"""
+		# Using Django's Client means our views will access the test database
+		c = Client()
+
+		# First, generate a token for our users
+		# User with data's JWT
+		response = c.post(auth_url, {'username': self.username_with_data})
+		# Decode the JWT from json to string format (which is what the API expects)
+		user_with_data_jwt = response.content.decode('utf-8')
+		# User without data's JWT
+		response = c.post(auth_url, {'username': self.username_without_data})
+		user_without_data_jwt = response.content.decode('utf-8')
+
+		# Request the contact info for the user with data
+		response = c.post(get_contacts_url, HTTP_AUTHORIZATION=user_with_data_jwt)
+		"""Testing that we received a 200 success response"""
+		self.assertEqual(response.status_code, success_code)
+		
+		# Load the contacts in dictionary/JSON format
+		contacts = json.loads(response.content)
+		
+		"""Testing that we got the expected amount of contacts back"""
+		self.assertEqual(len(contacts), self.user_with_data_contact_count)
+
+		"""Testing that the contacts returned are linked to our user with data"""
+		for contact in contacts:
+			self.assertEqual(contact['pidm'], self.pidm_with_data)
+
+		# Now to test that users without data receive a No Content (204) response
+		response = c.post(get_contacts_url, HTTP_AUTHORIZATION=user_without_data_jwt)
+		"""Testing that we received a 204 No Content response"""
+		self.assertEqual(response.status_code, no_content_code)
+		"""Testing that there's no contacts returned"""
+		self.assertEqual(len(response.content), 0)
+
+		# # Now test a user who doesn't supply a valid JWT
+		response = c.post(get_contacts_url, HTTP_AUTHORIZATION="No Token Here!")
+		"""Testing that back-end reports a 401 Unauthorized"""
+		self.assertEqual(response.status_code, unauthorized_code)
