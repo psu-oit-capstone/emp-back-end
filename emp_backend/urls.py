@@ -12,7 +12,7 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+"""#
 from django.contrib import admin
 from django.urls import path
 from emergency_app import views
@@ -22,6 +22,8 @@ urlpatterns = [
 	# path('grab_usernames/', views.test),
 	path('login/', views.login),
 	path('getEmergencyContacts/', views.get_emergency_contacts),
+	path('updateEmergencyContact/', views.update_emergency_contact),
+	path('updateEmergencyContact/<int:surrogate_id>/', views.update_emergency_contact),
 	path('getEmergencyNotifications/', views.get_emergency_notifications),
 	path('setEmergencyNotifications/', views.set_emergency_notifications),
     path('getEvacuationAssistance/', views.get_evacuation_assistance),
