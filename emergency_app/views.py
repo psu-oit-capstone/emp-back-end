@@ -23,6 +23,9 @@ Identity = identity.Identity
 Contact = contact.Contact
 Emergency = emergency.Emergency
 
+# Valid relational codes for contact database info
+valid_relational_codes = ['G', 'F', 'O', 'U', 'S', 'A', 'R']
+
 # The key name for our JWT in HTTP request headers
 JWT_Headers_Key = "HTTP_AUTHORIZATION"
 
@@ -136,14 +139,15 @@ def get_emergency_contacts(request):
 
 # Update (mutate) emergency contact information
 @csrf_exempt
-def update_emergency_contact(request):
+@require_http_methods(["POST", "DELETE"])
+def update_emergency_contact(request, surrogate_id=None):
 	"""
 	Update the database information regarding the emergency contact information.
 	This could imply either submitting a new emergency contact, or deleting the
 	existing emergency contact.
 	"""
 	# extract JWT from post request in uniform fashion to above JWT code
-	jwt = request.META.get("HTTP_AUTHORIZATION")
+	jwt = request.META.get(JWT_Headers_Key)
 
 	# Validate JWT
 	try:
@@ -155,17 +159,18 @@ def update_emergency_contact(request):
 	payload = j.grab_token_payload(jwt)
 
 	# First, we extract the checkbox data and determine if we need to branch
-	removal = request.POST.get('remove_contact') # mAKE SURE TO LET FRONT END KNOW TO CALL CHECKBOX DATA THIS
-	if removal == 'True':
-		# print("removal branch")
-		surrogate_id = request.POST.get('surrogate_id')
+	if request.method == "DELETE":
+		if surrogate_id == None:
+			print("surrogate_id can't be none!")
+			return HttpResponse("No Surrogate ID given!", status=422)
 		user_entry = Contact.objects.filter(surrogate_id=surrogate_id)
 		if len(user_entry) < 	1:
 			# The user does not exist
-			return HttpResponse("No contact found.", status=204)
+			return HttpResponse("No contact found.")
 		else:
 			user_entry.delete()
 			return HttpResponse("Successfully deleted emergency contact.")
+
 	else:
 		# Grab the additional data from the POST request
 		surrogate_id = request.POST.get('surrogate_id')
@@ -176,9 +181,10 @@ def update_emergency_contact(request):
 
 		relt_code = request.POST.get('relt_code')
 		# sanitize
-		if relt_code == "G" or relt_code == "F" or relt_code == "O" or relt_code == "U" or relt_code == "S" or relt_code == "A" or relt_code == "R":
-			relt_code = relt_code
-		else:
+
+		# Relational codes are defined in their own database
+		# The only valid ones are: G, F, O, U, S, A, and R
+		if relt_code not in valid_relational_codes:
 			return HttpResponse("Invalid relation.", status=422)
 
 		last_name = request.POST.get('last_name')

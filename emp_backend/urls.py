@@ -23,6 +23,7 @@ urlpatterns = [
 	path('login/', views.login),
 	path('getEmergencyContacts/', views.get_emergency_contacts),
 	path('updateEmergencyContact/', views.update_emergency_contact),
+	path('updateEmergencyContact/<int:surrogate_id>/', views.update_emergency_contact),
 	path('getEmergencyNotifications/', views.get_emergency_notifications),
 	path('setEmergencyNotifications/', views.set_emergency_notifications),
     path('getEvacuationAssistance/', views.get_evacuation_assistance),

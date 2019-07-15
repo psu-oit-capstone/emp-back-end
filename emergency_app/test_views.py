@@ -635,7 +635,6 @@ class EmergencyContactsTests(TestCase):
 		response = c.post(set_contacts_url,
 		# create the POST Body
 		{
-			'remove_contact':False,
 			'surrogate_id':self.surrogate_id_of_contact,
 			'priority':self.good_emergency_priority,
 			'relt_code':self.good_emergency_relt_code,
@@ -687,7 +686,6 @@ class EmergencyContactsTests(TestCase):
 		response = c.post(set_contacts_url,
 		# create the POST Body
 		{
-			'remove_contact':False,
 			'surrogate_id':self.surrogate_id_of_contact,
 			'priority':self.good_emergency_priority,
 			'relt_code':self.good_emergency_relt_code,
@@ -739,7 +737,6 @@ class EmergencyContactsTests(TestCase):
 		response = c.post(set_contacts_url,
 		# create the POST Body
 		{
-			'remove_contact':False,
 			'surrogate_id':self.surrogate_id_of_bad_contact,
 			'relt_code':self.bad_emergency_relt_code,
 			'phone_area':self.bad_emergency_phone_area,
@@ -763,7 +760,6 @@ class EmergencyContactsTests(TestCase):
 		response = c.post(set_contacts_url,
 		# create the POST Body
 		{
-			'remove_contact':False,
 			'surrogate_id':self.surrogate_id_of_contact,
 			'relt_code':self.bad_emergency_relt_code,
 			'phone_area':self.bad_emergency_phone_area,
@@ -802,13 +798,11 @@ class EmergencyContactsTests(TestCase):
 		self.assertEqual(len(user_entry), 1)
 
 		# now, delete it
-		response = c.post(set_contacts_url,
-		# create the POST Body
-		{
-			'remove_contact':True,
-			'surrogate_id':self.surrogate_id_of_contact,
-			# The rest should be None to be invalid.
-		},
+		# To delete a contact, the API expects the surrogate id to be placed in the url as a parameter, and called with a delete request
+		# i.e. set_contacts_url/<surrogate_id>/
+		delete_contact_url = set_contacts_url + str(self.surrogate_id_of_contact) + '/'
+		
+		response = c.delete(delete_contact_url,
 		# POST headers
 		HTTP_AUTHORIZATION=user_with_valid_data_jwt
 		)
