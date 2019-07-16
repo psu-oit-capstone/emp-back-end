@@ -111,26 +111,26 @@ class EmergencyNotificationTests(TestCase):
 	"""
 	Testing out the setting and getting of Alert Info
 	"""
-	
+
 	def setUp(self):
 		""" Our user entry with emergency notifications info set up """
 		# Create a user who will have data in the (test) contact database
 		identity.Identity.objects.create(pidm=123, username='fooBar', first_name='Foo', last_name='Bar', email='fooBar@pdx.edu')
 		self.username_with_data = 'fooBar'
 		self.pidm_with_data = 123
-		
+
 		# Create a user who won't have data in the (test) contact database
 		""" Our user entry without emergency notifications info set up """
 		identity.Identity.objects.create(pidm=456, username='TommyZ', first_name='Tom', last_name='Zero-friends', email='TomZ@pdx.edu')
 		self.username_without_data = 'TommyZ'
 		self.pidm_without_data = 456
-		
+
 		# Create a user who will have bad values to upload to the database
 		""" Our user entry with invalid data for the emergency notifications """
 		identity.Identity.objects.create(pidm=789, username='badData', first_name='Bad', last_name='Data', email='badData@pdx.edu')
 		self.username_with_invalid_data = 'badData'
 		self.user_pidm_with_invalid_data = 789
-		
+
 		""" Emergency information entry """
 		""" Valid Emergency information we'll use as the user data """
 		self.campus_email = 'fooBar@pdx.edu'
@@ -208,7 +208,7 @@ class EmergencyNotificationTests(TestCase):
 		response = c.post(get_emergency_notifications_url, HTTP_AUTHORIZATION="No Token Here!")
 		"""Testing that back-end reports a 401 Unauthorized"""
 		self.assertEqual(response.status_code, unauthorized_code)
-	
+
 	def test_set_emergency_notifications(self):
 		"""
 		Testing that set_emergency_notifications returns expected status codes and changes are made to the database
@@ -347,33 +347,33 @@ class EvacuationAssistanceTests(TestCase):
 	"""
 	Testing out the setting and getting of Evacuation Assistance Info
 	"""
-	
+
 	def setUp(self):
 		""" Our user entry with valid info set up """
 		identity.Identity.objects.create(pidm=123, username='fooBar', first_name='Foo', last_name='Bar', email='fooBar@pdx.edu')
 		self.username_with_data = 'fooBar'
 		self.pidm_with_data = 123
-		
+
 		""" Our user without evac assistance info set up """
 		identity.Identity.objects.create(pidm=456, username='TommyZ', first_name='Tom', last_name='Zero-friends', email='TomZ@pdx.edu')
 		self.username_without_data = 'TommyZ'
 		self.pidm_without_data = 456
-		
+
 		""" Our user entry who doesn't exist in the Emergency database yet """
 		identity.Identity.objects.create(pidm=789, username='JBob', first_name='Jim', last_name='Bob', email='JBob@pdx.edu')
 		self.username_without_emergency_entry = 'JBob'
 		self.pidm_without_emergency_entry = 789
-		
+
 		# The only valid status is 'Y' or None
 		self.valid_status = 'Y'
 		# We'll attempt to update with an invalid status, which shouldn't be accepted by the backend
 		self.invalid_status = 'invalid!'
-		
+
 		# The user entry with evacuation_assistance set to 'Y'
 		emergency.Emergency.objects.create(pidm=self.pidm_with_data, evacuation_assistance=self.valid_status)
 		# The user entry with no evacuation_assistance data set
 		emergency.Emergency.objects.create(pidm=self.pidm_without_data)
-		
+
 	def test_get_evacuation_assitance(self):
 		"""
 		Testing that get_evacuation_assitance returns expected values and status codes
@@ -409,7 +409,7 @@ class EvacuationAssistanceTests(TestCase):
 		self.assertEqual(response.status_code, success_code)
 		# Load the emergency notifications info list into a dictionary/JSON format
 		evac_assistance_return = json.loads(response.content)[0]
-		
+
 		"""This user didn't supply a value for evacuation_assistance, so it should be None/Null"""
 		self.assertEqual(evac_assistance_return['evacuation_assistance'], None)
 
@@ -429,7 +429,7 @@ class EvacuationAssistanceTests(TestCase):
 
 		One user will have an invalid JWT and test his request (401 response code)
 		"""
-		
+
 		# Using Django's client to access the temporary test database
 		c = Client()
 
@@ -437,7 +437,7 @@ class EvacuationAssistanceTests(TestCase):
 		# Grab our user without any emergency notifications info's JWT
 		response = c.post(auth_url, {'username': self.username_without_emergency_entry})
 		user_without_emergency_entry_jwt = response.content.decode('utf-8')
-		
+
 		# First, we'll attempt to create a new entry into the Emergency database with invalid data
 		response = c.post(set_evacuation_assistance_url,
 		# POST body
@@ -447,7 +447,7 @@ class EvacuationAssistanceTests(TestCase):
 		# POST headers
 		HTTP_AUTHORIZATION=user_without_emergency_entry_jwt
 		)
-		
+
 		"""Testing that we received a 422 unprocessable entity response"""
 		self.assertEqual(response.status_code, unprocessable_entity)
 
@@ -455,7 +455,7 @@ class EvacuationAssistanceTests(TestCase):
 		user_entry = emergency.Emergency.objects.filter(pidm=self.pidm_without_emergency_entry)
 		# Should be 0 returned values
 		self.assertEqual(len(user_entry), 0)
-		
+
 		# Now, we'll attempt to create an entry with valid data
 		response = c.post(set_evacuation_assistance_url,
 		# POST body
@@ -465,14 +465,14 @@ class EvacuationAssistanceTests(TestCase):
 		# POST headers
 		HTTP_AUTHORIZATION=user_without_emergency_entry_jwt
 		)
-		
+
 		"""Testing that we received a 200 success response"""
 		self.assertEqual(response.status_code, success_code)
-		
+
 		"""Testing that the user was added to the Emergency registry with the correct value"""
 		user_entry = emergency.Emergency.objects.get(pidm=self.pidm_without_emergency_entry)
 		self.assertEqual(user_entry.evacuation_assistance, self.valid_status)
-		
+
 		# We'll now update the database status with None
 		response = c.post(set_evacuation_assistance_url,
 		# POST body
@@ -482,14 +482,14 @@ class EvacuationAssistanceTests(TestCase):
 		# POST headers
 		HTTP_AUTHORIZATION=user_without_emergency_entry_jwt
 		)
-		
+
 		"""Testing that we received a 200 success response"""
 		self.assertEqual(response.status_code, success_code)
-		
+
 		"""Testing that the user's data has updated to None"""
 		user_entry = emergency.Emergency.objects.get(pidm=self.pidm_without_emergency_entry)
 		self.assertEqual(user_entry.evacuation_assistance, None)
-		
+
 		# Now we'll attempt to update the database with an invalid status
 		response = c.post(set_evacuation_assistance_url,
 		# POST body
@@ -499,20 +499,20 @@ class EvacuationAssistanceTests(TestCase):
 		# POST headers
 		HTTP_AUTHORIZATION=user_without_emergency_entry_jwt
 		)
-		
+
 		"""Testing that we received a 422 unprocessable entity response"""
 		self.assertEqual(response.status_code, unprocessable_entity)
-		
+
 		"""Testing that the user's data remains unchanged and is still None"""
 		user_entry = emergency.Emergency.objects.get(pidm=self.pidm_without_emergency_entry)
 		self.assertEqual(user_entry.evacuation_assistance, None)
-		
+
 
 class EmergencyContactsTests(TestCase):
 	"""
 	Testing out the setting and getting of Emergency Contacts Info
 	"""
-	
+
 	def setUp(self):
 		""" Our user entry with contact info set up """
 		identity.Identity.objects.create(pidm=123, username='fooBar', first_name='Foo', last_name='Bar', email='fooBar@pdx.edu')
@@ -523,7 +523,7 @@ class EmergencyContactsTests(TestCase):
 		identity.Identity.objects.create(pidm=456, username='TommyZ', first_name='Tom', last_name='Zero-friends', email='TomZ@pdx.edu')
 		self.username_without_data = 'TommyZ'
 		self.pidm_without_data = 456
-		
+
 		""" Our fresh user, for testing the setting of contact info """
 		identity.Identity.objects.create(pidm=789, username='JJohn', first_name='Jimmy', last_name='Johnson', email='JimmyJ@pdx.edu')
 		self.fresh_username = 'JJohn'
@@ -587,10 +587,10 @@ class EmergencyContactsTests(TestCase):
 		response = c.post(get_contacts_url, HTTP_AUTHORIZATION=user_with_data_jwt)
 		"""Testing that we received a 200 success response"""
 		self.assertEqual(response.status_code, success_code)
-		
+
 		# Load the contacts in dictionary/JSON format
 		contacts = json.loads(response.content)
-		
+
 		"""Testing that we got the expected amount of contacts back"""
 		self.assertEqual(len(contacts), self.user_with_data_contact_count)
 
@@ -609,7 +609,7 @@ class EmergencyContactsTests(TestCase):
 		response = c.post(get_contacts_url, HTTP_AUTHORIZATION="No Token Here!")
 		"""Testing that back-end reports a 401 Unauthorized"""
 		self.assertEqual(response.status_code, unauthorized_code)
-		
+
 	def test_update_emergency_contacts(self):
 		""" Testing will test for the following cases of usage of update_emergency_contact:
 
@@ -801,7 +801,7 @@ class EmergencyContactsTests(TestCase):
 		# To delete a contact, the API expects the surrogate id to be placed in the url as a parameter, and called with a delete request
 		# i.e. set_contacts_url/<surrogate_id>/
 		delete_contact_url = set_contacts_url + str(self.surrogate_id_of_contact) + '/'
-		
+
 		response = c.delete(delete_contact_url,
 		# POST headers
 		HTTP_AUTHORIZATION=user_with_valid_data_jwt
@@ -809,3 +809,23 @@ class EmergencyContactsTests(TestCase):
 
 		user_entry = contact.Contact.objects.filter(surrogate_id=self.surrogate_id_of_contact)
 		self.assertEqual(len(user_entry), 0)
+
+		# Now, we try to delete a user that does not belong to us. We should receive a 422.
+
+		# make sure that there is an existing entry for surrogate id of 3
+		user_entry = contact.Contact.objects.filter(surrogate_id=3)
+		self.assertEqual(len(user_entry), 1)
+
+		# now, try to delete it.
+		invalid_delete = set_contacts_url + str(3) + '/'
+
+		response = c.delete(invalid_delete,
+		# POST headers
+		HTTP_AUTHORIZATION=user_with_valid_data_jwt
+		)
+
+		# then, process the results.
+		self.assertEqual(response.status_code, unprocessable_entity)
+
+		user_entry = contact.Contact.objects.filter(surrogate_id=3)
+		self.assertEqual(len(user_entry), 1)

@@ -164,12 +164,16 @@ def update_emergency_contact(request, surrogate_id=None):
 			print("surrogate_id can't be none!")
 			return HttpResponse("No Surrogate ID given!", status=422)
 		user_entry = Contact.objects.filter(surrogate_id=surrogate_id)
-		if len(user_entry) < 	1:
+		if len(user_entry) < 1:
 			# The user does not exist
 			return HttpResponse("No contact found.")
 		else:
-			user_entry.delete()
-			return HttpResponse("Successfully deleted emergency contact.")
+			user_pidm = Identity.objects.get(username=payload['username']).pidm
+			if user_entry[0].pidm != user_pidm:
+				return HttpResponse("No contact found", status=422)
+			else:
+				user_entry.delete()
+				return HttpResponse("Successfully deleted emergency contact.", status=200)
 
 	else:
 		# Grab the additional data from the POST request
