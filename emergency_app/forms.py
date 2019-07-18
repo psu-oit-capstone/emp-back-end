@@ -12,6 +12,11 @@ class UpdateEmergencyContactForm(forms.ModelForm):
         for field in self.Meta.required:
             self.fields[field].required = True
 
+    # example for the surrogate_id
+    surrogate_id = forms.IntegerField()
+
+    priority = forms.Charfield()
+
     class Meta:
         model = Contact
         fields = [
@@ -26,3 +31,11 @@ class UpdateEmergencyContactForm(forms.ModelForm):
                     'city', 'stat_code', 'natn_code', 'zip')
 
     def clean_phone_number(self, *args, **kwargs):
+        #validation function goes here
+        phone_area = self.cleaned_data.get("phone_area")
+        phone_num = self.cleaned_data.get("phone_num")
+        # General format
+        # if correct:
+        #   return phone number
+        # else:
+        #   raise forms.ValidationError("Invalid phone number")
