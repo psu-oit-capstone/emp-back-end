@@ -173,6 +173,16 @@ def update_emergency_contact(request, surrogate_id=None):
 				return HttpResponse("Successfully deleted emergency contact.", status=200)
 
 	else:
+		# first, decide if we are updating or creating
+		# based upon if the surrogate_id already exists
+		surrogate_id = surrogate_id = request.POST.get('surrogate_id')
+		sur_id = Contact.objects.filter(surrogate_id=surrogate_id)
+		if len(sur_id) < 1:
+			user_exists = False
+		else:
+			entry = sur_id[0] # Save it for use later
+			user_exists = True
+
 		# Perform form stuff
 		form = UpdateEmergencyContactForm(request.POST)
 		if form.is_valid():
@@ -180,14 +190,6 @@ def update_emergency_contact(request, surrogate_id=None):
 			form = UpdateEmergencyContactForm()
 		# Grab the pidm from the JWT
 		user_pidm = Identity.objects.get(username=payload['username']).pidm
-		# grab the surrogate_id
-		sur_id = Contact.objects.filter(surrogate_id=surrogate_id)
-		# Check if the query returned anything
-		if len(sur_id) < 1:
-			user_exists = False
-		else:
-			entry = sur_id[0] # Save it for use later
-			user_exists = True
 
 		# Use the user_exists flag to add to the database
 		if user_exists:
