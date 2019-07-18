@@ -23,9 +23,6 @@ Identity = identity.Identity
 Contact = contact.Contact
 Emergency = emergency.Emergency
 
-# Valid relational codes for contact database info
-valid_relational_codes = ['G', 'F', 'O', 'U', 'S', 'A', 'R']
-
 # The key name for our JWT in HTTP request headers
 JWT_Headers_Key = "HTTP_AUTHORIZATION"
 
@@ -176,61 +173,11 @@ def update_emergency_contact(request, surrogate_id=None):
 				return HttpResponse("Successfully deleted emergency contact.", status=200)
 
 	else:
-		# Grab the additional data from the POST request
-		surrogate_id = request.POST.get('surrogate_id')
-		priority = request.POST.get('priority')
-		# sanitize
-		if priority == None:
-			return HttpResponse("Missing priority.", status=422)
-
-		relt_code = request.POST.get('relt_code')
-		# sanitize
-
-		# Relational codes are defined in their own database
-		# The only valid ones are: G, F, O, U, S, A, and R
-		if relt_code not in valid_relational_codes:
-			return HttpResponse("Invalid relation.", status=422)
-
-		last_name = request.POST.get('last_name')
-		first_name = request.POST.get('first_name')
-		mi = request.POST.get('mi')
-		street_line1 = request.POST.get('street_line1')
-		#sanitize
-		if last_name == None:
-			return HttpResponse("Invalid last name.", status=422)
-		if first_name == None:
-			return HttpResponse("Invalid first name.", status=422)
-		if street_line1 == None:
-			return HttpResponse("Invalid address line 1.", status=422)
-
-		street_line2 = request.POST.get('street_line2')
-		street_line3 = request.POST.get('street_line3')
-		city = request.POST.get('city')
-		# sanitize
-		if city == None:
-			return HttpResponse("Invalid city.", status=422)
-
-		stat_code = request.POST.get('stat_code')
-		natn_code = request.POST.get('natn_code')
-		zip = request.POST.get('zip')
-		# sanitize
-		if stat_code == None:
-			return HttpResponse("Invalid state.", status=422)
-		if natn_code == None:
-			return HttpResponse("Invalid nation code.", status=422)
-		if zip == None:
-			return HttpResponse("Invalid zip.", status=422)
-
-		ctry_code_phone = request.POST.get('ctry_code_phone')
-		phone_area = request.POST.get('phone_area')
-		phone_number = request.POST.get('phone_number')
-		phone_ext = request.POST.get('phone_ext')
-
-		# SANITIZATION
-		number_to_sanitize = phone_area + phone_number
-		result = sanitization.validate_phone_num(number_to_sanitize)
-		if result == False:
-			return HttpResponse("Invalid phone number provided.", status=422) #Make sure to note 422=sanitization to front end
+		# Perform form stuff
+		form = UpdateEmergencyContactForm(request.POST)
+		if form.is_valid():
+			form.save()
+			form = UpdateEmergencyContactForm()
 		# Grab the pidm from the JWT
 		user_pidm = Identity.objects.get(username=payload['username']).pidm
 		# grab the surrogate_id
