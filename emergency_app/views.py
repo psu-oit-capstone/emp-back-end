@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from django.utils import timezone
+from .forms import UpdateEmergencyContactForm
 
 # jwt_placeholder is a temporary JWT generator and validator
 # Will be replaced by Single-Sign-On calls
@@ -171,74 +172,50 @@ def update_emergency_contact(request, surrogate_id=None):
 			else:
 				user_entry.delete()
 				return HttpResponse("Successfully deleted emergency contact.", status=200)
-
+	# End of deletion branch ==============================================================
 	else:
 		# first, decide if we are updating or creating
 		# based upon if the surrogate_id already exists
 		surrogate_id = surrogate_id = request.POST.get('surrogate_id')
 		sur_id = Contact.objects.filter(surrogate_id=surrogate_id)
 		if len(sur_id) < 1:
+			entry = None
 			user_exists = False
 		else:
-			entry = sur_id[0] # Save it for use later
+			entry = sur_id[0] # Save it for use later in form instances
 			user_exists = True
 
-		# Perform form stuff
-		form = UpdateEmergencyContactForm(request.POST)
+		# Grab the pidm from the JWT
+		jwt_pidm = Identity.objects.get(username=payload['username']).pidm
+		# Grab the pidm from the post request
+		user_pidm = request.POST.get('pidm')
+		jwt_pidm = int(jwt_pidm)
+		try:
+			user_pidm = int(user_pidm)
+		except TypeError:
+			return HttpResponse("PIDM must be an integer.", status=http_unprocessable_entity_response)
+
+		if user_pidm != jwt_pidm:
+			print("Pidm mismatch thrown")
+			print(user_pidm)
+			print(jwt_pidm)
+			return HttpResponse("Invalid pidm query.", status=http_unauthorized_response)
+
+		# NOTE: PIDM is passed in post request as well as JWT simply because we need to add PIDM to database.
+		# For uniformity, we include this in the POST request, and simply verify it as I did above to ensure the PIDM
+		# belongs to the user (via jwt)
+
+		# Perform form logic
+		form = UpdateEmergencyContactForm(request.POST, instance=entry) # If instance=None, it creates table. else, updates
 		if form.is_valid():
 			form.save()
 			form = UpdateEmergencyContactForm()
-		# Grab the pidm from the JWT
-		user_pidm = Identity.objects.get(username=payload['username']).pidm
-
-		# Use the user_exists flag to add to the database
-		if user_exists:
-			# print("user exists")
-			entry.pidm = user_pidm
-			entry.priority = priority
-			entry.relt_code = relt_code
-			entry.last_name = last_name
-			entry.first_name = first_name
-			entry.mi = mi
-			entry.street_line1 = street_line1
-			entry.street_line2 = street_line2
-			entry.street_line3 = street_line3
-			entry.city = city
-			entry.stat_code = stat_code
-			entry.natn_code = natn_code
-			entry.zip = zip
-			entry.ctry_code_phone = ctry_code_phone
-			entry.phone_area = phone_area
-			entry.phone_number = phone_number
-			entry.phone_ext = phone_ext
-			# Save after writing to database
-			entry.save()
-			return HttpResponse("Emergency Contact Updated")
+			if user_exists == True:
+				return HttpResponse("Updated successfully.")
+			else:
+				return HttpResponse("Created successfully.")
 		else:
-			# Add the user (questions regarding usage of PIDM vs Surrogate)
-			# print("Adding new user")
-			n_entry = Contact(
-						surrogate_id=surrogate_id,
-						pidm=user_pidm,
-						priority=priority,
-						relt_code=relt_code,
-						last_name=last_name,
-						first_name=first_name,
-						mi=mi,
-						street_line1=street_line1,
-						street_line2=street_line2,
-						street_line3=street_line3,
-						city=city,
-						stat_code=stat_code,
-						natn_code=natn_code,
-						zip=zip,
-						ctry_code_phone=ctry_code_phone,
-						phone_area=phone_area,
-						phone_number=phone_number,
-						phone_ext=phone_ext)
-			n_entry.save()
-
-			return HttpResponse("New user added")
+			return HttpResponse("Invalid form data.", status=http_unprocessable_entity_response)
 
 @csrf_exempt
 @require_http_methods(["POST", "GET"])
@@ -377,7 +354,6 @@ def set_emergency_notifications(request):
 
 		return HttpResponse("User info updated")
 	else:
-		print("Adding in user")
 		new_entry = Emergency(pidm=user_pidm, external_email=external_email,
 								campus_email=campus_email, primary_phone=primary_phone,
 								alternate_phone=alternate_phone, sms_status_ind=sms_status_ind,
@@ -464,7 +440,6 @@ def set_evacuation_assistance(request):
 		user_entry.save()
 		return HttpResponse("User info updated")
 	else:
-		print("Adding in user")
 		new_entry = Emergency(pidm=user_pidm, evacuation_assistance=evacuation_assistance)
 		new_entry.save()
 		return HttpResponse("User info added")
