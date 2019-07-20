@@ -185,6 +185,8 @@ def update_emergency_contact(request, surrogate_id=None):
 			entry = sur_id[0] # Save it for use later in form instances
 			user_exists = True
 
+		# The old way of doing it
+		"""
 		# Grab the pidm from the JWT
 		jwt_pidm = Identity.objects.get(username=payload['username']).pidm
 		# Grab the pidm from the post request
@@ -200,13 +202,20 @@ def update_emergency_contact(request, surrogate_id=None):
 			print(user_pidm)
 			print(jwt_pidm)
 			return HttpResponse("Invalid pidm query.", status=http_unauthorized_response)
-
 		# NOTE: PIDM is passed in post request as well as JWT simply because we need to add PIDM to database.
 		# For uniformity, we include this in the POST request, and simply verify it as I did above to ensure the PIDM
 		# belongs to the user (via jwt)
+		"""
 
-		# Perform form logic
-		form = UpdateEmergencyContactForm(request.POST, instance=entry) # If instance=None, it creates table. else, updates
+		# Grab the pidm from the JWT
+		jwt_pidm = Identity.objects.get(username=payload['username']).pidm
+
+		# Create a copy of the POST request to modify the Pidm
+		temp_body = request.POST.copy()
+		temp_body['pidm'] = jwt_pidm
+
+		# Perform form logic, passing temp_body instead of original body
+		form = UpdateEmergencyContactForm(temp_body, instance=entry) # If instance=None, it creates table. else, updates
 		if form.is_valid():
 			form.save()
 			form = UpdateEmergencyContactForm()
