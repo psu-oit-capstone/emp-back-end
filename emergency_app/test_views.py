@@ -635,6 +635,7 @@ class EmergencyContactsTests(TestCase):
 		response = c.post(set_contacts_url,
 		# create the POST Body
 		{
+			'pidm': self.pidm_for_fresh_user,
 			'surrogate_id':self.surrogate_id_of_contact,
 			'priority':self.good_emergency_priority,
 			'relt_code':self.good_emergency_relt_code,
@@ -686,6 +687,7 @@ class EmergencyContactsTests(TestCase):
 		response = c.post(set_contacts_url,
 		# create the POST Body
 		{
+			'pidm':self.pidm_for_fresh_user,
 			'surrogate_id':self.surrogate_id_of_contact,
 			'priority':self.good_emergency_priority,
 			'relt_code':self.good_emergency_relt_code,
@@ -737,6 +739,7 @@ class EmergencyContactsTests(TestCase):
 		response = c.post(set_contacts_url,
 		# create the POST Body
 		{
+			'pidm':self.pidm_without_data,
 			'surrogate_id':self.surrogate_id_of_bad_contact,
 			'relt_code':self.bad_emergency_relt_code,
 			'phone_area':self.bad_emergency_phone_area,
@@ -760,6 +763,7 @@ class EmergencyContactsTests(TestCase):
 		response = c.post(set_contacts_url,
 		# create the POST Body
 		{
+			'pidm':self.pidm_for_fresh_user,
 			'surrogate_id':self.surrogate_id_of_contact,
 			'relt_code':self.bad_emergency_relt_code,
 			'phone_area':self.bad_emergency_phone_area,
