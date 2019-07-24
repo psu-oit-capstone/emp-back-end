@@ -58,3 +58,111 @@ class UpdateEmergencyContactForm(forms.ModelForm):
             return relation_code
         else:
             raise forms.ValidationError("Invalid relation code")
+
+
+class SetEvacuationAssistanceForm(forms.ModelForm):
+    evacuation_assistance = forms.CharField(max_length=4, required=False)
+
+    class Meta:
+        model = Emergency
+        fields = [
+            'evacuation_assistance'
+        ]
+
+    def clean_evacuation_assistance(self, *args, **kwargs):
+        evacuation_assistance = self.cleaned_data.get("evacuation_assistance")
+
+        # cleaned_data.get method returns empty string instead of null value
+        if evacuation_assistance == "":
+            evacuation_assistance = None
+
+        result = sanitization.validate_checkbox(evacuation_assistance)
+
+        if result:
+            return evacuation_assistance
+        else:
+            raise forms.ValidationError("Invalid relation code")
+
+
+class SetEmergencyNotificationsForm(forms.ModelForm):
+    external_email = forms.CharField(max_length=512, required=False)
+    primary_phone = forms.CharField(max_length=72, required=False)
+    alternate_phone = forms.CharField(max_length=72, required=False)
+    sms_status_ind = forms.CharField(max_length=4, required=False)
+    sms_device = forms.CharField(max_length=72, required=False)
+
+    class Meta:
+        model = Emergency
+        fields = [
+            'external_email', 'primary_phone', 'alternate_phone', 'sms_status_ind', 'sms_device'
+        ]
+
+    def clean_external_email(self, *args, **kwargs):
+        external_email = self.cleaned_data.get("external_email")
+
+        if external_email == "":
+            # external_email = None
+            return None
+
+        result = sanitization.validate_email(external_email)
+
+        if result:
+            return external_email
+        else:
+            raise forms.ValidationError("Invalid email")
+
+    def clean_primary_phone(self, *args, **kwargs):
+        primary_phone = self.cleaned_data.get("primary_phone")
+
+        if primary_phone == "":
+            # primary_phone = None
+            return None
+
+        result = sanitization.validate_phone_num(primary_phone)
+
+        if result:
+            return primary_phone
+        else:
+            raise forms.ValidationError("Invalid phone number")
+
+    def clean_alternate_phone(self, *args, **kwargs):
+        alternate_phone = self.cleaned_data.get("alternate_phone")
+
+        if alternate_phone == "":
+            # alternate_phone = None
+            return None
+
+        result = sanitization.validate_phone_num(alternate_phone)
+
+        if result:
+            return alternate_phone
+        else:
+            raise forms.ValidationError("Invalid phone number")
+
+    def clean_sms_status_ind(self, *args, **kwargs):
+        sms_status_ind = self.cleaned_data.get("sms_status_ind")
+
+        # cleaned_data.get method returns empty string instead of null value
+        if sms_status_ind == "":
+            sms_status_ind = None
+
+        result = sanitization.validate_checkbox(sms_status_ind)
+
+        if result:
+            return sms_status_ind
+        else:
+            raise forms.ValidationError("Invalid checkbox value")
+
+    def clean_sms_device(self, *args, **kwargs):
+        sms_device = self.cleaned_data.get("sms_device")
+
+        if sms_device == "":
+            # sms_device = None
+            return None
+
+        result = sanitization.validate_phone_num(sms_device)
+
+        if result:
+            return sms_device
+        else:
+            raise forms.ValidationError("Invalid phone number")

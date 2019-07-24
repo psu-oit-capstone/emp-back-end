@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from django.utils import timezone
-from .forms import UpdateEmergencyContactForm
+from .forms import UpdateEmergencyContactForm, SetEvacuationAssistanceForm, SetEmergencyNotificationsForm
 
 # jwt_placeholder is a temporary JWT generator and validator
 # Will be replaced by Single-Sign-On calls
@@ -185,28 +185,6 @@ def update_emergency_contact(request, surrogate_id=None):
 			entry = sur_id[0] # Save it for use later in form instances
 			user_exists = True
 
-		# The old way of doing it
-		"""
-		# Grab the pidm from the JWT
-		jwt_pidm = Identity.objects.get(username=payload['username']).pidm
-		# Grab the pidm from the post request
-		user_pidm = request.POST.get('pidm')
-		jwt_pidm = int(jwt_pidm)
-		try:
-			user_pidm = int(user_pidm)
-		except TypeError:
-			return HttpResponse("PIDM must be an integer.", status=http_unprocessable_entity_response)
-
-		if user_pidm != jwt_pidm:
-			print("Pidm mismatch thrown")
-			print(user_pidm)
-			print(jwt_pidm)
-			return HttpResponse("Invalid pidm query.", status=http_unauthorized_response)
-		# NOTE: PIDM is passed in post request as well as JWT simply because we need to add PIDM to database.
-		# For uniformity, we include this in the POST request, and simply verify it as I did above to ensure the PIDM
-		# belongs to the user (via jwt)
-		"""
-
 		# Grab the pidm from the JWT
 		jwt_pidm = Identity.objects.get(username=payload['username']).pidm
 
@@ -313,6 +291,7 @@ def set_emergency_notifications(request):
 
 	# POST requests - adding data into the registry database
 
+	"""
 	# Grab all additional data - POST.get(...) returns None if front-end didn't load the POST request with it
 	# also sanitize the data, returns invalid http response if the data has invalid format
 	external_email = request.POST.get('external_email')
@@ -370,10 +349,32 @@ def set_emergency_notifications(request):
 		new_entry.save()
 
 		return HttpResponse("User info added")
+	"""
+	query = Emergency.objects.filter(pidm=user_pidm)
+	if len(query) < 1:
+		entry = None
+		user_exists = False
+	else:
+		# Might as well grab the Emergency entry here
+		entry = query[0]
+		user_exists = True
+
+	form = SetEmergencyNotificationsForm(request.POST.copy())
+	if form.is_valid():
+		hmm = form.save()
+		hmm.pidm = user_pidm
+		hmm.save()
+		if user_exists == True:
+			return HttpResponse("Updated successfully.")
+		else:
+			return HttpResponse("Created successfully.")
+	else:
+		return HttpResponse("Invalid form data.", status=http_unprocessable_entity_response)
+
 
 
 @csrf_exempt
-@require_http_methods(["POST"])
+@require_http_methods(["POST", "GET"])
 def get_evacuation_assistance(request):
 	"""
 	returns a json on success with the following data
@@ -410,7 +411,7 @@ def get_evacuation_assistance(request):
 
 
 @csrf_exempt
-@require_http_methods(["POST", "DELETE"])
+@require_http_methods(["POST"])
 def set_evacuation_assistance(request):
 	"""
 	Updates the user's evacuation assitance status on the Emergency table
@@ -428,27 +429,24 @@ def set_evacuation_assistance(request):
 	# Grab the user's pidm from Identity table
 	user_pidm = Identity.objects.get(username=payload['username']).pidm
 
-	# Grab the evacuation status data - POST.get(...) returns None if front-end didn't load the POST request with it
-	# also sanitize the data, returns invalid http response if the data has invalid format
-	evacuation_assistance = request.POST.get('evacuation_assistance')
-	if not sanitization.validate_checkbox(evacuation_assistance):
-		return HttpResponse("Invalid Checkbox Value!", status=http_unprocessable_entity_response)
-
 	# Determine if the user is already in the emergency registry
 	query = Emergency.objects.filter(pidm=user_pidm)
 	if len(query) < 1:
+		entry = None
 		user_exists = False
 	else:
 		# Might as well grab the Emergency entry here
-		user_entry = query[0]
+		entry = query[0]
 		user_exists = True
 
-	# If the user exists, update all information (any blank fields from front-end result in no data for that field here)
-	if user_exists:
-		user_entry.evacuation_assistance = evacuation_assistance
-		user_entry.save()
-		return HttpResponse("User info updated")
+	form = SetEvacuationAssistanceForm(request.POST.copy())
+	if form.is_valid():
+		hmm = form.save()
+		hmm.pidm = user_pidm
+		hmm.save()
+		if user_exists == True:
+			return HttpResponse("Updated successfully.")
+		else:
+			return HttpResponse("Created successfully.")
 	else:
-		new_entry = Emergency(pidm=user_pidm, evacuation_assistance=evacuation_assistance)
-		new_entry.save()
-		return HttpResponse("User info added")
+		return HttpResponse("Invalid form data.", status=http_unprocessable_entity_response)

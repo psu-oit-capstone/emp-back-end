@@ -374,9 +374,9 @@ class EvacuationAssistanceTests(TestCase):
 		# The user entry with no evacuation_assistance data set
 		emergency.Emergency.objects.create(pidm=self.pidm_without_data)
 
-	def test_get_evacuation_assitance(self):
+	def test_get_evacuation_assistance(self):
 		"""
-		Testing that get_evacuation_assitance returns expected values and status codes
+		Testing that get_evacuation_assistance returns expected values and status codes
 
 		One user will have evacuation assistance info and test his request (200 response code and meaningful data returned)
 		One user will have no emergency assistance info and test his request (204 response code)
@@ -418,7 +418,7 @@ class EvacuationAssistanceTests(TestCase):
 		"""Testing that back-end reports a 401 Unauthorized"""
 		self.assertEqual(response.status_code, unauthorized_code)
 
-	def test_set_evacuation_assitance(self):
+	def test_set_evacuation_assistance(self):
 		"""
 		Testing that set_emergency_notifications returns expected status codes and changes are made to the database
 
