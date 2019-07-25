@@ -72,7 +72,7 @@ def login(request):
 
 	# Attempt to grab first/last name, username, and email from the database
 	# SQL equivilent: SELECT first_name, last_name, username, email FROM Identity WHERE Identity.username = requested_username
-	user_data = Identity.objects.filter(username=requested_username).values('first_name', 'last_name', 'username', 'email')
+	user_data = Identity.objects.filter(username=requested_username).values()
 
 	# If the query returned nothing, then the username isn't in the database
 	if len(user_data) < 1:
@@ -120,9 +120,7 @@ def get_emergency_contacts(request):
 
 	payload = j.grab_token_payload(jwt)
 
-	# With a valid jwt, we can query the Identity table for the user's primary key (pidm)
-	# SELECT pidm FROM Identity WHERE Identity.username = jwt['username']
-	user_pidm = Identity.objects.get(username=payload['username']).pidm
+	user_pidm = payload['pidm']
 
 	# Now we can query the contact table for any contacts that this user has listed
 	contacts = Contact.objects.filter(pidm=user_pidm)
@@ -166,7 +164,7 @@ def update_emergency_contact(request, surrogate_id=None):
 			# The user does not exist
 			return HttpResponse("No contact found.")
 		else:
-			user_pidm = Identity.objects.get(username=payload['username']).pidm
+			user_pidm = payload['pidm']
 			if user_entry[0].pidm != user_pidm:
 				return HttpResponse("No contact found", status=422)
 			else:
@@ -186,7 +184,7 @@ def update_emergency_contact(request, surrogate_id=None):
 			user_exists = True
 
 		# Grab the pidm from the JWT
-		jwt_pidm = Identity.objects.get(username=payload['username']).pidm
+		jwt_pidm = payload['pidm']
 
 		# Create a copy of the POST request to modify the Pidm
 		temp_body = request.POST.copy()
@@ -239,9 +237,7 @@ def get_emergency_notifications(request):
 	# Grab username from the token
 	payload = j.grab_token_payload(jwt)
 
-	# With a valid jwt, we can query the Identity table for the user's primary key (pidm)
-	# SELECT pidm FROM Identity WHERE Identity.usrname = payload['username']
-	user_pidm = Identity.objects.get(username=payload['username']).pidm
+	user_pidm = payload['pidm']
 
 	# Now we query the emergency table for any info the user has listed
 	# SELECT * FROM Emergency WHERE Emergency.pidm = user_pidm
@@ -278,8 +274,7 @@ def set_emergency_notifications(request):
 
 	payload = j.grab_token_payload(jwt)
 
-	# Grab the user's pidm from Identity table
-	user_pidm = Identity.objects.get(username=payload['username']).pidm
+	user_pidm = payload['pidm']
 
 	# Delete doesn't make sense in this request
 	# DELETE request - delete this user from the database
@@ -392,9 +387,7 @@ def get_evacuation_assistance(request):
 	# Grab username from the token
 	payload = j.grab_token_payload(jwt)
 
-	# With a valid jwt, we can query the Identity table for the user's primary key (pidm)
-	# SELECT pidm FROM Identity WHERE Identity.usrname = payload['username']
-	user_pidm = Identity.objects.get(username=payload['username']).pidm
+	user_pidm = payload['pidm']
 
 	# Now we query the emergency table for any info the user has listed
 	# SELECT * FROM Emergency WHERE Emergency.pidm = user_pidm
@@ -426,8 +419,7 @@ def set_evacuation_assistance(request):
 
 	payload = j.grab_token_payload(jwt)
 
-	# Grab the user's pidm from Identity table
-	user_pidm = Identity.objects.get(username=payload['username']).pidm
+	user_pidm = payload['pidm']
 
 	# Determine if the user is already in the emergency registry
 	query = Emergency.objects.filter(pidm=user_pidm)
