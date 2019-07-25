@@ -439,11 +439,11 @@ def set_evacuation_assistance(request):
 		entry = query[0]
 		user_exists = True
 
-	form = SetEvacuationAssistanceForm(request.POST.copy())
+	form = SetEvacuationAssistanceForm(request.POST, instance=entry)
 	if form.is_valid():
-		hmm = form.save()
-		hmm.pidm = user_pidm
-		hmm.save()
+		temp = form.save(commit=False) # Commit=false so it does not save
+		temp.pidm = user_pidm
+		temp.save()
 		if user_exists == True:
 			return HttpResponse("Updated successfully.")
 		else:

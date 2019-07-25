@@ -6,7 +6,7 @@ from common.util import sanitization
 
 class UpdateEmergencyContactForm(forms.ModelForm):
     # Provide an example of the schema of the model
-    pidm = forms.IntegerField()
+    pidm = forms.IntegerField(required=False)
     surrogate_id = forms.IntegerField(required=False)
     priority = forms.CharField()
     relt_code = forms.CharField(max_length=4)
