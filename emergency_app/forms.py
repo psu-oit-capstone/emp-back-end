@@ -4,11 +4,22 @@ from django import forms
 from .models import Identity, Contact, Emergency
 from common.util import sanitization
 
+# When required field=false, clean() would normalize empty value of CharField into empty string
+# However, null value was needed to follow the sample data provided. Therefore, this function is needed to check.
+# Source: https://docs.djangoproject.com/en/2.2/ref/forms/fields/
+def is_empty_string(field):
+    # if field either empty string or empty/null value
+    if not field:
+        return True
+    else:
+        return False
+
+
 class UpdateEmergencyContactForm(forms.ModelForm):
     # Provide an example of the schema of the model
     pidm = forms.IntegerField(required=False)
     surrogate_id = forms.IntegerField(required=False)
-    priority = forms.CharField()
+    priority = forms.CharField(max_length=4)
     relt_code = forms.CharField(max_length=4)
     last_name = forms.CharField(max_length=240)
     first_name = forms.CharField(max_length=240)
@@ -71,17 +82,13 @@ class SetEvacuationAssistanceForm(forms.ModelForm):
 
     def clean_evacuation_assistance(self, *args, **kwargs):
         evacuation_assistance = self.cleaned_data.get("evacuation_assistance")
-
-        # cleaned_data.get method returns empty string instead of null value
-        if evacuation_assistance == "":
+        if is_empty_string(evacuation_assistance):
             evacuation_assistance = None
-
         result = sanitization.validate_checkbox(evacuation_assistance)
-
         if result:
             return evacuation_assistance
         else:
-            raise forms.ValidationError("Invalid relation code")
+            raise forms.ValidationError("Invalid checkbox value")
 
 
 class SetEmergencyNotificationsForm(forms.ModelForm):
@@ -99,13 +106,9 @@ class SetEmergencyNotificationsForm(forms.ModelForm):
 
     def clean_external_email(self, *args, **kwargs):
         external_email = self.cleaned_data.get("external_email")
-
-        if external_email == "":
-            # external_email = None
+        if is_empty_string(external_email):
             return None
-
         result = sanitization.validate_email(external_email)
-
         if result:
             return external_email
         else:
@@ -113,13 +116,9 @@ class SetEmergencyNotificationsForm(forms.ModelForm):
 
     def clean_primary_phone(self, *args, **kwargs):
         primary_phone = self.cleaned_data.get("primary_phone")
-
-        if primary_phone == "":
-            # primary_phone = None
+        if is_empty_string(primary_phone):
             return None
-
         result = sanitization.validate_phone_num(primary_phone)
-
         if result:
             return primary_phone
         else:
@@ -127,13 +126,9 @@ class SetEmergencyNotificationsForm(forms.ModelForm):
 
     def clean_alternate_phone(self, *args, **kwargs):
         alternate_phone = self.cleaned_data.get("alternate_phone")
-
-        if alternate_phone == "":
-            # alternate_phone = None
+        if is_empty_string(alternate_phone):
             return None
-
         result = sanitization.validate_phone_num(alternate_phone)
-
         if result:
             return alternate_phone
         else:
@@ -141,13 +136,9 @@ class SetEmergencyNotificationsForm(forms.ModelForm):
 
     def clean_sms_status_ind(self, *args, **kwargs):
         sms_status_ind = self.cleaned_data.get("sms_status_ind")
-
-        # cleaned_data.get method returns empty string instead of null value
-        if sms_status_ind == "":
+        if is_empty_string(sms_status_ind):
             sms_status_ind = None
-
         result = sanitization.validate_checkbox(sms_status_ind)
-
         if result:
             return sms_status_ind
         else:
@@ -155,13 +146,11 @@ class SetEmergencyNotificationsForm(forms.ModelForm):
 
     def clean_sms_device(self, *args, **kwargs):
         sms_device = self.cleaned_data.get("sms_device")
-
-        if sms_device == "":
-            # sms_device = None
+        sms_status_ind = self.cleaned_data.get("sms_status_ind")
+        # if the user decides to opt out, then empty the device number
+        if is_empty_string(sms_device) or sms_status_ind == "Y":
             return None
-
         result = sanitization.validate_phone_num(sms_device)
-
         if result:
             return sms_device
         else:
