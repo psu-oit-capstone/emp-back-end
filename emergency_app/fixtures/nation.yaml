@@ -3,1118 +3,1360 @@
   fields:
     id: PAF
     value: AFGHANISTAN
+    phone_code: +93
 - model: emergency_app.Nation
   pk: FAL
   fields:
     id: FAL
     value: ALBANIA
+    phone_code: +355
+- model: emergency_app.Nation
+  pk: CDZ
+  fields:
+    id: CDZ
+    value: ALGERIA
+    phone_code: +213
+- model: emergency_app.Nation
+  pk: NAS
+  fields:
+    id: NAS
+    value: AMERICAN SAMOA
+    phone_code: +1684
 - model: emergency_app.Nation
   pk: GAD
   fields:
     id: GAD
     value: ANDORRA
+    phone_code: +376
 - model: emergency_app.Nation
   pk: BAO
   fields:
     id: BAO
     value: ANGOLA
+    phone_code: +244
+- model: emergency_app.Nation
+  pk: HAI
+  fields:
+    id: HAI
+    value: ANGUILLA
+    phone_code: +1264
 - model: emergency_app.Nation
   pk: RAQ
   fields:
     id: RAQ
     value: ANTARCTICA
+    phone_code: +672
 - model: emergency_app.Nation
   pk: HAG
   fields:
     id: HAG
     value: ANTIGUA AND BARBUDA
+    phone_code: +1268
 - model: emergency_app.Nation
   pk: JAR
   fields:
     id: JAR
     value: ARGENTINA
+    phone_code: +54
 - model: emergency_app.Nation
   pk: FAM
   fields:
     id: FAM
     value: ARMENIA
+    phone_code: +374
 - model: emergency_app.Nation
   pk: HAW
   fields:
     id: HAW
     value: ARUBA
+    phone_code: +297
 - model: emergency_app.Nation
   pk: MAU
   fields:
     id: MAU
     value: AUSTRALIA
+    phone_code: +61
 - model: emergency_app.Nation
   pk: GAT
   fields:
     id: GAT
     value: AUSTRIA
+    phone_code: +43
 - model: emergency_app.Nation
   pk: FAZ
   fields:
     id: FAZ
     value: AZERBAIJAN
+    phone_code: +994
 - model: emergency_app.Nation
   pk: HBS
   fields:
     id: HBS
     value: BAHAMAS
+    phone_code: +1242
 - model: emergency_app.Nation
   pk: KBH
   fields:
     id: KBH
     value: BAHRAIN
+    phone_code: +973
 - model: emergency_app.Nation
   pk: PBD
   fields:
     id: PBD
     value: BANGLADESH
+    phone_code: +880
 - model: emergency_app.Nation
   pk: HBB
   fields:
     id: HBB
     value: BARBADOS
+    phone_code: +1246
 - model: emergency_app.Nation
   pk: FBY
   fields:
     id: FBY
     value: BELARUS
+    phone_code: +375
 - model: emergency_app.Nation
   pk: GBE
   fields:
     id: GBE
     value: BELGIUM
+    phone_code: +32
 - model: emergency_app.Nation
   pk: IBZ
   fields:
     id: IBZ
     value: BELIZE
+    phone_code: +501
 - model: emergency_app.Nation
   pk: EBJ
   fields:
     id: EBJ
     value: BENIN
+    phone_code: +229
 - model: emergency_app.Nation
   pk: LBM
   fields:
     id: LBM
     value: BERMUDA
+    phone_code: +1441
 - model: emergency_app.Nation
   pk: PBT
   fields:
     id: PBT
     value: BHUTAN
+    phone_code: +975
 - model: emergency_app.Nation
   pk: JBO
   fields:
     id: JBO
     value: BOLIVIA
+    phone_code: +591
 - model: emergency_app.Nation
   pk: FBA
   fields:
     id: FBA
     value: BOSNIA-HERZEGOVINA
+    phone_code: +387
 - model: emergency_app.Nation
   pk: DBW
   fields:
     id: DBW
     value: BOTSWANA
+    phone_code: +267
 - model: emergency_app.Nation
   pk: JBR
   fields:
     id: JBR
     value: BRAZIL
+    phone_code: +55
 - model: emergency_app.Nation
   pk: BVI
   fields:
     id: BVI
     value: BRITISH VIRGIN ISLANDS
+    phone_code: +1284
 - model: emergency_app.Nation
   pk: QBN
   fields:
     id: QBN
     value: BRUNEI DARRUSALAM
+    phone_code: +673
 - model: emergency_app.Nation
   pk: FBG
   fields:
     id: FBG
     value: BULGARIA
+    phone_code: +359
 - model: emergency_app.Nation
   pk: EBF
   fields:
     id: EBF
     value: BURKINA FASO
+    phone_code: +226
 - model: emergency_app.Nation
   pk: ABI
   fields:
     id: ABI
     value: BURUNDI
+    phone_code: +257
 - model: emergency_app.Nation
   pk: QKH
   fields:
     id: QKH
     value: CAMBODIA
+    phone_code: +855
 - model: emergency_app.Nation
   pk: BCM
   fields:
     id: BCM
     value: CAMEROON
+    phone_code: +237
 - model: emergency_app.Nation
   pk: LCA
   fields:
     id: LCA
     value: CANADA
+    phone_code: +1
 - model: emergency_app.Nation
   pk: ECV
   fields:
     id: ECV
     value: CAPE VERDE
+    phone_code: +238
 - model: emergency_app.Nation
   pk: HKY
   fields:
     id: HKY
     value: CAYMAN ISLANDS
+    phone_code: +1345
 - model: emergency_app.Nation
   pk: BCF
   fields:
     id: BCF
     value: CENTRAL AFRICAN REPUBLIC
+    phone_code: +236
 - model: emergency_app.Nation
   pk: BTD
   fields:
     id: BTD
     value: CHAD
+    phone_code: +235
 - model: emergency_app.Nation
   pk: JCL
   fields:
     id: JCL
     value: CHILE
+    phone_code: +56
 - model: emergency_app.Nation
   pk: OCN
   fields:
     id: OCN
     value: CHINA
+    phone_code: +86
 - model: emergency_app.Nation
   pk: MCC
   fields:
     id: MCC
     value: COCOS (KEELING) ISLANDS
+    phone_code: +61
 - model: emergency_app.Nation
   pk: JCO
   fields:
     id: JCO
     value: COLOMBIA
+    phone_code: +57
 - model: emergency_app.Nation
   pk: AKM
   fields:
     id: AKM
     value: COMOROS
+    phone_code: +269
 - model: emergency_app.Nation
   pk: ICR
   fields:
     id: ICR
     value: COSTA RICA
+    phone_code: +506
 - model: emergency_app.Nation
   pk: ECI
   fields:
     id: ECI
     value: COTE D'IVOIRE
+    phone_code: +225
 - model: emergency_app.Nation
   pk: FHR
   fields:
     id: FHR
     value: CROATIA
+    phone_code: +385
 - model: emergency_app.Nation
   pk: HCU
   fields:
     id: HCU
     value: CUBA
+    phone_code: +53
 - model: emergency_app.Nation
   pk: KCY
   fields:
     id: KCY
     value: CYPRUS
+    phone_code: +357
 - model: emergency_app.Nation
   pk: FCZ
   fields:
     id: FCZ
     value: CZECH REPUBLIC
+    phone_code: +420
 - model: emergency_app.Nation
   pk: MCX
   fields:
     id: MCX
     value: Christmas Island
+    phone_code: +61
 - model: emergency_app.Nation
   pk: NCK
   fields:
     id: NCK
     value: Cook Island
+    phone_code: +682
 - model: emergency_app.Nation
   pk: BCD
   fields:
     id: BCD
     value: DEMOCRATIC REPUBLIC OF CONGO
+    phone_code: +243
 - model: emergency_app.Nation
   pk: GDK
   fields:
     id: GDK
     value: DENMARK
+    phone_code: +45
 - model: emergency_app.Nation
   pk: ADJ
   fields:
     id: ADJ
     value: DJIBOUTI
+    phone_code: +253
 - model: emergency_app.Nation
   pk: HDM
   fields:
     id: HDM
     value: DOMINICA
+    phone_code: +1767
 - model: emergency_app.Nation
   pk: HDO
   fields:
     id: HDO
     value: DOMINICAN REPUBLIC
+    phone_code: +1809
 - model: emergency_app.Nation
   pk: QTP
   fields:
     id: QTP
     value: EAST TIMOR
+    phone_code: +670
 - model: emergency_app.Nation
   pk: JEC
   fields:
     id: JEC
     value: ECUADOR
+    phone_code: +593
 - model: emergency_app.Nation
   pk: CEG
   fields:
     id: CEG
     value: EGYPT
+    phone_code: +20
 - model: emergency_app.Nation
   pk: ISV
   fields:
     id: ISV
     value: EL SALVADOR
+    phone_code: +503
 - model: emergency_app.Nation
   pk: BGQ
   fields:
     id: BGQ
     value: EQUATORIAL GUINEA
+    phone_code: +240
 - model: emergency_app.Nation
   pk: AER
   fields:
     id: AER
     value: ERITREA
+    phone_code: +291
 - model: emergency_app.Nation
   pk: FEE
   fields:
     id: FEE
     value: ESTONIA
+    phone_code: +372
 - model: emergency_app.Nation
   pk: AET
   fields:
     id: AET
     value: ETHIOPIA
+    phone_code: +251
 - model: emergency_app.Nation
   pk: JFK
   fields:
     id: JFK
     value: FALKLAND ISLANDS
+    phone_code: +500
 - model: emergency_app.Nation
   pk: GFO
   fields:
     id: GFO
     value: FAROE ISLANDS
+    phone_code: +298
 - model: emergency_app.Nation
   pk: NFJ
   fields:
     id: NFJ
     value: FIJI
+    phone_code: +679
 - model: emergency_app.Nation
   pk: GFI
   fields:
     id: GFI
     value: FINLAND
+    phone_code: +358
 - model: emergency_app.Nation
   pk: GFR
   fields:
     id: GFR
     value: FRANCE
+    phone_code: +33
 - model: emergency_app.Nation
   pk: JGF
   fields:
     id: JGF
     value: FRENCH GUIANA
+    phone_code: +594
 - model: emergency_app.Nation
   pk: NPF
   fields:
     id: NPF
     value: FRENCH POLYNESIA
+    phone_code: +689
 - model: emergency_app.Nation
   pk: BGA
   fields:
     id: BGA
     value: GABON
+    phone_code: +241
 - model: emergency_app.Nation
   pk: EGM
   fields:
     id: EGM
     value: GAMBIA
+    phone_code: +220
 - model: emergency_app.Nation
   pk: FGE
   fields:
     id: FGE
     value: GEORGIA
+    phone_code: +995
 - model: emergency_app.Nation
   pk: GDE
   fields:
     id: GDE
     value: GERMANY
+    phone_code: +49
 - model: emergency_app.Nation
   pk: EGH
   fields:
     id: EGH
     value: GHANA
+    phone_code: +233
 - model: emergency_app.Nation
   pk: GGI
   fields:
     id: GGI
     value: GIBRALTAR
+    phone_code: +350
 - model: emergency_app.Nation
   pk: GGR
   fields:
     id: GGR
     value: GREECE
+    phone_code: +30
 - model: emergency_app.Nation
   pk: SGL
   fields:
     id: SGL
     value: GREENLAND
+    phone_code: +299
 - model: emergency_app.Nation
   pk: HGD
   fields:
     id: HGD
     value: GRENADA
+    phone_code: +1473
 - model: emergency_app.Nation
   pk: HGP
   fields:
     id: HGP
     value: GUADELOUPE
+    phone_code: +1671
 - model: emergency_app.Nation
   pk: IGT
   fields:
     id: IGT
     value: GUATEMALA
+    phone_code: +502
 - model: emergency_app.Nation
   pk: GGY
   fields:
     id: GGY
     value: GUERNSEY
+    phone_code: +441481
 - model: emergency_app.Nation
   pk: EGN
   fields:
     id: EGN
     value: GUINEA
+    phone_code: +224
 - model: emergency_app.Nation
   pk: EGW
   fields:
     id: EGW
     value: GUINEA-BISSAU
+    phone_code: +245
 - model: emergency_app.Nation
   pk: JGY
   fields:
     id: JGY
     value: GUYANA
+    phone_code: +592
 - model: emergency_app.Nation
   pk: HHT
   fields:
     id: HHT
     value: HAITI
+    phone_code: +509
 - model: emergency_app.Nation
   pk: IHN
   fields:
     id: IHN
     value: HONDURAS
+    phone_code: +504
 - model: emergency_app.Nation
   pk: OHK
   fields:
     id: OHK
     value: HONG KONG
+    phone_code: +852
 - model: emergency_app.Nation
   pk: FHU
   fields:
     id: FHU
     value: HUNGARY
+    phone_code: +36
 - model: emergency_app.Nation
   pk: GIS
   fields:
     id: GIS
     value: ICELAND
+    phone_code: +354
 - model: emergency_app.Nation
   pk: PIN
   fields:
     id: PIN
     value: INDIA
+    phone_code: +91
 - model: emergency_app.Nation
   pk: QID
   fields:
     id: QID
     value: INDONESIA
+    phone_code: +62
 - model: emergency_app.Nation
   pk: KIR
   fields:
     id: KIR
     value: IRAN
+    phone_code: +98
 - model: emergency_app.Nation
   pk: KIQ
   fields:
     id: KIQ
     value: IRAQ
+    phone_code: +964
 - model: emergency_app.Nation
   pk: GIE
   fields:
     id: GIE
     value: IRELAND
+    phone_code: +353
 - model: emergency_app.Nation
   pk: KIL
   fields:
     id: KIL
     value: ISRAEL
+    phone_code: +972
 - model: emergency_app.Nation
   pk: GIT
   fields:
     id: GIT
     value: ITALY
+    phone_code: +39
 - model: emergency_app.Nation
   pk: HJM
   fields:
     id: HJM
     value: JAMAICA
+    phone_code: +1876
 - model: emergency_app.Nation
   pk: OJP
   fields:
     id: OJP
     value: JAPAN
+    phone_code: +81
 - model: emergency_app.Nation
   pk: KJO
   fields:
     id: KJO
     value: JORDAN
+    phone_code: +962
 - model: emergency_app.Nation
   pk: FKK
   fields:
     id: FKK
     value: KAZAKHSTAN
+    phone_code: +7
 - model: emergency_app.Nation
   pk: AKE
   fields:
     id: AKE
     value: KENYA
+    phone_code: +254
 - model: emergency_app.Nation
   pk: NKI
   fields:
     id: NKI
     value: KIRIBATI
+    phone_code: +686
 - model: emergency_app.Nation
   pk: KSV
   fields:
     id: KSV
     value: KOSOVO
+    phone_code: +383
 - model: emergency_app.Nation
   pk: KKW
   fields:
     id: KKW
     value: KUWAIT
+    phone_code: +965
 - model: emergency_app.Nation
   pk: FKG
   fields:
     id: FKG
     value: KYRGYZSTAN
+    phone_code: +996
 - model: emergency_app.Nation
   pk: QLA
   fields:
     id: QLA
     value: LAOS
+    phone_code: +856
 - model: emergency_app.Nation
   pk: FLA
   fields:
     id: FLA
     value: LATVIA
+    phone_code: +371
 - model: emergency_app.Nation
   pk: KLB
   fields:
     id: KLB
     value: LEBANON
+    phone_code: +961
 - model: emergency_app.Nation
   pk: DLS
   fields:
     id: DLS
     value: LESOTHO
+    phone_code: +266
 - model: emergency_app.Nation
   pk: ELR
   fields:
     id: ELR
     value: LIBERIA
+    phone_code: +231
 - model: emergency_app.Nation
   pk: CLV
   fields:
     id: CLY
     value: LIBYA
+    phone_code: +218
 - model: emergency_app.Nation
   pk: GLI
   fields:
     id: GLI
     value: LIECHTENSTEIN
+    phone_code: +423
 - model: emergency_app.Nation
   pk: FLT
   fields:
     id: FLT
     value: LITHUANIA
+    phone_code: +370
 - model: emergency_app.Nation
   pk: GLU
   fields:
     id: GLU
     value: LUXEMBOURG
+    phone_code: +352
 - model: emergency_app.Nation
   pk: OMO
   fields:
     id: OMO
     value: MACAU
+    phone_code: +853
 - model: emergency_app.Nation
   pk: FMK
   fields:
     id: FMK
     value: MACEDONIA
+    phone_code: +389
 - model: emergency_app.Nation
   pk: AMG
   fields:
     id: AMG
     value: MADAGASCAR
+    phone_code: +261
 - model: emergency_app.Nation
   pk: AMW
   fields:
     id: AMW
     value: MALAWI
+    phone_code: +265
 - model: emergency_app.Nation
   pk: QMY
   fields:
     id: QMY
     value: MALAYSIA
+    phone_code: +60
 - model: emergency_app.Nation
   pk: PMV
   fields:
     id: PMV
     value: MALDIVES
+    phone_code: +960
 - model: emergency_app.Nation
   pk: EML
   fields:
     id: EML
     value: MALI
+    phone_code: +223
 - model: emergency_app.Nation
   pk: GMT
   fields:
     id: GMT
     value: MALTA
+    phone_code: +356
 - model: emergency_app.Nation
   pk: NMH
   fields:
     id: NMH
     value: MARSHALL ISLANDS
+    phone_code: +692
 - model: emergency_app.Nation
   pk: HMQ
   fields:
     id: HMQ
     value: MARTINIQUE
+    phone_code: +596
 - model: emergency_app.Nation
   pk: EMR
   fields:
     id: EMR
     value: MAURITANIA
+    phone_code: +222
 - model: emergency_app.Nation
   pk: AMU
   fields:
     id: AMU
     value: MAURITIUS
+    phone_code: +230
 - model: emergency_app.Nation
   pk: IMX
   fields:
     id: IMX
     value: MEXICO
+    phone_code: +52
 - model: emergency_app.Nation
   pk: NFM
   fields:
     id: NFM
     value: MICRONESIA
+    phone_code: +691
 - model: emergency_app.Nation
   pk: FMD
   fields:
     id: FMD
     value: MOLDOVA
+    phone_code: +373
 - model: emergency_app.Nation
   pk: GMC
   fields:
     id: GMC
     value: MONACO
+    phone_code: +377
 - model: emergency_app.Nation
   pk: OMN
   fields:
     id: OMN
     value: MONGOLIA
+    phone_code: +976
 - model: emergency_app.Nation
   pk: MNE
   fields:
     id: MNE
     value: MONTENEGRO
+    phone_code: +382
 - model: emergency_app.Nation
   pk: CMA
   fields:
     id: CMA
     value: MOROCCO
+    phone_code: +1664
 - model: emergency_app.Nation
   pk: AMZ
   fields:
     id: AMZ
     value: MOZAMBIQUE
+    phone_code: +258
 - model: emergency_app.Nation
   pk: QBU
   fields:
     id: QBU
     value: MYANMAR
+    phone_code: +95
 - model: emergency_app.Nation
   pk: DNA
   fields:
     id: DNA
     value: NAMIBIA
+    phone_code: +264
 - model: emergency_app.Nation
   pk: NNR
   fields:
     id: NNR
     value: NAURU
+    phone_code: +674
 - model: emergency_app.Nation
   pk: PNP
   fields:
     id: PNP
     value: NEPAL
+    phone_code: +977
 - model: emergency_app.Nation
   pk: GNL
   fields:
     id: GNL
     value: NETHERLANDS
+    phone_code: +31
 - model: emergency_app.Nation
   pk: HAN
   fields:
     id: HAN
     value: NETHERLANDS ANTILLES
+    phone_code: +599
 - model: emergency_app.Nation
   pk: NNC
   fields:
     id: NNC
     value: NEW CALEDONIA
+    phone_code: +687
 - model: emergency_app.Nation
   pk: MNZ
   fields:
     id: MNZ
     value: NEW ZEALAND
+    phone_code: +64
 - model: emergency_app.Nation
   pk: INI
   fields:
     id: INI
     value: NICARAGUA
+    phone_code: +505
 - model: emergency_app.Nation
   pk: ENE
   fields:
     id: ENE
     value: NIGER
+    phone_code: +227
 - model: emergency_app.Nation
   pk: ENG
   fields:
     id: ENG
     value: NIGERIA
+    phone_code: +234
 - model: emergency_app.Nation
   pk: OKP
   fields:
     id: OKP
     value: NORTH KOREA
+    phone_code: +850
 - model: emergency_app.Nation
   pk: GNO
   fields:
     id: GNO
     value: NORWAY
+    phone_code: +47
 - model: emergency_app.Nation
   pk: KOM
   fields:
     id: KOM
     value: OMAN
+    phone_code: +968
 - model: emergency_app.Nation
   pk: PPK
   fields:
     id: PPK
     value: PAKISTAN
+    phone_code: +92
 - model: emergency_app.Nation
   pk: NPW
   fields:
     id: NPW
     value: PALAU
+    phone_code: +680
 - model: emergency_app.Nation
   pk: KGZ
   fields:
     id: KGZ
     value: PALESTINIAN TERR - GAZA STRIP
+    phone_code: +970
 - model: emergency_app.Nation
   pk: KWB
   fields:
     id: KWB
     value: PALESTINIAN TERR - WEST BANK
+    phone_code: +970
 - model: emergency_app.Nation
   pk: KPS
   fields:
     id: KPS
     value: PALESTINIAN TERRITORY
+    phone_code: +970
 - model: emergency_app.Nation
   pk: IPA
   fields:
     id: IPA
     value: PANAMA
+    phone_code: +507
 - model: emergency_app.Nation
   pk: NPG
   fields:
     id: NPG
     value: PAPUA NEW GUINEA
+    phone_code: +675
 - model: emergency_app.Nation
   pk: JPY
   fields:
     id: JPY
     value: PARAGUAY
+    phone_code: +595
 - model: emergency_app.Nation
   pk: JPE
   fields:
     id: JPE
     value: PERU
+    phone_code: +51
 - model: emergency_app.Nation
   pk: QPH
   fields:
     id: QPH
     value: PHILIPPINES
+    phone_code: +63
 - model: emergency_app.Nation
   pk: FPL
   fields:
     id: FPL
     value: POLAND
+    phone_code: +48
 - model: emergency_app.Nation
   pk: GPT
   fields:
     id: GPT
     value: PORTUGAL
+    phone_code: +351
 - model: emergency_app.Nation
   pk: HPR
   fields:
     id: HPR
     value: PUERTO RICO
+    phone_code: +1787
 - model: emergency_app.Nation
   pk: KQA
   fields:
     id: KQA
     value: QATAR
+    phone_code: +974
 - model: emergency_app.Nation
   pk: BCG
   fields:
     id: BCG
     value: REPUBLIC OF THE CONGO
+    phone_code: +242
 - model: emergency_app.Nation
   pk: ARE
   fields:
     id: ARE
     value: REUNION
+    phone_code: +262
 - model: emergency_app.Nation
   pk: FRO
   fields:
     id: FRO
     value: ROMANIA
+    phone_code: +40
 - model: emergency_app.Nation
   pk: FRU
   fields:
     id: FRU
     value: RUSSIA
+    phone_code: +7
 - model: emergency_app.Nation
   pk: ARW
   fields:
     id: ARW
     value: RWANDA
+    phone_code: +250
 - model: emergency_app.Nation
   pk: ESH
   fields:
     id: ESH
     value: SAINT HELENA
+    phone_code: +290
 - model: emergency_app.Nation
   pk: HKN
   fields:
     id: HKN
     value: SAINT KITTS AND NEVIS
+    phone_code: +1869
 - model: emergency_app.Nation
   pk: HLC
   fields:
     id: HLC
     value: SAINT LUCIA
+    phone_code: +1758
 - model: emergency_app.Nation
   pk: HPM
   fields:
     id: HPM
     value: SAINT PIERRE AND MIQUELON
+    phone_code: +508
 - model: emergency_app.Nation
   pk: HVC
   fields:
     id: HVC
     value: SAINT VINCENT & THE GRENADINES
+    phone_code: +1784
 - model: emergency_app.Nation
   pk: NWS
   fields:
     id: NWS
     value: SAMOA
+    phone_code: +685
 - model: emergency_app.Nation
   pk: GSM
   fields:
     id: GSM
     value: SAN MARINO
+    phone_code: +378
 - model: emergency_app.Nation
   pk: STP
   fields:
     id: STP
     value: SAO TOME AND PRINCIPE
+    phone_code: +239
 - model: emergency_app.Nation
   pk: KSA
   fields:
     id: KSA
     value: SAUDI ARABIA
+    phone_code: +966
 - model: emergency_app.Nation
   pk: ESN
   fields:
     id: ESN
     value: SENEGAL
+    phone_code: +221
 - model: emergency_app.Nation
   pk: SRB
   fields:
     id: SRB
     value: SERBIA
+    phone_code: +381
 - model: emergency_app.Nation
   pk: ASC
   fields:
     id: ASC
     value: SEYCHELLES
+    phone_code: +248
 - model: emergency_app.Nation
   pk: ESL
   fields:
     id: ESL
     value: SIERRA LEONE
+    phone_code: +232
 - model: emergency_app.Nation
   pk: QSG
   fields:
     id: QSG
     value: SINGAPORE
+    phone_code: +65
 - model: emergency_app.Nation
   pk: FSK
   fields:
     id: FSK
     value: SLOVAKIA
+    phone_code: +421
 - model: emergency_app.Nation
   pk: FSI
   fields:
     id: FSI
     value: SLOVENIA
+    phone_code: +386
 - model: emergency_app.Nation
   pk: NSB
   fields:
     id: NSB
     value: SOLOMON ISLANDS
+    phone_code: +677
 - model: emergency_app.Nation
   pk: ASO
   fields:
     id: ASO
     value: SOMALIA
+    phone_code: +252
 - model: emergency_app.Nation
   pk: DZA
   fields:
     id: DZA
     value: SOUTH AFRICA
+    phone_code: +27
 - model: emergency_app.Nation
   pk: OKR
   fields:
     id: OKR
     value: SOUTH KOREA
+    phone_code: +82
 - model: emergency_app.Nation
   pk: SSD
   fields:
     id: SSD
     value: SOUTH SUDAN
+    phone_code: +211
 - model: emergency_app.Nation
   pk: GES
   fields:
     id: GES
     value: SPAIN
+    phone_code: +34
 - model: emergency_app.Nation
   pk: PLK
   fields:
     id: PLK
     value: SRI LANKA
+    phone_code: +94
 - model: emergency_app.Nation
   pk: CSD
   fields:
     id: CSD
     value: SUDAN
+    phone_code: +249
 - model: emergency_app.Nation
   pk: JSR
   fields:
     id: JSR
     value: SURINAME
+    phone_code: +597
 - model: emergency_app.Nation
   pk: DSZ
   fields:
     id: DSZ
     value: SWAZILAND
+    phone_code: +268
 - model: emergency_app.Nation
   pk: GSE
   fields:
     id: GSE
     value: SWEDEN
+    phone_code: +46
 - model: emergency_app.Nation
   pk: GCH
   fields:
     id: GCH
     value: SWITZERLAND
+    phone_code: +41
 - model: emergency_app.Nation
   pk: KSY
   fields:
     id: KSY
     value: SYRIA
+    phone_code: +963
 - model: emergency_app.Nation
   pk: OTW
   fields:
     id: OTW
     value: TAIWAN
+    phone_code: +886
 - model: emergency_app.Nation
   pk: FTJ
   fields:
     id: FTJ
     value: TAJIKISTAN
+    phone_code: +992
 - model: emergency_app.Nation
   pk: ATZ
   fields:
     id: ATZ
     value: TANZANIA
+    phone_code: +255
 - model: emergency_app.Nation
   pk: QTH
   fields:
     id: QTH
     value: THAILAND
+    phone_code: +66
 - model: emergency_app.Nation
   pk: ETG
   fields:
     id: ETG
     value: TOGO
+    phone_code: +228
 - model: emergency_app.Nation
   pk: NTO
   fields:
     id: NTO
     value: TONGA
+    phone_code: +690
 - model: emergency_app.Nation
   pk: HTT
   fields:
     id: HTT
     value: TRINIDAD AND TOBAGO
+    phone_code: +1868
 - model: emergency_app.Nation
   pk: CTN
   fields:
     id: CTN
     value: TUNISIA
+    phone_code: +216
 - model: emergency_app.Nation
   pk: KTR
   fields:
     id: KTR
     value: TURKEY
+    phone_code: +90
 - model: emergency_app.Nation
   pk: FTM
   fields:
     id: FTM
     value: TURKMENISTAN
+    phone_code: +993
 - model: emergency_app.Nation
   pk: HTC
   fields:
     id: HTC
     value: TURKS AND CAICOS ISLANDS
+    phone_code: +1649
 - model: emergency_app.Nation
   pk: NTV
   fields:
     id: NTV
     value: TUVALU
+    phone_code: +688
 - model: emergency_app.Nation
   pk: AUG
   fields:
     id: AUG
     value: UGANDA
+    phone_code: +256
 - model: emergency_app.Nation
   pk: FUA
   fields:
     id: FUA
     value: UKRAINE
+    phone_code: +380
 - model: emergency_app.Nation
   pk: KAE
   fields:
     id: KAE
     value: UNITED ARAB EMIRATES
+    phone_code: +971
 - model: emergency_app.Nation
   pk: GGB
   fields:
     id: GGB
     value: UNITED KINGDOM
+    phone_code: +44
 - model: emergency_app.Nation
   pk: JUY
   fields:
     id: JUY
     value: URUGUAY
+    phone_code: +598
 - model: emergency_app.Nation
   pk: LUS
   fields:
     id: LUS
     value: USA
+    phone_code: +1
 - model: emergency_app.Nation
   pk: FUZ
   fields:
     id: FUZ
     value: UZBEKISTAN
+    phone_code: +998
 - model: emergency_app.Nation
   pk: GVA
   fields:
     id: GVA
     value: VATICAN CITY
+    phone_code: +379
 - model: emergency_app.Nation
   pk: JVE
   fields:
     id: JVE
     value: VENEZUELA
+    phone_code: +58
 - model: emergency_app.Nation
   pk: QVN
   fields:
     id: QVN
     value: VIETNAM
+    phone_code: +84
 - model: emergency_app.Nation
   pk: NWF
   fields:
     id: NWF
     value: WALLIS AND FUTUNA
+    phone_code: +687
 - model: emergency_app.Nation
   pk: KYE
   fields:
     id: KYE
     value: YEMEN
+    phone_code: +967
 - model: emergency_app.Nation
   pk: AZM
   fields:
     id: AZM
     value: ZAMBIA
+    phone_code: +260
 - model: emergency_app.Nation
   pk: AZW
   fields:
     id: AZW
     value: ZIMBABWE
+    phone_code: +263
