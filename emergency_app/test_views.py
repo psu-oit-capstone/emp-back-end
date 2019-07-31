@@ -548,7 +548,7 @@ class EmergencyContactsTests(TestCase):
 		self.good_emergency_street_line2 = ""
 		self.good_emergency_street_line3 = ""
 		self.good_emergency_city = "Portland"
-		self.good_emergency_stat_code = "OW"
+		self.good_emergency_stat_code = "OR"
 		self.good_emergency_natn_code = "LUS"
 		self.good_emergency_zip = "97230"
 		self.good_emergency_ctry_code_phone = "01"
