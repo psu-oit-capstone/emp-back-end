@@ -1,6 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from emergency_app.models import identity, contact, emergency
+from django.db.models import F
+# alternatively, from emergency_app.models.identity import Identity
+from .models.identity import Identity
+from .models.contact import Contact
+from .models.emergency import Emergency
+from .models.nation import Nation
+from .models.state import State
 #TODO - crsf_exempt is only needed when testing on http - REMOVE WHEN DONE TESTING
 from django.views.decorators.csrf import csrf_exempt
 #require_http_methods allows us to force POST rather then GET
@@ -18,11 +24,6 @@ from common.util import sanitization
 http_no_content_response = 204 # Request was valid and authorized, but no content found
 http_unauthorized_response = 401 # Request is either missing JWT or provided invalid JWT
 http_unprocessable_entity_response = 422 # Request was formatted properly, but had invalid data (e.g. invalid email)
-
-# Database models
-Identity = identity.Identity
-Contact = contact.Contact
-Emergency = emergency.Emergency
 
 # The key name for our JWT in HTTP request headers
 JWT_Headers_Key = "HTTP_AUTHORIZATION"
@@ -157,7 +158,6 @@ def update_emergency_contact(request, surrogate_id=None):
 	# First, we extract the checkbox data and determine if we need to branch
 	if request.method == "DELETE":
 		if surrogate_id == None:
-			print("surrogate_id can't be none!")
 			return HttpResponse("No Surrogate ID given!", status=422)
 		user_entry = Contact.objects.filter(surrogate_id=surrogate_id)
 		if len(user_entry) < 1:
@@ -166,22 +166,28 @@ def update_emergency_contact(request, surrogate_id=None):
 		else:
 			user_pidm = payload['pidm']
 			if user_entry[0].pidm != user_pidm:
-				return HttpResponse("No contact found", status=422)
+				return HttpResponse("No contact found", status=http_unprocessable_entity_response)
 			else:
+				Contact.objects.filter(priority__gte=user_entry[0].priority).update(priority=F('priority') - 1)
 				user_entry.delete()
 				return HttpResponse("Successfully deleted emergency contact.", status=200)
 	# End of deletion branch ==============================================================
 	else:
 		# first, decide if we are updating or creating
 		# based upon if the surrogate_id already exists
-		surrogate_id = surrogate_id = request.POST.get('surrogate_id')
+		surrogate_id = request.POST.get('surrogate_id')
+		#if surrogate_id:
 		sur_id = Contact.objects.filter(surrogate_id=surrogate_id)
 		if len(sur_id) < 1:
 			entry = None
-			user_exists = False
+			contact_exists = False
+				#return HttpResponse("Invalid surrogate id", status=http_unprocessable_entity_response)
 		else:
 			entry = sur_id[0] # Save it for use later in form instances
-			user_exists = True
+			contact_exists = True
+		#else:
+			# entry = None
+			# contact_exists = False
 
 		# Grab the pidm from the JWT
 		jwt_pidm = payload['pidm']
@@ -190,17 +196,17 @@ def update_emergency_contact(request, surrogate_id=None):
 		temp_body = request.POST.copy()
 		temp_body['pidm'] = jwt_pidm
 
-		# Perform form logic, passing temp_body instead of original body
 		form = UpdateEmergencyContactForm(temp_body, instance=entry) # If instance=None, it creates table. else, updates
 		if form.is_valid():
-			form.save()
-			form = UpdateEmergencyContactForm()
-			if user_exists == True:
+			entry = form.save(commit=False)
+			Contact.objects.filter(priority__gte=entry.priority).update(priority=F('priority') + 1)
+			entry.save()
+			if contact_exists == True:
 				return HttpResponse("Updated successfully.")
 			else:
 				return HttpResponse("Created successfully.")
 		else:
-			return HttpResponse("Invalid form data.", status=http_unprocessable_entity_response)
+			return HttpResponse("errors:" + str(form.errors), status=http_unprocessable_entity_response)
 
 @csrf_exempt
 @require_http_methods(["POST", "GET"])
@@ -275,6 +281,7 @@ def set_emergency_notifications(request):
 	payload = j.grab_token_payload(jwt)
 
 	user_pidm = payload['pidm']
+	user_email = payload['email']
 
 	# Determine if the user is already in the emergency registry
 	query = Emergency.objects.filter(pidm=user_pidm)
@@ -294,6 +301,7 @@ def set_emergency_notifications(request):
 		else:
 			new_entry = form.save(commit=False)
 			new_entry.pidm = user_pidm
+			new_entry.campus_email = user_email
 			new_entry.save()
 			return HttpResponse("Created successfully.")
 	else:
@@ -352,6 +360,7 @@ def set_evacuation_assistance(request):
 	payload = j.grab_token_payload(jwt)
 
 	user_pidm = payload['pidm']
+	user_email = payload['email']
 
 	# Determine if the user is already in the emergency registry
 	query = Emergency.objects.filter(pidm=user_pidm)
@@ -371,7 +380,33 @@ def set_evacuation_assistance(request):
 		else:
 			new_entry = form.save(commit=False)
 			new_entry.pidm = user_pidm
+			new_entry.campus_email = user_email
 			new_entry.save()
 			return HttpResponse("Created successfully.")
 	else:
-		return HttpResponse({ form: 'form' }, status=http_unprocessable_entity_response)
+		return HttpResponse(str(form.errors), status=http_unprocessable_entity_response)
+
+@csrf_exempt
+@require_http_methods(["POST", "GET"])
+def get_nation_codes(request):
+	# skip jwt authentication
+	nations = Nation.objects.all()
+
+	if len(nations) < 1:
+		return HttpResponse("No nations found", status=http_no_content_response)
+
+	nation_list = list(nations.values())
+	return JsonResponse(nation_list, safe=False)
+
+
+@csrf_exempt
+@require_http_methods(["POST", "GET"])
+def get_state_codes(request):
+	# skip jwt authentication
+	states = State.objects.all()
+
+	if len(states) < 1:
+		return HttpResponse("No states found", status=http_no_content_response)
+
+	state_list = list(states.values())
+	return JsonResponse(state_list, safe=False)

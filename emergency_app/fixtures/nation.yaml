@@ -1,0 +1,1120 @@
+- model: emergency_app.Nation
+  pk: PAF
+  fields:
+    id: PAF
+    value: AFGHANISTAN
+- model: emergency_app.Nation
+  pk: FAL
+  fields:
+    id: FAL
+    value: ALBANIA
+- model: emergency_app.Nation
+  pk: GAD
+  fields:
+    id: GAD
+    value: ANDORRA
+- model: emergency_app.Nation
+  pk: BAO
+  fields:
+    id: BAO
+    value: ANGOLA
+- model: emergency_app.Nation
+  pk: RAQ
+  fields:
+    id: RAQ
+    value: ANTARCTICA
+- model: emergency_app.Nation
+  pk: HAG
+  fields:
+    id: HAG
+    value: ANTIGUA AND BARBUDA
+- model: emergency_app.Nation
+  pk: JAR
+  fields:
+    id: JAR
+    value: ARGENTINA
+- model: emergency_app.Nation
+  pk: FAM
+  fields:
+    id: FAM
+    value: ARMENIA
+- model: emergency_app.Nation
+  pk: HAW
+  fields:
+    id: HAW
+    value: ARUBA
+- model: emergency_app.Nation
+  pk: MAU
+  fields:
+    id: MAU
+    value: AUSTRALIA
+- model: emergency_app.Nation
+  pk: GAT
+  fields:
+    id: GAT
+    value: AUSTRIA
+- model: emergency_app.Nation
+  pk: FAZ
+  fields:
+    id: FAZ
+    value: AZERBAIJAN
+- model: emergency_app.Nation
+  pk: HBS
+  fields:
+    id: HBS
+    value: BAHAMAS
+- model: emergency_app.Nation
+  pk: KBH
+  fields:
+    id: KBH
+    value: BAHRAIN
+- model: emergency_app.Nation
+  pk: PBD
+  fields:
+    id: PBD
+    value: BANGLADESH
+- model: emergency_app.Nation
+  pk: HBB
+  fields:
+    id: HBB
+    value: BARBADOS
+- model: emergency_app.Nation
+  pk: FBY
+  fields:
+    id: FBY
+    value: BELARUS
+- model: emergency_app.Nation
+  pk: GBE
+  fields:
+    id: GBE
+    value: BELGIUM
+- model: emergency_app.Nation
+  pk: IBZ
+  fields:
+    id: IBZ
+    value: BELIZE
+- model: emergency_app.Nation
+  pk: EBJ
+  fields:
+    id: EBJ
+    value: BENIN
+- model: emergency_app.Nation
+  pk: LBM
+  fields:
+    id: LBM
+    value: BERMUDA
+- model: emergency_app.Nation
+  pk: PBT
+  fields:
+    id: PBT
+    value: BHUTAN
+- model: emergency_app.Nation
+  pk: JBO
+  fields:
+    id: JBO
+    value: BOLIVIA
+- model: emergency_app.Nation
+  pk: FBA
+  fields:
+    id: FBA
+    value: BOSNIA-HERZEGOVINA
+- model: emergency_app.Nation
+  pk: DBW
+  fields:
+    id: DBW
+    value: BOTSWANA
+- model: emergency_app.Nation
+  pk: JBR
+  fields:
+    id: JBR
+    value: BRAZIL
+- model: emergency_app.Nation
+  pk: BVI
+  fields:
+    id: BVI
+    value: BRITISH VIRGIN ISLANDS
+- model: emergency_app.Nation
+  pk: QBN
+  fields:
+    id: QBN
+    value: BRUNEI DARRUSALAM
+- model: emergency_app.Nation
+  pk: FBG
+  fields:
+    id: FBG
+    value: BULGARIA
+- model: emergency_app.Nation
+  pk: EBF
+  fields:
+    id: EBF
+    value: BURKINA FASO
+- model: emergency_app.Nation
+  pk: ABI
+  fields:
+    id: ABI
+    value: BURUNDI
+- model: emergency_app.Nation
+  pk: QKH
+  fields:
+    id: QKH
+    value: CAMBODIA
+- model: emergency_app.Nation
+  pk: BCM
+  fields:
+    id: BCM
+    value: CAMEROON
+- model: emergency_app.Nation
+  pk: LCA
+  fields:
+    id: LCA
+    value: CANADA
+- model: emergency_app.Nation
+  pk: ECV
+  fields:
+    id: ECV
+    value: CAPE VERDE
+- model: emergency_app.Nation
+  pk: HKY
+  fields:
+    id: HKY
+    value: CAYMAN ISLANDS
+- model: emergency_app.Nation
+  pk: BCF
+  fields:
+    id: BCF
+    value: CENTRAL AFRICAN REPUBLIC
+- model: emergency_app.Nation
+  pk: BTD
+  fields:
+    id: BTD
+    value: CHAD
+- model: emergency_app.Nation
+  pk: JCL
+  fields:
+    id: JCL
+    value: CHILE
+- model: emergency_app.Nation
+  pk: OCN
+  fields:
+    id: OCN
+    value: CHINA
+- model: emergency_app.Nation
+  pk: MCC
+  fields:
+    id: MCC
+    value: COCOS (KEELING) ISLANDS
+- model: emergency_app.Nation
+  pk: JCO
+  fields:
+    id: JCO
+    value: COLOMBIA
+- model: emergency_app.Nation
+  pk: AKM
+  fields:
+    id: AKM
+    value: COMOROS
+- model: emergency_app.Nation
+  pk: ICR
+  fields:
+    id: ICR
+    value: COSTA RICA
+- model: emergency_app.Nation
+  pk: ECI
+  fields:
+    id: ECI
+    value: COTE D'IVOIRE
+- model: emergency_app.Nation
+  pk: FHR
+  fields:
+    id: FHR
+    value: CROATIA
+- model: emergency_app.Nation
+  pk: HCU
+  fields:
+    id: HCU
+    value: CUBA
+- model: emergency_app.Nation
+  pk: KCY
+  fields:
+    id: KCY
+    value: CYPRUS
+- model: emergency_app.Nation
+  pk: FCZ
+  fields:
+    id: FCZ
+    value: CZECH REPUBLIC
+- model: emergency_app.Nation
+  pk: MCX
+  fields:
+    id: MCX
+    value: Christmas Island
+- model: emergency_app.Nation
+  pk: NCK
+  fields:
+    id: NCK
+    value: Cook Island
+- model: emergency_app.Nation
+  pk: BCD
+  fields:
+    id: BCD
+    value: DEMOCRATIC REPUBLIC OF CONGO
+- model: emergency_app.Nation
+  pk: GDK
+  fields:
+    id: GDK
+    value: DENMARK
+- model: emergency_app.Nation
+  pk: ADJ
+  fields:
+    id: ADJ
+    value: DJIBOUTI
+- model: emergency_app.Nation
+  pk: HDM
+  fields:
+    id: HDM
+    value: DOMINICA
+- model: emergency_app.Nation
+  pk: HDO
+  fields:
+    id: HDO
+    value: DOMINICAN REPUBLIC
+- model: emergency_app.Nation
+  pk: QTP
+  fields:
+    id: QTP
+    value: EAST TIMOR
+- model: emergency_app.Nation
+  pk: JEC
+  fields:
+    id: JEC
+    value: ECUADOR
+- model: emergency_app.Nation
+  pk: CEG
+  fields:
+    id: CEG
+    value: EGYPT
+- model: emergency_app.Nation
+  pk: ISV
+  fields:
+    id: ISV
+    value: EL SALVADOR
+- model: emergency_app.Nation
+  pk: BGQ
+  fields:
+    id: BGQ
+    value: EQUATORIAL GUINEA
+- model: emergency_app.Nation
+  pk: AER
+  fields:
+    id: AER
+    value: ERITREA
+- model: emergency_app.Nation
+  pk: FEE
+  fields:
+    id: FEE
+    value: ESTONIA
+- model: emergency_app.Nation
+  pk: AET
+  fields:
+    id: AET
+    value: ETHIOPIA
+- model: emergency_app.Nation
+  pk: JFK
+  fields:
+    id: JFK
+    value: FALKLAND ISLANDS
+- model: emergency_app.Nation
+  pk: GFO
+  fields:
+    id: GFO
+    value: FAROE ISLANDS
+- model: emergency_app.Nation
+  pk: NFJ
+  fields:
+    id: NFJ
+    value: FIJI
+- model: emergency_app.Nation
+  pk: GFI
+  fields:
+    id: GFI
+    value: FINLAND
+- model: emergency_app.Nation
+  pk: GFR
+  fields:
+    id: GFR
+    value: FRANCE
+- model: emergency_app.Nation
+  pk: JGF
+  fields:
+    id: JGF
+    value: FRENCH GUIANA
+- model: emergency_app.Nation
+  pk: NPF
+  fields:
+    id: NPF
+    value: FRENCH POLYNESIA
+- model: emergency_app.Nation
+  pk: BGA
+  fields:
+    id: BGA
+    value: GABON
+- model: emergency_app.Nation
+  pk: EGM
+  fields:
+    id: EGM
+    value: GAMBIA
+- model: emergency_app.Nation
+  pk: FGE
+  fields:
+    id: FGE
+    value: GEORGIA
+- model: emergency_app.Nation
+  pk: GDE
+  fields:
+    id: GDE
+    value: GERMANY
+- model: emergency_app.Nation
+  pk: EGH
+  fields:
+    id: EGH
+    value: GHANA
+- model: emergency_app.Nation
+  pk: GGI
+  fields:
+    id: GGI
+    value: GIBRALTAR
+- model: emergency_app.Nation
+  pk: GGR
+  fields:
+    id: GGR
+    value: GREECE
+- model: emergency_app.Nation
+  pk: SGL
+  fields:
+    id: SGL
+    value: GREENLAND
+- model: emergency_app.Nation
+  pk: HGD
+  fields:
+    id: HGD
+    value: GRENADA
+- model: emergency_app.Nation
+  pk: HGP
+  fields:
+    id: HGP
+    value: GUADELOUPE
+- model: emergency_app.Nation
+  pk: IGT
+  fields:
+    id: IGT
+    value: GUATEMALA
+- model: emergency_app.Nation
+  pk: GGY
+  fields:
+    id: GGY
+    value: GUERNSEY
+- model: emergency_app.Nation
+  pk: EGN
+  fields:
+    id: EGN
+    value: GUINEA
+- model: emergency_app.Nation
+  pk: EGW
+  fields:
+    id: EGW
+    value: GUINEA-BISSAU
+- model: emergency_app.Nation
+  pk: JGY
+  fields:
+    id: JGY
+    value: GUYANA
+- model: emergency_app.Nation
+  pk: HHT
+  fields:
+    id: HHT
+    value: HAITI
+- model: emergency_app.Nation
+  pk: IHN
+  fields:
+    id: IHN
+    value: HONDURAS
+- model: emergency_app.Nation
+  pk: OHK
+  fields:
+    id: OHK
+    value: HONG KONG
+- model: emergency_app.Nation
+  pk: FHU
+  fields:
+    id: FHU
+    value: HUNGARY
+- model: emergency_app.Nation
+  pk: GIS
+  fields:
+    id: GIS
+    value: ICELAND
+- model: emergency_app.Nation
+  pk: PIN
+  fields:
+    id: PIN
+    value: INDIA
+- model: emergency_app.Nation
+  pk: QID
+  fields:
+    id: QID
+    value: INDONESIA
+- model: emergency_app.Nation
+  pk: KIR
+  fields:
+    id: KIR
+    value: IRAN
+- model: emergency_app.Nation
+  pk: KIQ
+  fields:
+    id: KIQ
+    value: IRAQ
+- model: emergency_app.Nation
+  pk: GIE
+  fields:
+    id: GIE
+    value: IRELAND
+- model: emergency_app.Nation
+  pk: KIL
+  fields:
+    id: KIL
+    value: ISRAEL
+- model: emergency_app.Nation
+  pk: GIT
+  fields:
+    id: GIT
+    value: ITALY
+- model: emergency_app.Nation
+  pk: HJM
+  fields:
+    id: HJM
+    value: JAMAICA
+- model: emergency_app.Nation
+  pk: OJP
+  fields:
+    id: OJP
+    value: JAPAN
+- model: emergency_app.Nation
+  pk: KJO
+  fields:
+    id: KJO
+    value: JORDAN
+- model: emergency_app.Nation
+  pk: FKK
+  fields:
+    id: FKK
+    value: KAZAKHSTAN
+- model: emergency_app.Nation
+  pk: AKE
+  fields:
+    id: AKE
+    value: KENYA
+- model: emergency_app.Nation
+  pk: NKI
+  fields:
+    id: NKI
+    value: KIRIBATI
+- model: emergency_app.Nation
+  pk: KSV
+  fields:
+    id: KSV
+    value: KOSOVO
+- model: emergency_app.Nation
+  pk: KKW
+  fields:
+    id: KKW
+    value: KUWAIT
+- model: emergency_app.Nation
+  pk: FKG
+  fields:
+    id: FKG
+    value: KYRGYZSTAN
+- model: emergency_app.Nation
+  pk: QLA
+  fields:
+    id: QLA
+    value: LAOS
+- model: emergency_app.Nation
+  pk: FLA
+  fields:
+    id: FLA
+    value: LATVIA
+- model: emergency_app.Nation
+  pk: KLB
+  fields:
+    id: KLB
+    value: LEBANON
+- model: emergency_app.Nation
+  pk: DLS
+  fields:
+    id: DLS
+    value: LESOTHO
+- model: emergency_app.Nation
+  pk: ELR
+  fields:
+    id: ELR
+    value: LIBERIA
+- model: emergency_app.Nation
+  pk: CLV
+  fields:
+    id: CLY
+    value: LIBYA
+- model: emergency_app.Nation
+  pk: GLI
+  fields:
+    id: GLI
+    value: LIECHTENSTEIN
+- model: emergency_app.Nation
+  pk: FLT
+  fields:
+    id: FLT
+    value: LITHUANIA
+- model: emergency_app.Nation
+  pk: GLU
+  fields:
+    id: GLU
+    value: LUXEMBOURG
+- model: emergency_app.Nation
+  pk: OMO
+  fields:
+    id: OMO
+    value: MACAU
+- model: emergency_app.Nation
+  pk: FMK
+  fields:
+    id: FMK
+    value: MACEDONIA
+- model: emergency_app.Nation
+  pk: AMG
+  fields:
+    id: AMG
+    value: MADAGASCAR
+- model: emergency_app.Nation
+  pk: AMW
+  fields:
+    id: AMW
+    value: MALAWI
+- model: emergency_app.Nation
+  pk: QMY
+  fields:
+    id: QMY
+    value: MALAYSIA
+- model: emergency_app.Nation
+  pk: PMV
+  fields:
+    id: PMV
+    value: MALDIVES
+- model: emergency_app.Nation
+  pk: EML
+  fields:
+    id: EML
+    value: MALI
+- model: emergency_app.Nation
+  pk: GMT
+  fields:
+    id: GMT
+    value: MALTA
+- model: emergency_app.Nation
+  pk: NMH
+  fields:
+    id: NMH
+    value: MARSHALL ISLANDS
+- model: emergency_app.Nation
+  pk: HMQ
+  fields:
+    id: HMQ
+    value: MARTINIQUE
+- model: emergency_app.Nation
+  pk: EMR
+  fields:
+    id: EMR
+    value: MAURITANIA
+- model: emergency_app.Nation
+  pk: AMU
+  fields:
+    id: AMU
+    value: MAURITIUS
+- model: emergency_app.Nation
+  pk: IMX
+  fields:
+    id: IMX
+    value: MEXICO
+- model: emergency_app.Nation
+  pk: NFM
+  fields:
+    id: NFM
+    value: MICRONESIA
+- model: emergency_app.Nation
+  pk: FMD
+  fields:
+    id: FMD
+    value: MOLDOVA
+- model: emergency_app.Nation
+  pk: GMC
+  fields:
+    id: GMC
+    value: MONACO
+- model: emergency_app.Nation
+  pk: OMN
+  fields:
+    id: OMN
+    value: MONGOLIA
+- model: emergency_app.Nation
+  pk: MNE
+  fields:
+    id: MNE
+    value: MONTENEGRO
+- model: emergency_app.Nation
+  pk: CMA
+  fields:
+    id: CMA
+    value: MOROCCO
+- model: emergency_app.Nation
+  pk: AMZ
+  fields:
+    id: AMZ
+    value: MOZAMBIQUE
+- model: emergency_app.Nation
+  pk: QBU
+  fields:
+    id: QBU
+    value: MYANMAR
+- model: emergency_app.Nation
+  pk: DNA
+  fields:
+    id: DNA
+    value: NAMIBIA
+- model: emergency_app.Nation
+  pk: NNR
+  fields:
+    id: NNR
+    value: NAURU
+- model: emergency_app.Nation
+  pk: PNP
+  fields:
+    id: PNP
+    value: NEPAL
+- model: emergency_app.Nation
+  pk: GNL
+  fields:
+    id: GNL
+    value: NETHERLANDS
+- model: emergency_app.Nation
+  pk: HAN
+  fields:
+    id: HAN
+    value: NETHERLANDS ANTILLES
+- model: emergency_app.Nation
+  pk: NNC
+  fields:
+    id: NNC
+    value: NEW CALEDONIA
+- model: emergency_app.Nation
+  pk: MNZ
+  fields:
+    id: MNZ
+    value: NEW ZEALAND
+- model: emergency_app.Nation
+  pk: INI
+  fields:
+    id: INI
+    value: NICARAGUA
+- model: emergency_app.Nation
+  pk: ENE
+  fields:
+    id: ENE
+    value: NIGER
+- model: emergency_app.Nation
+  pk: ENG
+  fields:
+    id: ENG
+    value: NIGERIA
+- model: emergency_app.Nation
+  pk: OKP
+  fields:
+    id: OKP
+    value: NORTH KOREA
+- model: emergency_app.Nation
+  pk: GNO
+  fields:
+    id: GNO
+    value: NORWAY
+- model: emergency_app.Nation
+  pk: KOM
+  fields:
+    id: KOM
+    value: OMAN
+- model: emergency_app.Nation
+  pk: PPK
+  fields:
+    id: PPK
+    value: PAKISTAN
+- model: emergency_app.Nation
+  pk: NPW
+  fields:
+    id: NPW
+    value: PALAU
+- model: emergency_app.Nation
+  pk: KGZ
+  fields:
+    id: KGZ
+    value: PALESTINIAN TERR - GAZA STRIP
+- model: emergency_app.Nation
+  pk: KWB
+  fields:
+    id: KWB
+    value: PALESTINIAN TERR - WEST BANK
+- model: emergency_app.Nation
+  pk: KPS
+  fields:
+    id: KPS
+    value: PALESTINIAN TERRITORY
+- model: emergency_app.Nation
+  pk: IPA
+  fields:
+    id: IPA
+    value: PANAMA
+- model: emergency_app.Nation
+  pk: NPG
+  fields:
+    id: NPG
+    value: PAPUA NEW GUINEA
+- model: emergency_app.Nation
+  pk: JPY
+  fields:
+    id: JPY
+    value: PARAGUAY
+- model: emergency_app.Nation
+  pk: JPE
+  fields:
+    id: JPE
+    value: PERU
+- model: emergency_app.Nation
+  pk: QPH
+  fields:
+    id: QPH
+    value: PHILIPPINES
+- model: emergency_app.Nation
+  pk: FPL
+  fields:
+    id: FPL
+    value: POLAND
+- model: emergency_app.Nation
+  pk: GPT
+  fields:
+    id: GPT
+    value: PORTUGAL
+- model: emergency_app.Nation
+  pk: HPR
+  fields:
+    id: HPR
+    value: PUERTO RICO
+- model: emergency_app.Nation
+  pk: KQA
+  fields:
+    id: KQA
+    value: QATAR
+- model: emergency_app.Nation
+  pk: BCG
+  fields:
+    id: BCG
+    value: REPUBLIC OF THE CONGO
+- model: emergency_app.Nation
+  pk: ARE
+  fields:
+    id: ARE
+    value: REUNION
+- model: emergency_app.Nation
+  pk: FRO
+  fields:
+    id: FRO
+    value: ROMANIA
+- model: emergency_app.Nation
+  pk: FRU
+  fields:
+    id: FRU
+    value: RUSSIA
+- model: emergency_app.Nation
+  pk: ARW
+  fields:
+    id: ARW
+    value: RWANDA
+- model: emergency_app.Nation
+  pk: ESH
+  fields:
+    id: ESH
+    value: SAINT HELENA
+- model: emergency_app.Nation
+  pk: HKN
+  fields:
+    id: HKN
+    value: SAINT KITTS AND NEVIS
+- model: emergency_app.Nation
+  pk: HLC
+  fields:
+    id: HLC
+    value: SAINT LUCIA
+- model: emergency_app.Nation
+  pk: HPM
+  fields:
+    id: HPM
+    value: SAINT PIERRE AND MIQUELON
+- model: emergency_app.Nation
+  pk: HVC
+  fields:
+    id: HVC
+    value: SAINT VINCENT & THE GRENADINES
+- model: emergency_app.Nation
+  pk: NWS
+  fields:
+    id: NWS
+    value: SAMOA
+- model: emergency_app.Nation
+  pk: GSM
+  fields:
+    id: GSM
+    value: SAN MARINO
+- model: emergency_app.Nation
+  pk: STP
+  fields:
+    id: STP
+    value: SAO TOME AND PRINCIPE
+- model: emergency_app.Nation
+  pk: KSA
+  fields:
+    id: KSA
+    value: SAUDI ARABIA
+- model: emergency_app.Nation
+  pk: ESN
+  fields:
+    id: ESN
+    value: SENEGAL
+- model: emergency_app.Nation
+  pk: SRB
+  fields:
+    id: SRB
+    value: SERBIA
+- model: emergency_app.Nation
+  pk: ASC
+  fields:
+    id: ASC
+    value: SEYCHELLES
+- model: emergency_app.Nation
+  pk: ESL
+  fields:
+    id: ESL
+    value: SIERRA LEONE
+- model: emergency_app.Nation
+  pk: QSG
+  fields:
+    id: QSG
+    value: SINGAPORE
+- model: emergency_app.Nation
+  pk: FSK
+  fields:
+    id: FSK
+    value: SLOVAKIA
+- model: emergency_app.Nation
+  pk: FSI
+  fields:
+    id: FSI
+    value: SLOVENIA
+- model: emergency_app.Nation
+  pk: NSB
+  fields:
+    id: NSB
+    value: SOLOMON ISLANDS
+- model: emergency_app.Nation
+  pk: ASO
+  fields:
+    id: ASO
+    value: SOMALIA
+- model: emergency_app.Nation
+  pk: DZA
+  fields:
+    id: DZA
+    value: SOUTH AFRICA
+- model: emergency_app.Nation
+  pk: OKR
+  fields:
+    id: OKR
+    value: SOUTH KOREA
+- model: emergency_app.Nation
+  pk: SSD
+  fields:
+    id: SSD
+    value: SOUTH SUDAN
+- model: emergency_app.Nation
+  pk: GES
+  fields:
+    id: GES
+    value: SPAIN
+- model: emergency_app.Nation
+  pk: PLK
+  fields:
+    id: PLK
+    value: SRI LANKA
+- model: emergency_app.Nation
+  pk: CSD
+  fields:
+    id: CSD
+    value: SUDAN
+- model: emergency_app.Nation
+  pk: JSR
+  fields:
+    id: JSR
+    value: SURINAME
+- model: emergency_app.Nation
+  pk: DSZ
+  fields:
+    id: DSZ
+    value: SWAZILAND
+- model: emergency_app.Nation
+  pk: GSE
+  fields:
+    id: GSE
+    value: SWEDEN
+- model: emergency_app.Nation
+  pk: GCH
+  fields:
+    id: GCH
+    value: SWITZERLAND
+- model: emergency_app.Nation
+  pk: KSY
+  fields:
+    id: KSY
+    value: SYRIA
+- model: emergency_app.Nation
+  pk: OTW
+  fields:
+    id: OTW
+    value: TAIWAN
+- model: emergency_app.Nation
+  pk: FTJ
+  fields:
+    id: FTJ
+    value: TAJIKISTAN
+- model: emergency_app.Nation
+  pk: ATZ
+  fields:
+    id: ATZ
+    value: TANZANIA
+- model: emergency_app.Nation
+  pk: QTH
+  fields:
+    id: QTH
+    value: THAILAND
+- model: emergency_app.Nation
+  pk: ETG
+  fields:
+    id: ETG
+    value: TOGO
+- model: emergency_app.Nation
+  pk: NTO
+  fields:
+    id: NTO
+    value: TONGA
+- model: emergency_app.Nation
+  pk: HTT
+  fields:
+    id: HTT
+    value: TRINIDAD AND TOBAGO
+- model: emergency_app.Nation
+  pk: CTN
+  fields:
+    id: CTN
+    value: TUNISIA
+- model: emergency_app.Nation
+  pk: KTR
+  fields:
+    id: KTR
+    value: TURKEY
+- model: emergency_app.Nation
+  pk: FTM
+  fields:
+    id: FTM
+    value: TURKMENISTAN
+- model: emergency_app.Nation
+  pk: HTC
+  fields:
+    id: HTC
+    value: TURKS AND CAICOS ISLANDS
+- model: emergency_app.Nation
+  pk: NTV
+  fields:
+    id: NTV
+    value: TUVALU
+- model: emergency_app.Nation
+  pk: AUG
+  fields:
+    id: AUG
+    value: UGANDA
+- model: emergency_app.Nation
+  pk: FUA
+  fields:
+    id: FUA
+    value: UKRAINE
+- model: emergency_app.Nation
+  pk: KAE
+  fields:
+    id: KAE
+    value: UNITED ARAB EMIRATES
+- model: emergency_app.Nation
+  pk: GGB
+  fields:
+    id: GGB
+    value: UNITED KINGDOM
+- model: emergency_app.Nation
+  pk: JUY
+  fields:
+    id: JUY
+    value: URUGUAY
+- model: emergency_app.Nation
+  pk: LUS
+  fields:
+    id: LUS
+    value: USA
+- model: emergency_app.Nation
+  pk: FUZ
+  fields:
+    id: FUZ
+    value: UZBEKISTAN
+- model: emergency_app.Nation
+  pk: GVA
+  fields:
+    id: GVA
+    value: VATICAN CITY
+- model: emergency_app.Nation
+  pk: JVE
+  fields:
+    id: JVE
+    value: VENEZUELA
+- model: emergency_app.Nation
+  pk: QVN
+  fields:
+    id: QVN
+    value: VIETNAM
+- model: emergency_app.Nation
+  pk: NWF
+  fields:
+    id: NWF
+    value: WALLIS AND FUTUNA
+- model: emergency_app.Nation
+  pk: KYE
+  fields:
+    id: KYE
+    value: YEMEN
+- model: emergency_app.Nation
+  pk: AZM
+  fields:
+    id: AZM
+    value: ZAMBIA
+- model: emergency_app.Nation
+  pk: AZW
+  fields:
+    id: AZW
+    value: ZIMBABWE

@@ -43,6 +43,8 @@ The first time you run this app locally, you'll need to do the following to set 
     * `python manage.py loaddata emergency.json`
     * `python manage.py loaddata contact.json`
     * `python manage.py loaddata relation.yaml`
+    * `python manage.py loaddata nation.yaml`
+    * `python manage.py loaddata state.yaml`
 
 ## JWT Requirements
 In order for the finished project to be compatible with the JWT authentication we use in our

@@ -8,7 +8,7 @@ class JWTTests(TestCase):
 	"""
 	Testing out the place-holder JWT generating and validating
 	"""
-	
+
 	# Data formatted into a json (Python Dictionary)
 	good_data_list = [
 		{ "username":"bob01","Admin":"True" },
@@ -17,24 +17,24 @@ class JWTTests(TestCase):
 	]
 	# List of unformatted data
 	bad_data_list = [[1,2,3], "This is data!", 0xFF]
-	
+
 	def test_generate_token(self):
 		"""
 		Testing the generating of JWTs
-		
+
 		Good data should return a formatted plain-text string in the form:
 			xxx.yyy.zzz
 			where x is header information, y is json payload, and z is a signature
 		Bad data should raise a TypeError in jwt_placeholder
 		Test only confirms the payload is valid on good data, or that a TypeError is raised on bad data
 		"""
-		
+
 		"""Testing json objects"""
 		for data in self.good_data_list:
 			jwt = jwt_placeholder.generate_token(data)
 			header, payload, signature = str(jwt).split('.')
 			self.assertTrue(base64_to_json_compare(payload, data))
-		
+
 		"""Testing non-json objects"""
 		for data in self.bad_data_list:
 			with self.assertRaises(TypeError):
@@ -43,50 +43,50 @@ class JWTTests(TestCase):
 	def test_validate_token(self):
 		"""
 		Testing the validation of JWTs
-		
+
 		A legitimate JWT should return True
 		An illegitimate/tampered JWT should raise an InvalidSignatureError
-		An improperly formatted token should raise a DecodeError 
+		An improperly formatted token should raise a DecodeError
 		"""
-		
+
 		# Grab a JWT and confirm that jwt_placeholder can successfully validate it
 		data = self.good_data_list[0]
 		jwt = jwt_placeholder.generate_token(data)
-		
+
 		"""Testing a valid token"""
 		self.assertTrue(jwt_placeholder.validate_token(jwt))
-		
+
 		# Create our own token to try and pass off on the server
 		local_key = 'secret'
 		wrong_key_jwt = jwt_lib.encode(data, local_key, algorithm='HS256')
-		
+
 		"""Testing a token signed with the wrong secret key"""
 		with self.assertRaises(jwt_lib.exceptions.InvalidSignatureError):
 			ret_val = jwt_placeholder.validate_token(wrong_key_jwt)
-		
+
 		# Tamper with a valid token and try and validate it
 		# We'll reuse the jwt from before since it is already vetted
 		header, payload, signature = jwt.decode('utf-8').split('.')
-		
+
 		# We'll add additional data to the payload and re-encode it
 		tampered_jwt = (header + '.' + payload + "ExtraData" + '.' + signature).encode('utf-8')
-		
+
 		"""Testing a token with tampered data"""
 		with self.assertRaises(jwt_lib.exceptions.InvalidSignatureError):
-			ret_val = jwt_placeholder.validate_token(tampered_jwt) 
-		
+			ret_val = jwt_placeholder.validate_token(tampered_jwt)
+
 		"""Testing malformed token"""
 		with self.assertRaises(jwt_lib.exceptions.DecodeError):
 			ret_val = jwt_placeholder.validate_token("Just a regular, unencoded string!")
-		
+
 	def test_grab_token_payload(self):
 		"""
 		Testing the payload-grabbing of JWTs
-		
+
 		The payload/claims used to generate a JWT should matche the output
 		from the grab_token_payload function
 		"""
-		
+
 		"""Testing valid and invalid comparisons"""
 		for data in self.good_data_list:
 			jwt = jwt_placeholder.generate_token(data)
@@ -141,12 +141,12 @@ class SanitizationTests(TestCase):
 
         """Testing valid numbers"""
         for data in self.good_phone_list:
-            result = sanitization.validate_phone_num(data)
+            result = sanitization.validate_phone_num_usa(data)
             self.assertTrue(result)
 
         """Testing invalid numbers"""
         for data in self.bad_phone_list:
-            result = sanitization.validate_phone_num(data)
+            result = sanitization.validate_phone_num_usa(data)
             self.assertFalse(result)
 
     def test_username_validation(self):
@@ -181,7 +181,7 @@ def base64_to_json_compare(payload, expected):
 	# base64 decoding requires the payload to be a multiple of 4
 	# '=' is the padding char. a maximum padding of 3 '=' is needed.
 	base64_padding = '==='
-	
+
 	# The JWT generation formats the string:
 	# 	Single quotes (') are replaced with double quotes (")
 	#	No Spaces between Keys and Values, and no spaces between pairs

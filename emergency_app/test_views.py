@@ -540,7 +540,7 @@ class EmergencyContactsTests(TestCase):
 
 		""" Valid emergency contact information to enter into database """
 		self.good_emergency_priority = "1"
-		self.good_emergency_relt_code = 'S'
+		self.good_emergency_relt_code = "S"
 		self.good_emergency_last_name = "Bauuer"
 		self.good_emergency_first_name = "George"
 		self.good_emergency_middle_init = "S"
@@ -548,8 +548,8 @@ class EmergencyContactsTests(TestCase):
 		self.good_emergency_street_line2 = ""
 		self.good_emergency_street_line3 = ""
 		self.good_emergency_city = "Portland"
-		self.good_emergency_stat_code = "OR"
-		self.good_emergency_natn_code = "LUS" # Not sure what this denotes but it is present in the existing dataset
+		self.good_emergency_stat_code = "OW"
+		self.good_emergency_natn_code = "LUS"
 		self.good_emergency_zip = "97230"
 		self.good_emergency_ctry_code_phone = "01"
 		self.good_emergency_phone_area = "503"
@@ -635,7 +635,6 @@ class EmergencyContactsTests(TestCase):
 		response = c.post(set_contacts_url,
 		# create the POST Body
 		{
-			# 'pidm': self.pidm_for_fresh_user,
 			'surrogate_id':self.surrogate_id_of_contact,
 			'priority':self.good_emergency_priority,
 			'relt_code':self.good_emergency_relt_code,
@@ -658,6 +657,7 @@ class EmergencyContactsTests(TestCase):
 		HTTP_AUTHORIZATION=user_with_valid_data_jwt
 		)
 
+		# print(response.content.decode('utf-8'))
 		""" Testing to make sure that this returned a 200 status code """
 		self.assertEqual(response.status_code, success_code)
 

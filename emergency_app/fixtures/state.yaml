@@ -1,0 +1,390 @@
+- model: emergency_app.State
+  pk: AL
+  fields:
+    id: AL
+    value: Alabama
+- model: emergency_app.State
+  pk: AK
+  fields:
+    id: AK
+    value: Alaska
+- model: emergency_app.State
+  pk: AB
+  fields:
+    id: AB
+    value: Alberta
+- model: emergency_app.State
+  pk: AS
+  fields:
+    id: AS
+    value: American Samoa
+- model: emergency_app.State
+  pk: AZ
+  fields:
+    id: AZ
+    value: Arizona
+- model: emergency_app.State
+  pk: AR
+  fields:
+    id: AR
+    value: Arkansas
+- model: emergency_app.State
+  pk: AA
+  fields:
+    id: AA
+    value: Armed Forces (AA)
+- model: emergency_app.State
+  pk: AE
+  fields:
+    id: AE
+    value: Armed Forces (AE)
+- model: emergency_app.State
+  pk: AP
+  fields:
+    id: AP
+    value: Armed Forces (AP)
+- model: emergency_app.State
+  pk: BC
+  fields:
+    id: BC
+    value: British Columbia
+- model: emergency_app.State
+  pk: CA
+  fields:
+    id: CA
+    value: California
+- model: emergency_app.State
+  pk: CZ
+  fields:
+    id: CZ
+    value: Canal Zone
+- model: emergency_app.State
+  pk: CO
+  fields:
+    id: CO
+    value: Colorado
+- model: emergency_app.State
+  pk: CT
+  fields:
+    id: CT
+    value: Connecticut
+- model: emergency_app.State
+  pk: DE
+  fields:
+    id: DE
+    value: Delaware
+- model: emergency_app.State
+  pk: DC
+  fields:
+    id: DC
+    value: District of Columbia
+- model: emergency_app.State
+  pk: FM
+  fields:
+    id: FM
+    value: Federated States of Micronesia
+- model: emergency_app.State
+  pk: FL
+  fields:
+    id: FL
+    value: Florida
+- model: emergency_app.State
+  pk: FR
+  fields:
+    id: FR
+    value: Foreign State
+- model: emergency_app.State
+  pk: GA
+  fields:
+    id: GA
+    value: Georgia
+- model: emergency_app.State
+  pk: GU
+  fields:
+    id: GU
+    value: Guam
+- model: emergency_app.State
+  pk: HI
+  fields:
+    id: HI
+    value: Hawaii
+- model: emergency_app.State
+  pk: ID
+  fields:
+    id: ID
+    value: Idaho
+- model: emergency_app.State
+  pk: IL
+  fields:
+    id: IL
+    value: Illinois
+- model: emergency_app.State
+  pk: IN
+  fields:
+    id: IN
+    value: Indiana
+- model: emergency_app.State
+  pk: IA
+  fields:
+    id: IA
+    value: Iowa
+- model: emergency_app.State
+  pk: KS
+  fields:
+    id: KS
+    value: Kansas
+- model: emergency_app.State
+  pk: KY
+  fields:
+    id: KY
+    value: Kentucky
+- model: emergency_app.State
+  pk: LA
+  fields:
+    id: LA
+    value: Louisiana
+- model: emergency_app.State
+  pk: ME
+  fields:
+    id: ME
+    value: Maine
+- model: emergency_app.State
+  pk: MB
+  fields:
+    id: MB
+    value: Manitoba
+- model: emergency_app.State
+  pk: MH
+  fields:
+    id: MH
+    value: Marshall Islands
+- model: emergency_app.State
+  pk: MD
+  fields:
+    id: MD
+    value: Maryland
+- model: emergency_app.State
+  pk: MA
+  fields:
+    id: MA
+    value: Massachusetts
+- model: emergency_app.State
+  pk: MI
+  fields:
+    id: MI
+    value: Michigan
+- model: emergency_app.State
+  pk: MN
+  fields:
+    id: MN
+    value: Minnesota
+- model: emergency_app.State
+  pk: MS
+  fields:
+    id: MS
+    value: Mississippi
+- model: emergency_app.State
+  pk: MO
+  fields:
+    id: MO
+    value: Missouri
+- model: emergency_app.State
+  pk: MT
+  fields:
+    id: MT
+    value: Montana
+- model: emergency_app.State
+  pk: NE
+  fields:
+    id: NE
+    value: Nebraska
+- model: emergency_app.State
+  pk: NV
+  fields:
+    id: NV
+    value: Nevada
+- model: emergency_app.State
+  pk: NB
+  fields:
+    id: NB
+    value: New Brunswick
+- model: emergency_app.State
+  pk: NH
+  fields:
+    id: NH
+    value: New Hampshire
+- model: emergency_app.State
+  pk: NJ
+  fields:
+    id: NJ
+    value: New Jersey
+- model: emergency_app.State
+  pk: NM
+  fields:
+    id: NM
+    value: New Mexico
+- model: emergency_app.State
+  pk: NY
+  fields:
+    id: NY
+    value: New York
+- model: emergency_app.State
+  pk: NF
+  fields:
+    id: NF
+    value: Newfoundland
+- model: emergency_app.State
+  pk: NC
+  fields:
+    id: NC
+    value: North Carolina
+- model: emergency_app.State
+  pk: ND
+  fields:
+    id: ND
+    value: North Dakota
+- model: emergency_app.State
+  pk: MP
+  fields:
+    id: MP
+    value: Northern Mariana Islands
+- model: emergency_app.State
+  pk: NT
+  fields:
+    id: NT
+    value: Northwest Territories
+- model: emergency_app.State
+  pk: 00
+  fields:
+    id: 00
+    value: Not Used by PSU
+- model: emergency_app.State
+  pk: NS
+  fields:
+    id: NS
+    value: Nova Scotia
+- model: emergency_app.State
+  pk: OH
+  fields:
+    id: OH
+    value: Ohio
+- model: emergency_app.State
+  pk: OK
+  fields:
+    id: OK
+    value: Oklahoma
+- model: emergency_app.State
+  pk: ON
+  fields:
+    id: ON
+    value: Ontario
+- model: emergency_app.State
+  pk: OR
+  fields:
+    id: OR
+    value: Oregon
+- model: emergency_app.State
+  pk: PW
+  fields:
+    id: PW
+    value: Palau
+- model: emergency_app.State
+  pk: PA
+  fields:
+    id: PA
+    value: Pennsylvania
+- model: emergency_app.State
+  pk: PE
+  fields:
+    id: PE
+    value: Prince Edward Island
+- model: emergency_app.State
+  pk: PR
+  fields:
+    id: PR
+    value: Puerto Rico
+- model: emergency_app.State
+  pk: PQ
+  fields:
+    id: PQ
+    value: Quebec
+- model: emergency_app.State
+  pk: RI
+  fields:
+    id: RI
+    value: Rhode Island
+- model: emergency_app.State
+  pk: SK
+  fields:
+    id: SK
+    value: Saskatchewan
+- model: emergency_app.State
+  pk: SC
+  fields:
+    id: SC
+    value: South Carolina
+- model: emergency_app.State
+  pk: SD
+  fields:
+    id: SD
+    value: South Dakota
+- model: emergency_app.State
+  pk: TN
+  fields:
+    id: TN
+    value: Tennessee
+- model: emergency_app.State
+  pk: TX
+  fields:
+    id: TX
+    value: Texas
+- model: emergency_app.State
+  pk: TT
+  fields:
+    id: TT
+    value: Trust Territories
+- model: emergency_app.State
+  pk: UT
+  fields:
+    id: UT
+    value: Utah
+- model: emergency_app.State
+  pk: VT
+  fields:
+    id: VT
+    value: Vermont
+- model: emergency_app.State
+  pk: VI
+  fields:
+    id: VI
+    value: Virgin Islands
+- model: emergency_app.State
+  pk: VA
+  fields:
+    id: VA
+    value: Virginia
+- model: emergency_app.State
+  pk: WA
+  fields:
+    id: WA
+    value: Washington
+- model: emergency_app.State
+  pk: WV
+  fields:
+    id: WV
+    value: West Virginia
+- model: emergency_app.State
+  pk: WI
+  fields:
+    id: WI
+    value: Wisconsin
+- model: emergency_app.State
+  pk: WY
+  fields:
+    id: WY
+    value: Wyoming
+- model: emergency_app.State
+  pk: YT
+  fields:
+    id: YT
+    value: Yukon Territory
