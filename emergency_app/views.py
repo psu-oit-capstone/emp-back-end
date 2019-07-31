@@ -176,18 +176,16 @@ def update_emergency_contact(request, surrogate_id=None):
 		# first, decide if we are updating or creating
 		# based upon if the surrogate_id already exists
 		surrogate_id = request.POST.get('surrogate_id')
-		#if surrogate_id:
-		sur_id = Contact.objects.filter(surrogate_id=surrogate_id)
-		if len(sur_id) < 1:
+		if surrogate_id:
+			sur_id = Contact.objects.filter(surrogate_id=surrogate_id)
+			if len(sur_id) < 1:
+				return HttpResponse("Invalid surrogate id", status=http_unprocessable_entity_response)
+			else:
+				entry = sur_id[0] # Save it for use later in form instances
+				contact_exists = True
+		else:
 			entry = None
 			contact_exists = False
-				#return HttpResponse("Invalid surrogate id", status=http_unprocessable_entity_response)
-		else:
-			entry = sur_id[0] # Save it for use later in form instances
-			contact_exists = True
-		#else:
-			# entry = None
-			# contact_exists = False
 
 		# Grab the pidm from the JWT
 		jwt_pidm = payload['pidm']
