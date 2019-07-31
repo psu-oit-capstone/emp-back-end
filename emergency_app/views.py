@@ -305,7 +305,7 @@ def set_emergency_notifications(request):
 			new_entry.save()
 			return HttpResponse("Created successfully.")
 	else:
-		return HttpResponse(form.errors, status=http_unprocessable_entity_response)
+		return HttpResponse("errors:" + str(form.errors), status=http_unprocessable_entity_response)
 
 
 
@@ -384,7 +384,7 @@ def set_evacuation_assistance(request):
 			new_entry.save()
 			return HttpResponse("Created successfully.")
 	else:
-		return HttpResponse(str(form.errors), status=http_unprocessable_entity_response)
+		return HttpResponse("errors:" + str(form.errors), status=http_unprocessable_entity_response)
 
 @csrf_exempt
 @require_http_methods(["POST", "GET"])
