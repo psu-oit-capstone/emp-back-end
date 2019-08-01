@@ -392,7 +392,7 @@ def get_relations(request):
 	Returns the backend's relationship Values
 	No need for JWT validation as this is generic data
 	"""
-	return HttpResponse(Relation.objects.values())
+	return JsonResponse(list(Relation.objects.values()), safe=False)
 
 @csrf_exempt
 @require_http_methods(["GET"])

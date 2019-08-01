@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.utils import timezone	# For timestamp verification
 from emergency_app import views
-from emergency_app.models import identity, contact, emergency
+from emergency_app.models import identity, contact, emergency, relation
 
 import base64 # For checking JWT data
 import json # For checking JWT return data
@@ -20,6 +20,8 @@ set_evacuation_assistance_url = '/setEvacuationAssistance/'
 # Emergency Contacts Urls
 get_contacts_url = '/getEmergencyContacts/'
 set_contacts_url = '/updateEmergencyContact/'
+# Relationship URL 
+get_relationship_url = '/getRelations/'
 # Common HTTP Return statuses
 success_code = 200 # Successful request, with return data
 no_content_code = 204 # Successful request, but no data to return
@@ -833,3 +835,48 @@ class EmergencyContactsTests(TestCase):
 
 		user_entry = contact.Contact.objects.filter(surrogate_id=3)
 		self.assertEqual(len(user_entry), 1)
+
+class RelationshipCodeTests(TestCase): 
+	""" 
+	Testing out the relationship code + description API call 
+	Just confirms that we are returning the code -> description JSON that we expect 
+	""" 
+	def setUp(self): 
+		# Hardcoding our relationship Code->description dicts/JSONs
+		self.codeToDescription = {} 
+		self.codeToDescription['G'] = 'Guardian/Parent' 
+		self.codeToDescription['F'] = 'Friend' 
+		self.codeToDescription['O'] = 'Other Relative' 
+		self.codeToDescription['U'] = 'Unknown' 
+		self.codeToDescription['S'] = 'Spouse/Significant Other' 
+		self.codeToDescription['A'] = 'Agent' 
+		self.codeToDescription['R'] = 'Other Representative' 
+ 
+		# Adding in the relationship JSONs to the test database
+		for key in self.codeToDescription: 
+			relation.Relation.objects.create(code=key, description=self.codeToDescription[key])
+
+	def test_get_relationship_codes(self): 
+		""" 
+		Simple test to call the get_relationship API call, and compare against hard-coded values 
+		Checks for 200 success status, and checks that the values match what are expected 
+		""" 
+		c = Client() 
+		response = c.get(get_relationship_url) 
+		 
+		""" Confirm that we've got a 200 success response """ 
+		self.assertEqual(response.status_code, success_code) 
+		 
+		# Pull the JSONs out of our response 
+		response_jsons = json.loads(response.content) 
+		 
+		""" Confirm that we receive the expected amount of JSON objects """ 
+		self.assertEqual(len(self.codeToDescription), len(response_jsons)) 
+		
+		for relation in response_jsons: 
+			code = relation['code'] 
+			description = relation['description'] 
+			""" Confirm that any key received is as expected in our hard-coded values""" 
+			self.assertTrue(code in self.codeToDescription) 
+			""" Confirm that the description matches what we expect """ 
+			self.assertEqual(description, self.codeToDescription[code]) 
