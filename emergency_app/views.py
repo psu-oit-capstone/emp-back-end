@@ -5,6 +5,7 @@ from django.db.models import F
 from .models.identity import Identity
 from .models.contact import Contact
 from .models.emergency import Emergency
+from .models.relation import Relation
 from .models.nation import Nation
 from .models.state import State
 #TODO - crsf_exempt is only needed when testing on http - REMOVE WHEN DONE TESTING
@@ -385,26 +386,29 @@ def set_evacuation_assistance(request):
 		return HttpResponse("errors:" + str(form.errors), status=http_unprocessable_entity_response)
 
 @csrf_exempt
-@require_http_methods(["POST", "GET"])
+@require_http_methods(["GET"])
+def get_relations(request):
+	"""
+	Returns the backend's relationship Values
+	No need for JWT validation as this is generic data
+	"""
+	return HttpResponse(Relation.objects.values())
+
+@csrf_exempt
+@require_http_methods(["GET"])
 def get_nation_codes(request):
-	# skip jwt authentication
-	nations = Nation.objects.all()
-
-	if len(nations) < 1:
-		return HttpResponse("No nations found", status=http_no_content_response)
-
-	nation_list = list(nations.values())
-	return JsonResponse(nation_list, safe=False)
+	"""
+	Returns the backend's nation Values
+	No need for JWT validation as this is generic data
+	"""
+	return HttpResponse(Nation.objects.values())
 
 
 @csrf_exempt
-@require_http_methods(["POST", "GET"])
+@require_http_methods(["GET"])
 def get_state_codes(request):
-	# skip jwt authentication
-	states = State.objects.all()
-
-	if len(states) < 1:
-		return HttpResponse("No states found", status=http_no_content_response)
-
-	state_list = list(states.values())
-	return JsonResponse(state_list, safe=False)
+	"""
+	Returns the backend's state Values
+	No need for JWT validation as this is generic data
+	"""
+	return HttpResponse(State.objects.values())

@@ -81,7 +81,7 @@ def validate_relation(relt_code):
     Returns:
             boolean: True if valid, False otherwise.
     """
-    check_relation = Relation.objects.filter(code=str(relt_code))
+    check_relation = Relation.objects.filter(code=relt_code)
     if len(check_relation) < 1:
         return False
 
@@ -96,7 +96,7 @@ def validate_state_usa(stat_code):
     Returns:
             boolean: True if valid, False otherwise.
     """
-    check_states = State.objects.filter(id=str(stat_code))
+    check_states = State.objects.filter(id=stat_code)
     if len(check_states) < 1:
         return False
 
@@ -110,7 +110,7 @@ def validate_nation_code(natn_code):
     Returns:
             boolean: True if valid, False otherwise.
     """
-    check_nation = Nation.objects.filter(id=str(natn_code))
+    check_nation = Nation.objects.filter(id=natn_code)
     if len(check_nation) < 1:
         return False
 
