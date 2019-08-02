@@ -62,6 +62,8 @@ class UpdateEmergencyContactForm(forms.ModelForm):
 
         priority = cleaned_data.get("priority")
         entries = Contact.objects.filter(pidm=pidm)
+        if not priority:
+            raise forms.ValidationError("Missing priority number")
         if not(0 < int(priority) < (len(entries) + 2)):
             raise forms.ValidationError("Invalid priority number")
 
