@@ -4,6 +4,9 @@ from common.util import sanitization #The file that contains the code for saniti
 import base64 # For checking JWT data
 import jwt as jwt_lib # For creating our own JWTs to tamper with
 
+# Need to store this in case of failure during the expiration tests, as new tests will require the original timeout values
+original_expiration_time = jwt_placeholder.token_expiration_time
+
 class JWTTests(TestCase):
 	"""
 	Testing out the place-holder JWT generating and validating
@@ -17,6 +20,11 @@ class JWTTests(TestCase):
 	]
 	# List of unformatted data
 	bad_data_list = [[1,2,3], "This is data!", 0xFF]
+	
+	# tearDown() gets called after every unit test in this class
+	# Reset our jwt_placeholder module's original expiration time NO MATTER WHAT after each test
+	def tearDown(self):
+		jwt_placeholder.token_expiration_time = original_expiration_time
 	
 	def test_generate_token(self):
 		"""
@@ -96,6 +104,34 @@ class JWTTests(TestCase):
 			"""Invalid comparison - should be False"""
 			for bad_data in self.bad_data_list:
 				self.assertFalse(bad_data == data_from_JWT)
+	
+	def test_token_expiration(self):
+		"""
+		Testing that the JWT's expiration wokrs as expected
+		
+		Since this unit test exists with the backend, it can manually overide the expiration times
+		Will test that a token validates as expected within an expiration period
+		Will test that a token is invalid after the expiration period
+		"""
+		# Grab the first good piece of data
+		data = self.good_data_list[0]
+		
+		jwt = jwt_placeholder.generate_token(data)
+		
+		""" Confirm that our token validates as expected """
+		self.assertTrue(jwt_placeholder.validate_token(jwt))
+		
+		# We'll modify the expiration time, but teardown() will set it back to the original time
+		# Set the expiration time to 1 second in the past
+		jwt_placeholder.token_expiration_time = -1
+		
+		# This token, while signed properly, has an expiration date of 1 second ago
+		jwt = jwt_placeholder.generate_token(data)
+
+		""" Confirm that our token validation raises an exception """
+		with self.assertRaises(jwt_lib.exceptions.ExpiredSignatureError):
+			ret_val = jwt_placeholder.validate_token(jwt)
+
 
 class SanitizationTests(TestCase):
     """
