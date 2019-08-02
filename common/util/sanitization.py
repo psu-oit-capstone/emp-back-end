@@ -138,13 +138,13 @@ def validate_username(username):
 
 def validate_checkbox(checkbox):
     """
-    Validates a checkbox input by ensuring whether it's 'Y' or None values
+    Validates a checkbox input by ensuring whether it's 'Y' or 'N' values
     Args:
             checkbox(String): checkbox to validate in String format.
     Returns:
             boolean: True if valid, False otherwise.
     """
-    if checkbox == 'Y' or checkbox == None:
+    if checkbox == 'Y' or checkbox == 'N':
         return True
     else:
         return False

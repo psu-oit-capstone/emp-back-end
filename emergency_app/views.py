@@ -401,7 +401,7 @@ def get_nation_codes(request):
 	Returns the backend's nation Values
 	No need for JWT validation as this is generic data
 	"""
-	return HttpResponse(Nation.objects.values())
+	return HttpResponse(list(Nation.objects.values()), safe=False)
 
 
 @csrf_exempt
@@ -411,4 +411,4 @@ def get_state_codes(request):
 	Returns the backend's state Values
 	No need for JWT validation as this is generic data
 	"""
-	return HttpResponse(State.objects.values())
+	return HttpResponse(list(State.objects.values()), safe=False)

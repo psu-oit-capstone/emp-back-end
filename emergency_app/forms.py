@@ -156,7 +156,8 @@ class SetEvacuationAssistanceForm(forms.ModelForm):
     def clean_evacuation_assistance(self, *args, **kwargs):
         evacuation_assistance = self.cleaned_data.get("evacuation_assistance")
         evacuation_assistance = empty_string_handler(evacuation_assistance)
-        if not(evacuation_assistance == None or sanitization.validate_checkbox(evacuation_assistance)):
+        # since evacuation assistance form must submit some values, evacuation_assistance should not be None
+        if not(sanitization.validate_checkbox(evacuation_assistance)):
             raise forms.ValidationError("Invalid checkbox value")
 
         return evacuation_assistance
@@ -202,7 +203,8 @@ class SetEmergencyNotificationsForm(forms.ModelForm):
     def clean_sms_status_ind(self, *args, **kwargs):
         sms_status_ind = self.cleaned_data.get("sms_status_ind")
         sms_status_ind = empty_string_handler(sms_status_ind)
-        if not(sms_status_ind == None or sanitization.validate_checkbox(sms_status_ind)):
+        # since sms_status_ind must be submitted with a value, it should not be none
+        if not(sanitization.validate_checkbox(sms_status_ind)):
             raise forms.ValidationError("Invalid checkbox value")
 
         return sms_status_ind
