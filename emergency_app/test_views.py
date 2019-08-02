@@ -276,7 +276,8 @@ class EmergencyNotificationTests(TestCase):
 			'external_email':self.additional_good_external_email,
 			'primary_phone':self.good_primary_phone,
 			'alternate_phone':self.additional_good_alternate_phone,
-			'sms_device':self.good_sms_device
+			'sms_device':self.good_sms_device,
+			'sms_status_ind':'N'
 		},
 		# POST headers
 		HTTP_AUTHORIZATION=user_with_valid_data_jwt
@@ -293,7 +294,7 @@ class EmergencyNotificationTests(TestCase):
 		self.assertEqual(user_entry.external_email, self.additional_good_external_email)
 		self.assertEqual(user_entry.primary_phone, self.good_primary_phone)
 		self.assertEqual(user_entry.alternate_phone, self.additional_good_alternate_phone)
-		self.assertEqual(user_entry.sms_status_ind, None)
+		self.assertEqual(user_entry.sms_status_ind, 'N')
 		self.assertEqual(user_entry.sms_device, self.good_sms_device)
 
 		# Bad data testing #
@@ -480,22 +481,21 @@ class EvacuationAssistanceTests(TestCase):
 		user_entry = Emergency.objects.get(pidm=self.pidm_without_emergency_entry)
 		self.assertEqual(user_entry.evacuation_assistance, self.valid_status)
 
-		# We'll now update the database status with None
+		# We'll now update the database status with 'N' - No
 		response = c.post(set_evacuation_assistance_url,
 		# POST body
 		{
-			# Without 'evacuation_assistance' set, it will be deleted in the database
+			'evacuation_assistance':'N'
 		},
 		# POST headers
 		HTTP_AUTHORIZATION=user_without_emergency_entry_jwt
 		)
-
 		"""Testing that we received a 200 success response"""
 		self.assertEqual(response.status_code, success_code)
 
 		"""Testing that the user's data has updated to None"""
 		user_entry = Emergency.objects.get(pidm=self.pidm_without_emergency_entry)
-		self.assertEqual(user_entry.evacuation_assistance, None)
+		self.assertEqual(user_entry.evacuation_assistance, 'N')
 
 		# Now we'll attempt to update the database with an invalid status
 		response = c.post(set_evacuation_assistance_url,
@@ -512,7 +512,7 @@ class EvacuationAssistanceTests(TestCase):
 
 		"""Testing that the user's data remains unchanged and is still None"""
 		user_entry = Emergency.objects.get(pidm=self.pidm_without_emergency_entry)
-		self.assertEqual(user_entry.evacuation_assistance, None)
+		self.assertEqual(user_entry.evacuation_assistance, 'N')
 
 
 class EmergencyContactsTests(TestCase):
