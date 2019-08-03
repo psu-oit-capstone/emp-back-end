@@ -346,10 +346,10 @@ def get_evacuation_assistance(request):
 
 	# Now we query the emergency table for any info the user has listed
 	# SELECT * FROM Emergency WHERE Emergency.pidm = user_pidm
-	try:
-		user_entry = Emergency.objects.filter(pidm=user_pidm)
-	except Emergency.DoesNotExist:
-		# No info found for this user's valid request results in a 204, No Content
+	user_entry = Emergency.objects.filter(pidm=user_pidm)
+
+	# No info found for this user's valid request results in a 204, No Content
+	if len(user_entry) < 1:
 		return HttpResponse("No emergency info found", status=http_no_content_response)
 
 	# Otherwise return evacuation assistance status in their json format
