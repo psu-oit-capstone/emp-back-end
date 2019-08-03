@@ -4,11 +4,17 @@
 """
 import sys
 import jwt
+# datetime and timedelta for expiration
+from datetime import datetime, timedelta
 
 # The base for our secret - TODO: temporary, replace with better base later (perhaps store it in the database, and allow it to be updated)
 # Once set up, this should be used to salt the user password to generate our 
-base_secret = "H4ML7sLF51ANTwgFTQa3OXmuc2lIAk6J"
+base_secret = "H4ML7sLF51ANTwgFTQa3OXmuc2lIAk6JX"
 hash_algorithm = 'HS256'
+
+# Token's expiration time in seconds
+# Currently 15 minutes
+token_expiration_time = 60 * 15
 
 def generate_token(json):
 	"""
@@ -19,6 +25,9 @@ def generate_token(json):
 	Returns:
 		String: The encoded JWT as a string
 	"""
+	
+	json['exp'] = datetime.utcnow() + timedelta(seconds=token_expiration_time)
+	
 	try:
 		token = jwt.encode(json, base_secret, algorithm=hash_algorithm)
 	except(TypeError):
@@ -44,9 +53,12 @@ def validate_token(token):
 	except(jwt.exceptions.DecodeError):
 		# print("Malformed JWT passed to jwt_placeholder.validate_token()!")
 		raise
-	except(e):
+	except(jwt.exceptions.ExpiredSignatureError):
+		# print("Expired token!")
+		raise
+	except Exception as e:
 		print(e)
-		return False
+		raise
 	return True
 
 def grab_token_payload(token):
