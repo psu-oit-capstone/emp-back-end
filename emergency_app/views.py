@@ -158,32 +158,37 @@ def update_emergency_contact(request, surrogate_id=None):
 
 	# First, we extract the checkbox data and determine if we need to branch
 	if request.method == "DELETE":
+		# checking whether surrogate id is given, and exists in database
 		if surrogate_id == None:
-			return HttpResponse("No Surrogate ID given!", status=422)
-		user_entry = Contact.objects.filter(surrogate_id=surrogate_id)
-		if len(user_entry) < 1:
-			# The user does not exist
+			return HttpResponse("No Surrogate ID given for deleting contact!", status=422)
+		try:
+			entry = Contact.objects.get(surrogate_id=surrogate_id)
+		except Contact.DoesNotExist:
 			return HttpResponse("No contact found.")
+
+		# checking whether user request has matching pidm with contact that has the surrogate id
+		user_pidm = Identity.objects.get(username=payload['username']).pidm
+		if entry.pidm != user_pidm:
+			return HttpResponse("No contact found", status=http_unprocessable_entity_response)
 		else:
-			user_pidm = Identity.objects.get(username=payload['username']).pidm
-			if user_entry[0].pidm != user_pidm:
-				return HttpResponse("No contact found", status=http_unprocessable_entity_response)
-			else:
-				Contact.objects.filter(priority__gte=user_entry[0].priority).update(priority=F('priority') - 1)
-				user_entry.delete()
-				return HttpResponse("Successfully deleted emergency contact.", status=200)
+			# any contacts that is belong to the same user and have lower priority got promoted, before deleting the entry
+			Contact.objects.filter(pidm=entry.pidm, priority__gt=entry.priority).update(priority=F('priority') - 1)
+			entry.delete()
+			return HttpResponse("Successfully deleted emergency contact.", status=200)
 	# End of deletion branch ==============================================================
 	else:
 		# first, decide if we are updating or creating
 		# based upon if the surrogate_id already exists
 		surrogate_id = request.POST.get('surrogate_id')
 		if surrogate_id:
-			sur_id = Contact.objects.filter(surrogate_id=surrogate_id)
-			if len(sur_id) < 1:
+			# if given surrogate id does not match in table, throws error
+			try:
+				entry = Contact.objects.get(surrogate_id=surrogate_id)
+			except Contact.DoesNotExist:
 				return HttpResponse("Invalid surrogate id", status=http_unprocessable_entity_response)
-			else:
-				entry = sur_id[0] # Save it for use later in form instances
-				contact_exists = True
+			contact_exists = True
+			# also record the priority before proceeding, to decide whether other contacts belong to the same user need demotion or promotion
+			old_priority = int(entry.priority)
 		else:
 			entry = None
 			contact_exists = False
@@ -195,14 +200,26 @@ def update_emergency_contact(request, surrogate_id=None):
 		temp_body = request.POST.copy()
 		temp_body['pidm'] = jwt_pidm
 
+		# use form to validate and then save the request if the inputs are valid
 		form = UpdateEmergencyContactForm(temp_body, instance=entry) # If instance=None, it creates table. else, updates
 		if form.is_valid():
+			# do not save immediately, since priority check on other contacts are needed
 			entry = form.save(commit=False)
-			Contact.objects.filter(priority__gte=entry.priority).update(priority=F('priority') + 1)
-			entry.save()
+			new_priority = int(entry.priority)
 			if contact_exists == True:
+				# if the old contact wants to be promoted, demote the contacts between new and (old - 1) priority
+				if old_priority > new_priority:
+					Contact.objects.filter(pidm=entry.pidm, priority__range=(new_priority, old_priority - 1)).update(priority=F('priority') + 1)
+				# if the old contact wants to be demoted, promote the contacts between (old + 1) and new priority
+				if old_priority < new_priority:
+					Contact.objects.filter(pidm=entry.pidm, priority__range=(old_priority + 1, new_priority)).update(priority=F('priority') - 1)
+				# and do not change anything if the old and new priority are same
+				entry.save()
 				return HttpResponse("Updated successfully.")
 			else:
+				# if the contact is new, demote any contacts that have lower priority
+				Contact.objects.filter(priority__gte=new_priority).update(priority=F('priority') + 1)
+				entry.save()
 				return HttpResponse("Created successfully.")
 		else:
 			return HttpResponse("errors:" + str(form.errors), status=http_unprocessable_entity_response)
@@ -254,10 +271,8 @@ def get_emergency_notifications(request):
 
 	# Otherwise return all emergency info in their json format
 	# We want every field except for the pidm, as there is no need to expose front-end to database specifics
-	emergency_info = list(user_entry.values('external_email', 'campus_email',
-											'primary_phone', 'alternate_phone',
-											'sms_status_ind', 'sms_device',
-											'activity_date'))
+	emergency_info = list(user_entry.values('external_email', 'campus_email', 'primary_phone',
+											'alternate_phone', 'sms_status_ind', 'sms_device'))
 
 	# Return the list of user's emergency info, safe=false means we can return non-dictionary items
 	return JsonResponse(emergency_info, safe=False)
@@ -331,10 +346,10 @@ def get_evacuation_assistance(request):
 
 	# Now we query the emergency table for any info the user has listed
 	# SELECT * FROM Emergency WHERE Emergency.pidm = user_pidm
-	user_entry = Emergency.objects.filter(pidm=user_pidm)
-
-	# No info found for this user's valid request results in a 204, No Content
-	if len(user_entry) < 1:
+	try:
+		user_entry = Emergency.objects.filter(pidm=user_pidm)
+	except Emergency.DoesNotExist:
+		# No info found for this user's valid request results in a 204, No Content
 		return HttpResponse("No emergency info found", status=http_no_content_response)
 
 	# Otherwise return evacuation assistance status in their json format

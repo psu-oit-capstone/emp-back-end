@@ -67,6 +67,8 @@ def validate_zip_usa(zip):
     Returns:
             boolean: True if valid, False otherwise.
     """
+    if not zip:
+        return False
     if not zipcodes.is_real(zip):
         return False
 
@@ -81,8 +83,9 @@ def validate_relation(relt_code):
     Returns:
             boolean: True if valid, False otherwise.
     """
-    check_relation = Relation.objects.filter(code=relt_code)
-    if len(check_relation) < 1:
+    try:
+        Relation.objects.get(code=relt_code)
+    except Relation.DoesNotExist:
         return False
 
     return True
@@ -96,8 +99,9 @@ def validate_state_usa(stat_code):
     Returns:
             boolean: True if valid, False otherwise.
     """
-    check_states = State.objects.filter(id=stat_code)
-    if len(check_states) < 1:
+    try:
+        State.objects.get(id=stat_code)
+    except State.DoesNotExist:
         return False
 
     return True
@@ -110,8 +114,9 @@ def validate_nation_code(natn_code):
     Returns:
             boolean: True if valid, False otherwise.
     """
-    check_nation = Nation.objects.filter(id=natn_code)
-    if len(check_nation) < 1:
+    try:
+        Nation.objects.get(id=natn_code)
+    except Nation.DoesNotExist:
         return False
 
     return True

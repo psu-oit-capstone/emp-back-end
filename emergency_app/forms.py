@@ -1,15 +1,16 @@
 # Taken from this video:
 # https://www.youtube.com/watch?v=wVnQkKf-gHo
 from django import forms
-from .models.identity import Identity
-from .models.contact import Contact
-from .models.emergency import Emergency
-from .models.nation import Nation
-from .models.state import State
+# from emergency_app.models.identity import Identity
+from emergency_app.models.contact import Contact
+from emergency_app.models.emergency import Emergency
+from emergency_app.models.nation import Nation
+# from emergency_app.models.state import State
 from common.util import sanitization
 
 # When required field=false, clean() would normalize empty value of CharField into empty string
 # However, null value was needed to follow the sample data provided. Therefore, this function is declared.
+# alternatively, to_python function for each field could use this function.
 # Source: https://docs.djangoproject.com/en/2.2/ref/forms/fields/
 def empty_string_handler(field):
     # if field either empty string or empty/null value
@@ -18,9 +19,10 @@ def empty_string_handler(field):
     else:
         return field
 
-
+# Form for validating the request update of user's emergency contact
 class UpdateEmergencyContactForm(forms.ModelForm):
     # Provide an example of the schema of the model
+    # pidm was needed to search all contacts related to related user.
     pidm = forms.IntegerField()
     surrogate_id = forms.IntegerField(required=False)
     priority = forms.CharField(max_length=4)
@@ -51,55 +53,81 @@ class UpdateEmergencyContactForm(forms.ModelForm):
             'ctry_code_phone', 'phone_area', 'phone_number', 'phone_ext'
         ]
 
+    # clean() for validating fields that depend on each other
     def clean(self):
-        cleaned_data = super(UpdateEmergencyContactForm, self).clean()
-        surrogate_id = cleaned_data.get("surrogate_id")
-        pidm = cleaned_data.get("pidm")
+        self.cleaned_data = super(UpdateEmergencyContactForm, self).clean()
+        # checking whether given surrogate id is actually in database.
+        surrogate_id = self.cleaned_data.get("surrogate_id")
+        pidm = self.cleaned_data.get("pidm")
         if surrogate_id:
-            check_pidm = Contact.objects.filter(surrogate_id=surrogate_id, pidm=pidm)
-            if len(check_pidm) != 1:
+            try:
+                Contact.objects.get(surrogate_id=surrogate_id, pidm=pidm)
+            except Contact.DoesNotExist:
                 raise forms.ValidationError("Invalid Surrogate ID")
 
-        priority = cleaned_data.get("priority")
+        # checking whether given priority is actually in the correct range (1 to (n+1)) for new entry
+        # and range (1 to n) for old entry (the one with surrogate id given correctly)
+        priority = self.cleaned_data.get("priority")
         entries = Contact.objects.filter(pidm=pidm)
         if not priority:
             raise forms.ValidationError("Missing priority number")
-        if not(0 < int(priority) < (len(entries) + 2)):
+        if (not surrogate_id and not(1 <= int(priority) <= (len(entries) + 1)) or
+            (surrogate_id and not(1 <= int(priority) <= len(entries)))):
             raise forms.ValidationError("Invalid priority number")
 
-        street_line1 = cleaned_data.get("street_line1")
-        city = cleaned_data.get("city")
-        stat_code = cleaned_data.get("stat_code")
-        zip = cleaned_data.get("zip")
-        natn_code = cleaned_data.get("natn_code")
+        # empty string handler for the rest fields
+        # this seems ugly, it's probably better to use clean_<field_name>() for each of these fields,
+        # and the commented function below throws error somehow
+        # self.cleaned_data['relt_code'] = empty_string_handler(self.cleaned_data['relt_code'])
+        self.cleaned_data['mi'] = empty_string_handler(self.cleaned_data['mi'])
+        self.cleaned_data['street_line1'] = empty_string_handler(self.cleaned_data['street_line1'])
+        self.cleaned_data['street_line2'] = empty_string_handler(self.cleaned_data['street_line2'])
+        self.cleaned_data['street_line3'] = empty_string_handler(self.cleaned_data['street_line3'])
+        self.cleaned_data['city'] = empty_string_handler(self.cleaned_data['city'])
+        self.cleaned_data['stat_code'] = empty_string_handler(self.cleaned_data['stat_code'])
+        self.cleaned_data['natn_code'] = empty_string_handler(self.cleaned_data['natn_code'])
+        self.cleaned_data['zip'] = empty_string_handler(self.cleaned_data['zip'])
+        self.cleaned_data['ctry_code_phone'] = empty_string_handler(self.cleaned_data['ctry_code_phone'])
+        self.cleaned_data['phone_area'] = empty_string_handler(self.cleaned_data['phone_area'])
+        self.cleaned_data['phone_number'] = empty_string_handler(self.cleaned_data['phone_number'])
+        self.cleaned_data['phone_ext'] = empty_string_handler(self.cleaned_data['phone_ext'])
+
+        # checking whether given address is complete (street line1, city, and either state + zip or country) or completely empty
+        street_line1 = self.cleaned_data.get("street_line1")
+        city = self.cleaned_data.get("city")
+        stat_code = self.cleaned_data.get("stat_code")
+        zip = self.cleaned_data.get("zip")
+        natn_code = self.cleaned_data.get("natn_code")
         if (street_line1 or city or stat_code or zip or natn_code):
             if not street_line1:
-                self.add_error('street_line1', "Address field is required")
+                raise forms.ValidationError('street_line1', "Address field is required")
             if not city:
-                self.add_error('city', "City field is required")
+                raise forms.ValidationError('city', "City field is required")
             if not natn_code and not(stat_code and zip):
-                msg = "Nation field, or State + Zip fields is/are required"
-                self.add_error('natn_code', msg)
-                self.add_error('stat_code', msg)
-                self.add_error('zip', msg)
+                raise forms.ValidationError("Nation field, or State + Zip fields is/are required")
 
-        if natn_code == "LUS":
-            stat_code = cleaned_data.get("stat_code")
-            if not(sanitization.validate_state_usa(stat_code)):
+        # checking specifically for USA country, whether given state, zip, and phone number are correct or completely empty.
+        # need revisions since it's complicated on implementation
+        if natn_code == Nation.objects.get(value="USA").id: # alternatively, == "LUS":
+            if not(stat_code == None or sanitization.validate_state_usa(stat_code)):
                 raise forms.ValidationError("Invalid state code")
-            zip = cleaned_data.get("zip")
-            if not(sanitization.validate_zip_usa(zip)):
+            if not(zip == None or sanitization.validate_zip_usa(zip)):
                 raise forms.ValidationError("Invalid zip code")
-            phone_area = cleaned_data.get("phone_area")
-            phone_number = cleaned_data.get("phone_number")
-            phone_area = str(phone_area)
-            phone_number = str(phone_number)
-            full_phone = phone_area + phone_number
-            if len(phone_area) != 3 or len(phone_number) != 7 or not(sanitization.validate_phone_num_usa(full_phone)):
+            # this if statement is weird, but OIT website behaves like this
+            if stat_code and not zip:
+                raise forms.ValidationError("Nation field, or State + Zip fields is/are required")
+            phone_area = self.cleaned_data.get("phone_area")
+            phone_number = self.cleaned_data.get("phone_number")
+            if ((phone_area or phone_number) and
+                not(len(phone_area) == 3 and len(phone_number) == 7 and
+                    sanitization.validate_phone_num_usa(phone_area + phone_number))):
                 raise forms.ValidationError("Invalid phone number")
 
-        return cleaned_data
+        return self.cleaned_data
+        # Possible TODOs: check validity of address, city and state based on zipcode
 
+    # clean_<field_name>() function is reponsible to validate one specific field.
+    # since empty_string_handler could not run relt_code in clean(), execute it here
     def clean_relt_code(self, *args, **kwargs):
         relt_code = self.cleaned_data.get("relt_code")
         relt_code = empty_string_handler(relt_code)
@@ -108,44 +136,17 @@ class UpdateEmergencyContactForm(forms.ModelForm):
 
         return relt_code
 
-    def clean_stat_code(self, *args, **kwargs):
-        stat_code = self.cleaned_data.get("stat_code")
-        stat_code = empty_string_handler(stat_code)
-
-        return stat_code
-
     def clean_natn_code(self, *args, **kwargs):
         natn_code = self.cleaned_data.get("natn_code")
-        natn_code = empty_string_handler(natn_code)
         if not(natn_code == None or sanitization.validate_nation_code(natn_code)):
             raise forms.ValidationError("Invalid nation code:")
 
         return natn_code
 
-    def clean_zip(self, *args, **kwargs):
-        zip = self.cleaned_data.get("zip")
-        zip = empty_string_handler(zip)
 
-        return zip
-
-    def clean_phone_area(self, *args, **kwargs):
-        phone_area = self.cleaned_data.get("phone_area")
-        phone_area = empty_string_handler(phone_area)
-
-        return phone_area
-
-    def clean_phone_number(self, *args, **kwargs):
-        phone_number = self.cleaned_data.get("phone_number")
-        phone_number = empty_string_handler(phone_number)
-
-        return phone_number
-
-    # ctry_code_phone and phone_ext seem does not need clean_<field> method
-
-
+# Form for validating the request update of user's evacuation assistance
 class SetEvacuationAssistanceForm(forms.ModelForm):
-    # since checkbox is either "Y" or None, the field is not required
-    evacuation_assistance = forms.CharField(max_length=4, required=False)
+    evacuation_assistance = forms.CharField(max_length=4)
 
     class Meta:
         model = Emergency
@@ -155,19 +156,19 @@ class SetEvacuationAssistanceForm(forms.ModelForm):
 
     def clean_evacuation_assistance(self, *args, **kwargs):
         evacuation_assistance = self.cleaned_data.get("evacuation_assistance")
-        evacuation_assistance = empty_string_handler(evacuation_assistance)
         # since evacuation assistance form must submit some values, evacuation_assistance should not be None
+        # hence, skipping empty_string_handler function
         if not(sanitization.validate_checkbox(evacuation_assistance)):
             raise forms.ValidationError("Invalid checkbox value")
 
         return evacuation_assistance
 
-
+# Form for validating the request update of user's emergency notifications
 class SetEmergencyNotificationsForm(forms.ModelForm):
     external_email = forms.CharField(max_length=512, required=False)
     primary_phone = forms.CharField(max_length=72, required=False)
     alternate_phone = forms.CharField(max_length=72, required=False)
-    sms_status_ind = forms.CharField(max_length=4, required=False)
+    sms_status_ind = forms.CharField(max_length=4)
     sms_device = forms.CharField(max_length=72, required=False)
 
     class Meta:
@@ -209,6 +210,7 @@ class SetEmergencyNotificationsForm(forms.ModelForm):
 
         return sms_status_ind
 
+    # probably better placing this function in clean() instead, since it's dependent on another field.
     def clean_sms_device(self, *args, **kwargs):
         # if the user decides to opt out, then empty the device number
         sms_status_ind = self.cleaned_data.get("sms_status_ind")
