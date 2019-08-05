@@ -1,6 +1,6 @@
 from django.db import models
 
-
+# should we put foreign keys on this model?
 class Contact(models.Model):
     # Primary key
     surrogate_id = models.IntegerField(db_column='SPREMRG_SURROGATE_ID', primary_key=True)

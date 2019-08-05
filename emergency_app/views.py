@@ -1,13 +1,20 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from emergency_app.models import identity, contact, emergency
+from django.db.models import F
+# alternatively, from emergency_app.models.identity import Identity
+from .models.identity import Identity
+from .models.contact import Contact
+from .models.emergency import Emergency
+from .models.relation import Relation
+from .models.nation import Nation
+from .models.state import State
 #TODO - crsf_exempt is only needed when testing on http - REMOVE WHEN DONE TESTING
 from django.views.decorators.csrf import csrf_exempt
 #require_http_methods allows us to force POST rather then GET
 from django.views.decorators.http import require_http_methods
 
 from django.utils import timezone
-from .forms import UpdateEmergencyContactForm
+from .forms import UpdateEmergencyContactForm, SetEvacuationAssistanceForm, SetEmergencyNotificationsForm
 
 # jwt_placeholder is a temporary JWT generator and validator
 # Will be replaced by Single-Sign-On calls
@@ -18,11 +25,6 @@ from common.util import sanitization
 http_no_content_response = 204 # Request was valid and authorized, but no content found
 http_unauthorized_response = 401 # Request is either missing JWT or provided invalid JWT
 http_unprocessable_entity_response = 422 # Request was formatted properly, but had invalid data (e.g. invalid email)
-
-# Database models
-Identity = identity.Identity
-Contact = contact.Contact
-Emergency = emergency.Emergency
 
 # The key name for our JWT in HTTP request headers
 JWT_Headers_Key = "HTTP_AUTHORIZATION"
@@ -72,7 +74,7 @@ def login(request):
 
 	# Attempt to grab first/last name, username, and email from the database
 	# SQL equivilent: SELECT first_name, last_name, username, email FROM Identity WHERE Identity.username = requested_username
-	user_data = Identity.objects.filter(username=requested_username).values()
+	user_data = Identity.objects.filter(username=requested_username).values('first_name', 'last_name', 'username', 'email')
 
 	# If the query returned nothing, then the username isn't in the database
 	if len(user_data) < 1:
@@ -120,7 +122,7 @@ def get_emergency_contacts(request):
 
 	payload = j.grab_token_payload(jwt)
 
-	user_pidm = payload['pidm']
+	user_pidm = Identity.objects.get(username=payload['username']).pidm
 
 	# Now we can query the contact table for any contacts that this user has listed
 	contacts = Contact.objects.filter(pidm=user_pidm)
@@ -156,73 +158,71 @@ def update_emergency_contact(request, surrogate_id=None):
 
 	# First, we extract the checkbox data and determine if we need to branch
 	if request.method == "DELETE":
+		# checking whether surrogate id is given, and exists in database
 		if surrogate_id == None:
-			print("surrogate_id can't be none!")
-			return HttpResponse("No Surrogate ID given!", status=422)
-		user_entry = Contact.objects.filter(surrogate_id=surrogate_id)
-		if len(user_entry) < 1:
-			# The user does not exist
+			return HttpResponse("No Surrogate ID given for deleting contact!", status=422)
+		try:
+			entry = Contact.objects.get(surrogate_id=surrogate_id)
+		except Contact.DoesNotExist:
 			return HttpResponse("No contact found.")
+
+		# checking whether user request has matching pidm with contact that has the surrogate id
+		user_pidm = Identity.objects.get(username=payload['username']).pidm
+		if entry.pidm != user_pidm:
+			return HttpResponse("No contact found", status=http_unprocessable_entity_response)
 		else:
-			user_pidm = payload['pidm']
-			if user_entry[0].pidm != user_pidm:
-				return HttpResponse("No contact found", status=422)
-			else:
-				user_entry.delete()
-				return HttpResponse("Successfully deleted emergency contact.", status=200)
+			# any contacts that is belong to the same user and have lower priority got promoted, before deleting the entry
+			Contact.objects.filter(pidm=entry.pidm, priority__gt=entry.priority).update(priority=F('priority') - 1)
+			entry.delete()
+			return HttpResponse("Successfully deleted emergency contact.", status=200)
 	# End of deletion branch ==============================================================
 	else:
 		# first, decide if we are updating or creating
 		# based upon if the surrogate_id already exists
-		surrogate_id = surrogate_id = request.POST.get('surrogate_id')
-		sur_id = Contact.objects.filter(surrogate_id=surrogate_id)
-		if len(sur_id) < 1:
-			entry = None
-			user_exists = False
+		surrogate_id = request.POST.get('surrogate_id')
+		if surrogate_id:
+			# if given surrogate id does not match in table, throws error
+			try:
+				entry = Contact.objects.get(surrogate_id=surrogate_id)
+			except Contact.DoesNotExist:
+				return HttpResponse("Invalid surrogate id", status=http_unprocessable_entity_response)
+			contact_exists = True
+			# also record the priority before proceeding, to decide whether other contacts belong to the same user need demotion or promotion
+			old_priority = int(entry.priority)
 		else:
-			entry = sur_id[0] # Save it for use later in form instances
-			user_exists = True
-
-		# The old way of doing it
-		"""
-		# Grab the pidm from the JWT
-		jwt_pidm = payload['pidm']
-		# Grab the pidm from the post request
-		user_pidm = request.POST.get('pidm')
-		jwt_pidm = int(jwt_pidm)
-		try:
-			user_pidm = int(user_pidm)
-		except TypeError:
-			return HttpResponse("PIDM must be an integer.", status=http_unprocessable_entity_response)
-
-		if user_pidm != jwt_pidm:
-			print("Pidm mismatch thrown")
-			print(user_pidm)
-			print(jwt_pidm)
-			return HttpResponse("Invalid pidm query.", status=http_unauthorized_response)
-		# NOTE: PIDM is passed in post request as well as JWT simply because we need to add PIDM to database.
-		# For uniformity, we include this in the POST request, and simply verify it as I did above to ensure the PIDM
-		# belongs to the user (via jwt)
-		"""
+			entry = None
+			contact_exists = False
 
 		# Grab the pidm from the JWT
-		jwt_pidm = payload['pidm']
+		jwt_pidm = Identity.objects.get(username=payload['username']).pidm
 
 		# Create a copy of the POST request to modify the Pidm
 		temp_body = request.POST.copy()
 		temp_body['pidm'] = jwt_pidm
 
-		# Perform form logic, passing temp_body instead of original body
+		# use form to validate and then save the request if the inputs are valid
 		form = UpdateEmergencyContactForm(temp_body, instance=entry) # If instance=None, it creates table. else, updates
 		if form.is_valid():
-			form.save()
-			form = UpdateEmergencyContactForm()
-			if user_exists == True:
+			# do not save immediately, since priority check on other contacts are needed
+			entry = form.save(commit=False)
+			new_priority = int(entry.priority)
+			if contact_exists == True:
+				# if the old contact wants to be promoted, demote the contacts between new and (old - 1) priority
+				if old_priority > new_priority:
+					Contact.objects.filter(pidm=entry.pidm, priority__range=(new_priority, old_priority - 1)).update(priority=F('priority') + 1)
+				# if the old contact wants to be demoted, promote the contacts between (old + 1) and new priority
+				if old_priority < new_priority:
+					Contact.objects.filter(pidm=entry.pidm, priority__range=(old_priority + 1, new_priority)).update(priority=F('priority') - 1)
+				# and do not change anything if the old and new priority are same
+				entry.save()
 				return HttpResponse("Updated successfully.")
 			else:
+				# if the contact is new, demote any contacts that have lower priority
+				Contact.objects.filter(priority__gte=new_priority).update(priority=F('priority') + 1)
+				entry.save()
 				return HttpResponse("Created successfully.")
 		else:
-			return HttpResponse("Invalid form data.", status=http_unprocessable_entity_response)
+			return HttpResponse("errors:" + str(form.errors), status=http_unprocessable_entity_response)
 
 @csrf_exempt
 @require_http_methods(["POST", "GET"])
@@ -259,7 +259,7 @@ def get_emergency_notifications(request):
 	# Grab username from the token
 	payload = j.grab_token_payload(jwt)
 
-	user_pidm = payload['pidm']
+	user_pidm = Identity.objects.get(username=payload['username']).pidm
 
 	# Now we query the emergency table for any info the user has listed
 	# SELECT * FROM Emergency WHERE Emergency.pidm = user_pidm
@@ -271,10 +271,8 @@ def get_emergency_notifications(request):
 
 	# Otherwise return all emergency info in their json format
 	# We want every field except for the pidm, as there is no need to expose front-end to database specifics
-	emergency_info = list(user_entry.values('external_email', 'campus_email',
-											'primary_phone', 'alternate_phone',
-											'sms_status_ind', 'sms_device',
-											'activity_date'))
+	emergency_info = list(user_entry.values('external_email', 'campus_email', 'primary_phone',
+											'alternate_phone', 'sms_status_ind', 'sms_device'))
 
 	# Return the list of user's emergency info, safe=false means we can return non-dictionary items
 	return JsonResponse(emergency_info, safe=False)
@@ -296,79 +294,37 @@ def set_emergency_notifications(request):
 
 	payload = j.grab_token_payload(jwt)
 
-	user_pidm = payload['pidm']
-
-	# Delete doesn't make sense in this request
-	# DELETE request - delete this user from the database
-	# if request.method == "DELETE":
-		# print("DELETE Request!")
-		# # TODO set their op-out to Y
-		# Emergency.objects.filter(pidm=user_pidm).delete()
-		# return HttpResponse("User info deleted")
-
-	# POST requests - adding data into the registry database
-
-	# Grab all additional data - POST.get(...) returns None if front-end didn't load the POST request with it
-	# also sanitize the data, returns invalid http response if the data has invalid format
-	external_email = request.POST.get('external_email')
-	if not (sanitization.validate_email(external_email) or external_email == None):
-		return HttpResponse("Invalid Email!", status=http_unprocessable_entity_response)
-
-	primary_phone = request.POST.get('primary_phone')
-	if not (sanitization.validate_phone_num(primary_phone) or primary_phone == None):
-		return HttpResponse("Invalid Phone Number!", status=http_unprocessable_entity_response)
-
-	alternate_phone = request.POST.get('alternate_phone')
-	if not (sanitization.validate_phone_num(alternate_phone) or primary_phone == None):
-		return HttpResponse("Invalid Phone Number!", status=http_unprocessable_entity_response)
-
-	sms_status_ind = request.POST.get('sms_status_ind')
-	if not sanitization.validate_checkbox(sms_status_ind):
-		return HttpResponse("Invalid Checkbox Value!", status=http_unprocessable_entity_response)
-
-	if sms_status_ind == 'Y':
-		sms_device = None
-	else:
-		sms_device = request.POST.get('sms_device')
-		if not (sanitization.validate_phone_num(sms_device) or sms_device == None):
-			return HttpResponse("Invalid Phone Number!", status=http_unprocessable_entity_response)
-
-	# Campus email is included in jwt
-	campus_email = payload['email']
+	user_pidm = Identity.objects.get(username=payload['username']).pidm
+	user_email = payload['email']
 
 	# Determine if the user is already in the emergency registry
 	query = Emergency.objects.filter(pidm=user_pidm)
 	if len(query) < 1:
+		entry = None
 		user_exists = False
 	else:
 		# Might as well grab the Emergency entry here
-		user_entry = query[0]
+		entry = query[0]
 		user_exists = True
 
-	# If the user exists, update all information (any blank fields from front-end result in no data for that field here)
-	if user_exists:
-		user_entry.external_email = external_email
-		user_entry.campus_email = campus_email
-		user_entry.primary_phone = primary_phone
-		user_entry.alternate_phone = alternate_phone
-		user_entry.sms_status_ind = sms_status_ind
-		user_entry.sms_device = sms_device
-		# user_entry.campus_email = campus_email # campus email should not be modified
-		user_entry.save()
-
-		return HttpResponse("User info updated")
+	form = SetEmergencyNotificationsForm(request.POST, instance=entry)
+	if form.is_valid():
+		if user_exists == True:
+			form.save()
+			return HttpResponse("Updated successfully.")
+		else:
+			new_entry = form.save(commit=False)
+			new_entry.pidm = user_pidm
+			new_entry.campus_email = user_email
+			new_entry.save()
+			return HttpResponse("Created successfully.")
 	else:
-		new_entry = Emergency(pidm=user_pidm, external_email=external_email,
-								campus_email=campus_email, primary_phone=primary_phone,
-								alternate_phone=alternate_phone, sms_status_ind=sms_status_ind,
-								sms_device=sms_device)
-		new_entry.save()
+		return HttpResponse("errors:" + str(form.errors), status=http_unprocessable_entity_response)
 
-		return HttpResponse("User info added")
 
 
 @csrf_exempt
-@require_http_methods(["POST"])
+@require_http_methods(["POST", "GET"])
 def get_evacuation_assistance(request):
 	"""
 	returns a json on success with the following data
@@ -386,7 +342,7 @@ def get_evacuation_assistance(request):
 	# Grab username from the token
 	payload = j.grab_token_payload(jwt)
 
-	user_pidm = payload['pidm']
+	user_pidm = Identity.objects.get(username=payload['username']).pidm
 
 	# Now we query the emergency table for any info the user has listed
 	# SELECT * FROM Emergency WHERE Emergency.pidm = user_pidm
@@ -403,44 +359,71 @@ def get_evacuation_assistance(request):
 
 
 @csrf_exempt
-@require_http_methods(["POST", "DELETE"])
+@require_http_methods(["POST"])
 def set_evacuation_assistance(request):
 	"""
 	Updates the user's evacuation assitance status on the Emergency table
 	"""
-
+	# Pull the jwt from the POST request
 	jwt = request.META.get(JWT_Headers_Key)
-
 	try:
 		j.validate_token(jwt)
 	except Exception as e:
 		return HttpResponse(str(e), status=http_unauthorized_response)
-
+	# Grab username from the token
 	payload = j.grab_token_payload(jwt)
 
-	user_pidm = payload['pidm']
-
-	# Grab the evacuation status data - POST.get(...) returns None if front-end didn't load the POST request with it
-	# also sanitize the data, returns invalid http response if the data has invalid format
-	evacuation_assistance = request.POST.get('evacuation_assistance')
-	if not sanitization.validate_checkbox(evacuation_assistance):
-		return HttpResponse("Invalid Checkbox Value!", status=http_unprocessable_entity_response)
+	user_pidm = Identity.objects.get(username=payload['username']).pidm
+	user_email = payload['email']
 
 	# Determine if the user is already in the emergency registry
 	query = Emergency.objects.filter(pidm=user_pidm)
 	if len(query) < 1:
+		entry = None
 		user_exists = False
 	else:
 		# Might as well grab the Emergency entry here
-		user_entry = query[0]
+		entry = query[0]
 		user_exists = True
 
-	# If the user exists, update all information (any blank fields from front-end result in no data for that field here)
-	if user_exists:
-		user_entry.evacuation_assistance = evacuation_assistance
-		user_entry.save()
-		return HttpResponse("User info updated")
+	form = SetEvacuationAssistanceForm(request.POST, instance=entry)
+	if form.is_valid():
+		if user_exists == True:
+			form.save()
+			return HttpResponse("Updated successfully.")
+		else:
+			new_entry = form.save(commit=False)
+			new_entry.pidm = user_pidm
+			new_entry.campus_email = user_email
+			new_entry.save()
+			return HttpResponse("Created successfully.")
 	else:
-		new_entry = Emergency(pidm=user_pidm, evacuation_assistance=evacuation_assistance)
-		new_entry.save()
-		return HttpResponse("User info added")
+		return HttpResponse("errors:" + str(form.errors), status=http_unprocessable_entity_response)
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def get_relations(request):
+	"""
+	Returns the backend's relationship Values
+	No need for JWT validation as this is generic data
+	"""
+	return JsonResponse(list(Relation.objects.values()), safe=False)
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def get_nation_codes(request):
+	"""
+	Returns the backend's nation Values
+	No need for JWT validation as this is generic data
+	"""
+	return HttpResponse(list(Nation.objects.values()), safe=False)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def get_state_codes(request):
+	"""
+	Returns the backend's state Values
+	No need for JWT validation as this is generic data
+	"""
+	return HttpResponse(list(State.objects.values()), safe=False)

@@ -28,5 +28,7 @@ urlpatterns = [
 	path('setEmergencyNotifications/', views.set_emergency_notifications),
     path('getEvacuationAssistance/', views.get_evacuation_assistance),
     path('setEvacuationAssistance/', views.set_evacuation_assistance),
-	# path('validate_token/<str:token>/', views.validate_token),
+    path('getRelations/', views.get_relations),
+    path('getNationCodes/', views.get_nation_codes),
+    path('getStateCodes/', views.get_state_codes),
 ]
