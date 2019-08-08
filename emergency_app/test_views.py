@@ -814,6 +814,107 @@ class EmergencyContactsTests(TestCase):
 		self.assertEqual(user_entry.phone_number, self.good_emergency_phone_number)
 		self.assertEqual(user_entry.phone_ext, self.good_emergency_phone_ext)
 
+		""" Testing the update mechanic regarding priority differences works """
+		response = c.post(set_contacts_url,
+		# create the POST Body
+		{
+			'pidm':self.pidm_for_fresh_user,
+			'priority':self.good_emergency_priority,
+			'relt_code':self.good_emergency_relt_code,
+			'last_name':self.good_emergency_last_name,
+			'first_name':"test_user_1",
+			'mi':self.good_emergency_middle_init,
+			'street_line1':self.good_emergency_street_line1,
+			'street_line2':self.good_emergency_street_line2,
+			'street_line3':self.good_emergency_street_line3,
+			'city':self.good_emergency_city,
+			'stat_code':self.good_emergency_stat_code,
+			'natn_code':self.good_emergency_natn_code,
+			'zip':self.good_emergency_zip,
+			'ctry_code_phone':self.good_emergency_ctry_code_phone,
+			'phone_area':self.good_emergency_phone_area,
+			'phone_number':self.good_emergency_phone_number,
+			'phone_ext':self.good_emergency_phone_ext
+		},
+		# POST headers
+		HTTP_AUTHORIZATION=user_with_valid_data_jwt
+		)
+
+		# Make sure this request went through before checking for bumping up or down.
+		self.assertEqual(response.status_code, success_code)
+
+		# Now check if the priority of the surrogate was moved correctly.
+		user_entry_last = Contact.objects.get(surrogate_id=surrogate_id_of_contact)
+		self.assertEqual(user_entry_last.priority, '2')
+
+		# Insert at the front of the list.
+		response = c.post(set_contacts_url,
+		# create the POST Body
+		{
+			'pidm':self.pidm_for_fresh_user,
+			'priority':'1',
+			'relt_code':self.good_emergency_relt_code,
+			'last_name':self.good_emergency_last_name,
+			'first_name':"should_be_at_start",
+			'mi':self.good_emergency_middle_init,
+			'street_line1':self.good_emergency_street_line1,
+			'street_line2':self.good_emergency_street_line2,
+			'street_line3':self.good_emergency_street_line3,
+			'city':self.good_emergency_city,
+			'stat_code':self.good_emergency_stat_code,
+			'natn_code':self.good_emergency_natn_code,
+			'zip':self.good_emergency_zip,
+			'ctry_code_phone':self.good_emergency_ctry_code_phone,
+			'phone_area':self.good_emergency_phone_area,
+			'phone_number':self.good_emergency_phone_number,
+			'phone_ext':self.good_emergency_phone_ext
+		},
+		# POST headers
+		HTTP_AUTHORIZATION=user_with_valid_data_jwt
+		)
+
+		self.assertEqual(response.status_code, success_code)
+		# check bumping down
+		should_be_first = Contact.objects.get(first_name="should_be_at_start")
+		self.assertEqual(should_be_first.priority, '1')
+		to_bump_down = should_be_first.surrogate_id
+		should_be_third = Contact.objects.get(surrogate_id=surrogate_id_of_contact)
+		self.assertEqual(should_be_third.priority, '3')
+
+		# Now, test bumping up
+		response = c.post(set_contacts_url,
+		# create the POST Body
+		{
+			'pidm':self.pidm_for_fresh_user,
+			'surrogate_id':to_bump_down,
+			'priority':'3',
+			'relt_code':self.good_emergency_relt_code,
+			'last_name':self.good_emergency_last_name,
+			'first_name':"should_be_at_start",
+			'mi':self.good_emergency_middle_init,
+			'street_line1':self.good_emergency_street_line1,
+			'street_line2':self.good_emergency_street_line2,
+			'street_line3':self.good_emergency_street_line3,
+			'city':self.good_emergency_city,
+			'stat_code':self.good_emergency_stat_code,
+			'natn_code':self.good_emergency_natn_code,
+			'zip':self.good_emergency_zip,
+			'ctry_code_phone':self.good_emergency_ctry_code_phone,
+			'phone_area':self.good_emergency_phone_area,
+			'phone_number':self.good_emergency_phone_number,
+			'phone_ext':self.good_emergency_phone_ext
+		},
+		# POST headers
+		HTTP_AUTHORIZATION=user_with_valid_data_jwt
+		)
+
+		# make sure that the new priority is three, and the old three was moved up to two
+		should_be_third = Contact.objects.get(surrogate_id=to_bump_down)
+		self.assertEqual(should_be_third.priority, "3")
+
+		should_now_be_second = Contact.objects.get(surrogate_id=surrogate_id_of_contact)
+		self.assertEqual(should_now_be_second.priority, "2")
+
 		""" Testing the delete functionality in the emergency contact interface """
 		# Make sure that the valid entry exists.
 		user_entry = Contact.objects.filter(surrogate_id=surrogate_id_of_contact)
@@ -832,6 +933,9 @@ class EmergencyContactsTests(TestCase):
 		user_entry = Contact.objects.filter(surrogate_id=surrogate_id_of_contact)
 		self.assertEqual(len(user_entry), 0)
 
+		# Check if the priority adjustments happen as needed
+		bump_for_deletion = Contact.objects.get(surrogate_id=to_bump_down)
+		self.assertEqual(bump_for_deletion.priority, "2")
 		# Now, we try to delete a user that does not belong to us. We should receive a 422.
 
 		# make sure that there is an existing entry for surrogate id of 3
