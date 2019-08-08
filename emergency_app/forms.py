@@ -14,7 +14,7 @@ from common.util import sanitization
 # Source: https://docs.djangoproject.com/en/2.2/ref/forms/fields/
 def empty_string_handler(field):
     # if field either empty string or empty/null value
-    if not field:
+    if field == "":
         return None
     else:
         return field
@@ -71,7 +71,7 @@ class UpdateEmergencyContactForm(forms.ModelForm):
         priority = self.cleaned_data.get("priority")
         entries = Contact.objects.filter(pidm=pidm)
         if not priority:
-            print("MIssing priority number. ")
+            print("Missing priority number. ")
             raise forms.ValidationError("Missing priority number")
         if (not surrogate_id and not(1 <= int(priority) <= (len(entries) + 1)) or
             (surrogate_id and not(1 <= int(priority) <= len(entries)))):
