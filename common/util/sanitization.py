@@ -23,7 +23,7 @@ def validate_email(email):
     split_email = re.split("@", email)
     # now we have validated the pre-@. we need to validate that there is only one . in the post-@
     dot_count = split_email[1].count('.')
-    if dot_count != 1:
+    if dot_count < 1:
         return False
 
     return True
@@ -52,9 +52,8 @@ def validate_phone_num_usa(phone_num):
         return False
 
     # and the last two digits cannot both be 1s.
-    if phone_num[-1] == '1':
-        if phone_num[-2] == '1':
-            return False
+    if phone_num[-2:] == '11':
+        return False
 
     return True
 
