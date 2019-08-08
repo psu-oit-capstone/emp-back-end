@@ -199,7 +199,6 @@ class SanitizationTests(TestCase):
 
         """Testing invalid usernames"""
         for data in self.bad_usernames_list:
-            print("USERNAME: " + data)
             result = sanitization.validate_username(data)
             self.assertFalse(result)
 
