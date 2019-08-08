@@ -31,17 +31,17 @@ class UpdateEmergencyContactForm(forms.ModelForm):
     first_name = forms.CharField(max_length=240)
     mi = forms.CharField(max_length=240, required=False)
 
-    street_line1 = forms.CharField(max_length=300, required=False)
-    street_line2 = forms.CharField(max_length=300, required=False)
-    street_line3 = forms.CharField(max_length=300, required=False)
-    city = forms.CharField(max_length=200, required=False)
-    stat_code = forms.CharField(max_length=12, required=False)
-    natn_code = forms.CharField(max_length=20, required=False)
-    zip = forms.CharField(max_length=120, required=False)
+    street_line1 = forms.CharField(max_length=75, required=False)
+    street_line2 = forms.CharField(max_length=75, required=False)
+    street_line3 = forms.CharField(max_length=75, required=False)
+    city = forms.CharField(max_length=50, required=False)
+    stat_code = forms.CharField(max_length=3, required=False)
+    natn_code = forms.CharField(max_length=5, required=False)
+    zip = forms.CharField(max_length=30, required=False)
     ctry_code_phone = forms.CharField(max_length=16, required=False)
-    phone_area = forms.CharField(max_length=24, required=False)
-    phone_number = forms.CharField(max_length=48, required=False)
-    phone_ext = forms.CharField(max_length=40, required=False)
+    phone_area = forms.CharField(max_length=6, required=False)
+    phone_number = forms.CharField(max_length=12, required=False)
+    phone_ext = forms.CharField(max_length=10, required=False)
 
     class Meta:
         model = Contact
@@ -178,7 +178,7 @@ class SetEvacuationAssistanceForm(forms.ModelForm):
 
 # Form for validating the request update of user's emergency notifications
 class SetEmergencyNotificationsForm(forms.ModelForm):
-    external_email = forms.CharField(max_length=512, required=False)
+    external_email = forms.CharField(max_length=128, required=False)
     primary_phone = forms.CharField(max_length=72, required=False)
     alternate_phone = forms.CharField(max_length=72, required=False)
     sms_status_ind = forms.CharField(max_length=4)
