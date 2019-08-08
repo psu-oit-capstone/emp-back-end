@@ -1047,7 +1047,7 @@
     id: ENG
     value: NIGERIA
     phone_code: +234
-    svgimg:
+    svgimg: ng.svg
 - model: emergency_app.Nation
   pk: OKP
   fields:
