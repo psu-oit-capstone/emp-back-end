@@ -66,12 +66,7 @@ def validate_zip_usa(zip):
     Returns:
             boolean: True if valid, False otherwise.
     """
-    if not zip:
-        return False
-    if not zipcodes.is_real(zip):
-        return False
-
-    return True
+    return bool(zip and zipcodes.is_real(zip))
 
 # implementing foreign key for relation, state and nation tables would eliminate the need to validate all
 def validate_relation(relt_code):
@@ -129,15 +124,11 @@ def validate_username(username):
     Returns:
             boolean: True if valid, False otherwise.
     """
-    if not username:
-        return False
-    if len(username) < 6:
-        return False
     for c in username:
         if c.isalnum() == False and c != '_':
             return False
-
-    return True
+            
+    return bool(username and re.match('^\w{2,30}$', username))
 
 
 def validate_checkbox(checkbox):
