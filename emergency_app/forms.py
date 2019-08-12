@@ -14,7 +14,7 @@ from common.util import sanitization
 # Source: https://docs.djangoproject.com/en/2.2/ref/forms/fields/
 def empty_string_handler(field):
     # if field either empty string or empty/null value
-    if field == "":
+    if str(field) == "" or str(field) == "null" or field is None or not(str(field)):
         return None
     else:
         return field
@@ -81,6 +81,12 @@ class UpdateEmergencyContactForm(forms.ModelForm):
         # empty string handler for the rest fields
         # this seems ugly, it's probably better to use clean_<field_name>() for each of these fields,
         # and the commented function below throws error somehow
+        for field in self.cleaned_data:
+            try:
+                self.cleaned_data[field] = empty_string_handler(self.cleaned_data[field])
+            except NameError:
+                field = None
+        """
         # self.cleaned_data['relt_code'] = empty_string_handler(self.cleaned_data['relt_code'])
         self.cleaned_data['mi'] = empty_string_handler(self.cleaned_data['mi'])
         self.cleaned_data['street_line1'] = empty_string_handler(self.cleaned_data['street_line1'])
@@ -94,7 +100,7 @@ class UpdateEmergencyContactForm(forms.ModelForm):
         self.cleaned_data['phone_area'] = empty_string_handler(self.cleaned_data['phone_area'])
         self.cleaned_data['phone_number'] = empty_string_handler(self.cleaned_data['phone_number'])
         self.cleaned_data['phone_ext'] = empty_string_handler(self.cleaned_data['phone_ext'])
-
+        """
         # checking whether given address is complete (street line1, city, and either state + zip or country) or completely empty
         street_line1 = self.cleaned_data.get("street_line1")
         city = self.cleaned_data.get("city")
@@ -150,7 +156,7 @@ class UpdateEmergencyContactForm(forms.ModelForm):
     def clean_natn_code(self, *args, **kwargs):
         natn_code = self.cleaned_data.get("natn_code")
         if not(natn_code == None or sanitization.validate_nation_code(natn_code)):
-            print("Invalid natn_code. ")
+            print("Invalid natn_code. " + natn_code)
             raise forms.ValidationError("Invalid nation code:")
 
         return natn_code
