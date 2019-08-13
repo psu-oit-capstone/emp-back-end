@@ -85,7 +85,7 @@ class UpdateEmergencyContactForm(forms.ModelForm):
             try:
                 self.cleaned_data[field] = empty_string_handler(self.cleaned_data[field])
             except NameError:
-                field = None
+                self.cleaned_data[field] = None
         """
         # self.cleaned_data['relt_code'] = empty_string_handler(self.cleaned_data['relt_code'])
         self.cleaned_data['mi'] = empty_string_handler(self.cleaned_data['mi'])
@@ -121,10 +121,10 @@ class UpdateEmergencyContactForm(forms.ModelForm):
         # checking specifically for USA country, whether given state, zip, and phone number are correct or completely empty.
         # need revisions since it's complicated on implementation
         if natn_code == Nation.objects.get(value="USA").id: # alternatively, == "LUS":
-            if not(stat_code == None or sanitization.validate_state_usa(stat_code)):
+            if not(stat_code is None or sanitization.validate_state_usa(stat_code)):
                 print("Invalid stat_code")
                 raise forms.ValidationError("Invalid state code")
-            if not(zip == None or sanitization.validate_zip_usa(zip)):
+            if not(zip is None or sanitization.validate_zip_usa(zip)):
                 print("Invalid zip")
                 raise forms.ValidationError("Invalid zip code")
             # this if statement is weird, but OIT website behaves like this
@@ -147,7 +147,7 @@ class UpdateEmergencyContactForm(forms.ModelForm):
     def clean_relt_code(self, *args, **kwargs):
         relt_code = self.cleaned_data.get("relt_code")
         relt_code = empty_string_handler(relt_code)
-        if not(relt_code == None or sanitization.validate_relation(relt_code)):
+        if not(relt_code is None or sanitization.validate_relation(relt_code)):
             print("Invalid relation code. ")
             raise forms.ValidationError("Invalid relation code:")
 
@@ -155,7 +155,7 @@ class UpdateEmergencyContactForm(forms.ModelForm):
 
     def clean_natn_code(self, *args, **kwargs):
         natn_code = self.cleaned_data.get("natn_code")
-        if not(natn_code == None or sanitization.validate_nation_code(natn_code)):
+        if not(natn_code is None or sanitization.validate_nation_code(natn_code)):
             print("Invalid natn_code. " + natn_code)
             raise forms.ValidationError("Invalid nation code:")
 
@@ -199,7 +199,7 @@ class SetEmergencyNotificationsForm(forms.ModelForm):
     def clean_external_email(self, *args, **kwargs):
         external_email = self.cleaned_data.get("external_email")
         external_email = empty_string_handler(external_email)
-        if not(external_email == None or sanitization.validate_email(external_email)):
+        if not(external_email is None or sanitization.validate_email(external_email)):
             print("Invalid external email. ")
             raise forms.ValidationError("Invalid email")
 
@@ -208,7 +208,7 @@ class SetEmergencyNotificationsForm(forms.ModelForm):
     def clean_primary_phone(self, *args, **kwargs):
         primary_phone = self.cleaned_data.get("primary_phone")
         primary_phone = empty_string_handler(primary_phone)
-        if not(primary_phone == None or sanitization.validate_phone_num_usa(primary_phone)):
+        if not(primary_phone is None or sanitization.validate_phone_num_usa(primary_phone)):
             print("Invalid primary phone number. ")
             raise forms.ValidationError("Invalid phone number")
 
@@ -217,7 +217,7 @@ class SetEmergencyNotificationsForm(forms.ModelForm):
     def clean_alternate_phone(self, *args, **kwargs):
         alternate_phone = self.cleaned_data.get("alternate_phone")
         alternate_phone = empty_string_handler(alternate_phone)
-        if not(alternate_phone == None or sanitization.validate_phone_num_usa(alternate_phone)):
+        if not(alternate_phone is None or sanitization.validate_phone_num_usa(alternate_phone)):
             print("Invalid alternate phone. ")
             raise forms.ValidationError("Invalid phone number")
 
@@ -241,7 +241,7 @@ class SetEmergencyNotificationsForm(forms.ModelForm):
             return None     # sms_device = None
         sms_device = self.cleaned_data.get("sms_device")
         sms_device = empty_string_handler(sms_device)
-        if not(sms_device == None or sanitization.validate_phone_num_usa(sms_device)):
+        if not(sms_device is None or sanitization.validate_phone_num_usa(sms_device)):
             print("Invalid sms_device phone number. ")
             raise forms.ValidationError("Invalid phone number")
 
