@@ -53,7 +53,7 @@ class UpdateEmergencyContactForm(forms.ModelForm):
             'ctry_code_phone', 'phone_area', 'phone_number', 'phone_ext'
         ]
 
-    # clean() for validating fields that depend on each other
+    # clean() for validating fields that depend on each other, this function apparently runs after clean_<field_name>() got executed
     def clean(self):
         self.cleaned_data = super(UpdateEmergencyContactForm, self).clean()
         # checking whether given surrogate id is actually in database.
@@ -82,7 +82,8 @@ class UpdateEmergencyContactForm(forms.ModelForm):
         # this seems ugly, it's probably better to use clean_<field_name>() for each of these fields.
         for field in self.cleaned_data:
             try:
-                if field != "relt_code" or field != "stat_code":
+                # since both fields are handled manually, skipping these two
+                if field != "relt_code" or field != "natn_code":
                     self.cleaned_data[field] = empty_string_handler(self.cleaned_data[field])
             except NameError:
                 self.cleaned_data[field] = None
@@ -130,7 +131,6 @@ class UpdateEmergencyContactForm(forms.ModelForm):
         # Possible TODOs: check validity of address, city and state based on zipcode
 
     # clean_<field_name>() function is reponsible to validate one specific field.
-    # since empty_string_handler could not run relt_code in clean(), execute it here
     def clean_relt_code(self, *args, **kwargs):
         relt_code = self.cleaned_data.get("relt_code")
         relt_code = empty_string_handler(relt_code)
