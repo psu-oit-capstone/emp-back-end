@@ -14,7 +14,7 @@ from common.util import sanitization
 # Source: https://docs.djangoproject.com/en/2.2/ref/forms/fields/
 def empty_string_handler(field):
     # if field either empty string or empty/null value
-    if str(field) == "" or str(field) == "null" or field is None or not(str(field)):
+    if not(str(field)) or str(field) == "" or str(field) == "null":
         return None
     else:
         return field
@@ -79,28 +79,14 @@ class UpdateEmergencyContactForm(forms.ModelForm):
             raise forms.ValidationError("Invalid priority number")
 
         # empty string handler for the rest fields
-        # this seems ugly, it's probably better to use clean_<field_name>() for each of these fields,
-        # and the commented function below throws error somehow
+        # this seems ugly, it's probably better to use clean_<field_name>() for each of these fields.
         for field in self.cleaned_data:
             try:
-                self.cleaned_data[field] = empty_string_handler(self.cleaned_data[field])
+                if field != "relt_code" or field != "stat_code":
+                    self.cleaned_data[field] = empty_string_handler(self.cleaned_data[field])
             except NameError:
                 self.cleaned_data[field] = None
-        """
-        # self.cleaned_data['relt_code'] = empty_string_handler(self.cleaned_data['relt_code'])
-        self.cleaned_data['mi'] = empty_string_handler(self.cleaned_data['mi'])
-        self.cleaned_data['street_line1'] = empty_string_handler(self.cleaned_data['street_line1'])
-        self.cleaned_data['street_line2'] = empty_string_handler(self.cleaned_data['street_line2'])
-        self.cleaned_data['street_line3'] = empty_string_handler(self.cleaned_data['street_line3'])
-        self.cleaned_data['city'] = empty_string_handler(self.cleaned_data['city'])
-        self.cleaned_data['stat_code'] = empty_string_handler(self.cleaned_data['stat_code'])
-        self.cleaned_data['natn_code'] = empty_string_handler(self.cleaned_data['natn_code'])
-        self.cleaned_data['zip'] = empty_string_handler(self.cleaned_data['zip'])
-        self.cleaned_data['ctry_code_phone'] = empty_string_handler(self.cleaned_data['ctry_code_phone'])
-        self.cleaned_data['phone_area'] = empty_string_handler(self.cleaned_data['phone_area'])
-        self.cleaned_data['phone_number'] = empty_string_handler(self.cleaned_data['phone_number'])
-        self.cleaned_data['phone_ext'] = empty_string_handler(self.cleaned_data['phone_ext'])
-        """
+
         # checking whether given address is complete (street line1, city, and either state + zip or country) or completely empty
         street_line1 = self.cleaned_data.get("street_line1")
         city = self.cleaned_data.get("city")
@@ -108,6 +94,7 @@ class UpdateEmergencyContactForm(forms.ModelForm):
         zip = self.cleaned_data.get("zip")
         natn_code = self.cleaned_data.get("natn_code")
         if (street_line1 or city or stat_code or zip or natn_code):
+            print("Invalid address, need street_line1, city, and either stat_code + zip or natn_code be filled correctly.")
             if not street_line1:
                 print("Invalid street line1. ")
                 raise forms.ValidationError('street_line1', "Address field is required")
@@ -155,8 +142,9 @@ class UpdateEmergencyContactForm(forms.ModelForm):
 
     def clean_natn_code(self, *args, **kwargs):
         natn_code = self.cleaned_data.get("natn_code")
+        natn_code = empty_string_handler(natn_code)
         if not(natn_code is None or sanitization.validate_nation_code(natn_code)):
-            print("Invalid natn_code. " + natn_code)
+            print("Invalid natn_code. ")
             raise forms.ValidationError("Invalid nation code:")
 
         return natn_code
