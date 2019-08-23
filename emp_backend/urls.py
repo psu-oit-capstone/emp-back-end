@@ -19,7 +19,6 @@ from emergency_app import views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-	# path('grab_usernames/', views.test),
 	path('login/', views.login),
 	path('getEmergencyContacts/', views.get_emergency_contacts),
 	path('updateEmergencyContact/', views.update_emergency_contact),

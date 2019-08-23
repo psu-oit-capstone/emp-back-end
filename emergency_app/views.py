@@ -29,18 +29,6 @@ http_unprocessable_entity_response = 422 # Request was formatted properly, but h
 # The key name for our JWT in HTTP request headers
 JWT_Headers_Key = "HTTP_AUTHORIZATION"
 
-def test(request, name=None):
-	"""
-	Test function for returning all usernames
-	Useful for testing login that requires a username
-	"""
-	ret = ["ALL DATABASE USERNAMES: "]
-	#Gather the db entries
-	usernames = Identity.objects.all().values('username')
-	for username in usernames:
-		ret.append(username['username'] + ' # ')
-	return HttpResponse(ret)
-
 #TODO csrf_exempt is temporary, need this exemption over http
 @csrf_exempt
 @require_http_methods(["POST"])
