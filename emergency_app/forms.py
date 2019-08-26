@@ -82,8 +82,8 @@ class UpdateEmergencyContactForm(forms.ModelForm):
         # this seems ugly, it's probably better to use clean_<field_name>() for each of these fields.
         for field in self.cleaned_data:
             try:
-                # since both fields are handled manually, skipping these two
-                if field != "relt_code" or field != "natn_code":
+                # since these fields are handled manually, skipping these two
+                if field not in ("relt_code", "natn_code", "stat_code"):
                     self.cleaned_data[field] = empty_string_handler(self.cleaned_data[field])
             except NameError:
                 self.cleaned_data[field] = None
@@ -106,10 +106,12 @@ class UpdateEmergencyContactForm(forms.ModelForm):
                 print("Invalid natn_code or stat_code + zip. ")
                 raise forms.ValidationError("Nation field, or State + Zip fields is/are required")
 
+        # commenting validations related to USA option part since it needs more revisions
+        """
         # checking specifically for USA country, whether given state, zip, and phone number are correct or completely empty.
         # need revisions since it's complicated on implementation
         if natn_code == Nation.objects.get(value="USA").id: # alternatively, == "LUS":
-            if not(stat_code is None or sanitization.validate_state_usa(stat_code)):
+            if not(stat_code is None or stat_code != "00")):
                 print("Invalid stat_code")
                 raise forms.ValidationError("Invalid state code")
             if not(zip is None or sanitization.validate_zip_usa(zip)):
@@ -119,6 +121,8 @@ class UpdateEmergencyContactForm(forms.ModelForm):
             if stat_code and not zip:
                 print("Invalid natn_code or stat_code + zip. ")
                 raise forms.ValidationError("Nation field, or State + Zip fields is/are required")
+            # Below phone number validation is not completely true, people live in USA may have phone number from foreign country
+            # may add if ctry_code_phone == Nation.objects.get(value="USA").phone_code but Canada adds more complication
             phone_area = self.cleaned_data.get("phone_area")
             phone_number = self.cleaned_data.get("phone_number")
             if ((phone_area or phone_number) and
@@ -126,6 +130,7 @@ class UpdateEmergencyContactForm(forms.ModelForm):
                     sanitization.validate_phone_num_usa(phone_area + phone_number))):
                 print("Invalid phone area + number. ")
                 raise forms.ValidationError("Invalid phone area and number")
+        """
 
         return self.cleaned_data
         # Possible TODOs: check validity of address, city and state based on zipcode
@@ -136,16 +141,26 @@ class UpdateEmergencyContactForm(forms.ModelForm):
         relt_code = empty_string_handler(relt_code)
         if not(relt_code is None or sanitization.validate_relation(relt_code)):
             print("Invalid relation code. ")
-            raise forms.ValidationError("Invalid relation code:")
+            raise forms.ValidationError("Invalid relation code")
 
         return relt_code
+
+    # adding this field validation since all state values are based on the table list anyway
+    def clean_stat_code(self, *args, **kwargs):
+        stat_code = self.cleaned_data.get("stat_code")
+        stat_code = empty_string_handler(stat_code)
+        if not(stat_code is None or sanitization.validate_state_usa(stat_code)):
+            print("Invalid stat_code. ")
+            raise forms.ValidationError("Invalid state code")
+
+        return stat_code
 
     def clean_natn_code(self, *args, **kwargs):
         natn_code = self.cleaned_data.get("natn_code")
         natn_code = empty_string_handler(natn_code)
         if not(natn_code is None or sanitization.validate_nation_code(natn_code)):
             print("Invalid natn_code. ")
-            raise forms.ValidationError("Invalid nation code:")
+            raise forms.ValidationError("Invalid nation code")
 
         return natn_code
 

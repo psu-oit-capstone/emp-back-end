@@ -189,8 +189,11 @@ def update_emergency_contact(request, surrogate_id=None):
 		temp_body['pidm'] = jwt_pidm
 
 		# temporary fix for null value on state
-		if temp_body['stat_code'] == "null":
-			temp_body['stat_code'] = None
+		try:
+			if temp_body['stat_code'] == "null":
+				temp_body['stat_code'] = None
+		except:
+			pass
 
 		# use form to validate and then save the request if the inputs are valid
 		form = UpdateEmergencyContactForm(temp_body, instance=entry) # If instance=None, it creates table. else, updates
