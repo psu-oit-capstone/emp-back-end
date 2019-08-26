@@ -115,6 +115,21 @@ def validate_nation_code(natn_code):
 
     return True
 
+def validate_country_phone_code(ctry_code_phone):
+    """
+    Validates a country code phone code
+    Args:
+            country phone code (String): The country phone code to validate in String format
+    Returns:
+            boolean: True if valid, False otherwise.
+    """
+    try:
+        Nation.objects.get(phone_code=ctry_code_phone)
+    except Nation.DoesNotExist:
+        return False
+
+    return True
+
 def validate_username(username):
     """
     Validates a username by ensuring that it is at least 6 characters length and is entirely

@@ -14,7 +14,7 @@ from common.util import sanitization
 # Source: https://docs.djangoproject.com/en/2.2/ref/forms/fields/
 def empty_string_handler(field):
     # if field either empty string or empty/null value
-    if not(str(field)) or str(field) == "" or str(field) == "null":
+    if not(str(field)) or str(field) in ("", "null", "N/A"):
         return None
     else:
         return field
@@ -163,6 +163,15 @@ class UpdateEmergencyContactForm(forms.ModelForm):
             raise forms.ValidationError("Invalid nation code")
 
         return natn_code
+
+    def clean_ctry_code_phone_code(self, *args, **kwargs):
+        ctry_code_phone_code = self.cleaned_data.get("ctry_code_phone_code")
+        ctry_code_phone_code = empty_string_handler(ctry_code_phone_code)
+        if not(ctry_code_phone_code is None or sanitization.validate_country_phone_code(ctry_code_phone_code)):
+            print("Invalid ctry_code_phone_code. ")
+            raise forms.ValidationError("Invalid country phone code")
+
+        return ctry_code_phone_code
 
 
 # Form for validating the request update of user's evacuation assistance
